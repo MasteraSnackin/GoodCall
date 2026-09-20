@@ -2,6 +2,10 @@
 
 Turn a creator’s judgement into reviewed, reusable advice.
 
+![GoodCall answer canvas with a selected answer and review panel](docs/review/screenshots/03-answer-inspector.jpg)
+
+*Review an answer alongside its supporting evidence.*
+
 ## Description
 
 GoodCall is a working local prototype for the fictional Operation Shade / Tano Creator Heist exercise. It helps Maya organise follower questions, connect supporting evidence, draft answers in her style and check missing or conflicting information before sharing an advice card. A movable canvas keeps the question, sources, decision and review state together.
@@ -171,9 +175,13 @@ The legacy `maya-*` storage names preserve existing data after the GoodCall rena
 
 Run the local demo using the steps above. No public live deployment is supplied.
 
+**Desktop canvas**
+
 ![GoodCall desktop canvas](docs/review/screenshots/02-desktop-canvas.jpg)
 
-[Desktop answer inspector](docs/review/screenshots/03-answer-inspector.jpg) · [Phone-width inspector](docs/review/screenshots/04-mobile-inspector.jpg)
+**Phone-width answer review**
+
+<img src="docs/review/screenshots/04-mobile-inspector.jpg" alt="GoodCall answer review panel at phone width" width="390">
 
 These captures document the inspected local interface. They do not establish physical microphone/speaker operation or live provider access; consult the [final review report](docs/review/TASK-RESULTS.md) for interaction coverage.
 
