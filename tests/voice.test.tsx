@@ -9,6 +9,7 @@ class RecognitionMock {
   lang = ''; continuous = false; interimResults = false; maxAlternatives = 1;
   onstart: (() => void) | null = null;
   onend: (() => void) | null = null;
+  onaudiostart: (() => void) | null = null;
   onerror: ((event: { error: string }) => void) | null = null;
   onresult: ((event: { results: { isFinal: boolean; 0: { transcript: string } }[] }) => void) | null = null;
   start = vi.fn(() => { if (RecognitionMock.autoStart) this.onstart?.(); });
@@ -221,6 +222,8 @@ describe('Voice companion with simulated browser speech APIs', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Start listening' }));
     expect(synth.cancel).toHaveBeenCalledOnce();
     expect(RecognitionMock.sessions).toHaveLength(1);
+    expect(screen.getByText('Speech service ready · waiting for audio')).toBeTruthy();
+    act(() => RecognitionMock.sessions[0].onaudiostart?.());
     expect(screen.getByText('Listening')).toBeTruthy();
   });
 

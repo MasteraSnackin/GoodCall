@@ -38,6 +38,7 @@ const invalidProvider = () => new AiError(502, 'invalid_provider_response', 'The
 const cancelled = () => new AiError(409, 'cancelled', 'The AI request was cancelled.');
 function object(value: unknown): value is JsonObject { return typeof value === 'object' && value !== null && !Array.isArray(value); }
 function exact(value: JsonObject, keys: string[]): boolean { const present = Object.keys(value); return present.length === keys.length && present.every(key => keys.includes(key)); }
+function oneOf(value: unknown, choices: readonly string[]): value is string { return typeof value === 'string' && choices.includes(value); }
 function boundedText(value: unknown, max: number, empty = false): value is string {
   return typeof value === 'string' && value.length <= max && (empty || value.trim().length > 0) && !/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(value);
 }
@@ -63,6 +64,7 @@ function validEvidenceId(id: string, kind: string): boolean {
     product: ['product:', PRODUCTS], note: ['note:', NOTES], issue: ['issue:', ISSUES],
     'case-evidence': ['case:', CASES], 'reviewed-answer': ['reviewed:', undefined],
   };
+  if (!Object.hasOwn(prefixes, kind)) return false;
   const entry = prefixes[kind];
   if (!entry || !base.startsWith(entry[0])) return false;
   const entityId = base.slice(entry[0].length);
@@ -70,11 +72,11 @@ function validEvidenceId(id: string, kind: string): boolean {
 }
 
 export function validateAiRequest(value: unknown): AiRequest {
-  if (!object(value) || !exact(value, REQUEST_KEYS) || !['draft', 'chat'].includes(String(value.task))
+  if (!object(value) || !exact(value, REQUEST_KEYS) || !oneOf(value.task, ['draft', 'chat'])
     || !boundedText(value.question, 6000) || !boundedText(value.selectedContext, 6000, true)
     || !strings(value.productIds, 20, 200, true) || !value.productIds.every(id => PRODUCTS.has(id))
     || !strings(value.checks, 40, 2000) || !Array.isArray(value.history) || value.history.length > 12
-    || !value.history.every(item => object(item) && exact(item, ['role', 'text']) && ['user', 'assistant'].includes(String(item.role)) && boundedText(item.text, 6000))
+    || !value.history.every(item => object(item) && exact(item, ['role', 'text']) && oneOf(item.role, ['user', 'assistant']) && boundedText(item.text, 6000))
     || !Array.isArray(value.evidence) || value.evidence.length > 100
     || !value.evidence.every(item => object(item) && exact(item, ['id', 'kind', 'label', 'page', 'text', ...('source' in item ? ['source'] : [])])
       && typeof item.id === 'string' && typeof item.kind === 'string' && validEvidenceId(item.id, item.kind)
@@ -90,10 +92,10 @@ export function validateAiRequest(value: unknown): AiRequest {
 }
 
 export function validateAiAnswer(value: unknown, request: AiRequest, credential?: string): AiAnswer {
-  if (!object(value) || !exact(value, ANSWER_KEYS) || !['answer', 'clarification'].includes(String(value.kind))
+  if (!object(value) || !exact(value, ANSWER_KEYS) || !oneOf(value.kind, ['answer', 'clarification'])
     || !boundedText(value.title, 160) || !boundedText(value.text, 5500)
     || !object(value.decision) || !exact(value.decision, ['verdict', 'suits', 'skipIf', 'unknowns'])
-    || !VERDICTS.includes(String(value.decision.verdict)) || !['suits', 'skipIf', 'unknowns'].every(key => boundedText((value.decision as JsonObject)[key], 800))
+    || !oneOf(value.decision.verdict, VERDICTS) || !['suits', 'skipIf', 'unknowns'].every(key => boundedText((value.decision as JsonObject)[key], 800))
     || !strings(value.productIds, 20, 200, true) || !value.productIds.every(id => request.productIds.includes(id))
     || !strings(value.sourceIds, 20, 200, true) || !value.sourceIds.every(id => request.evidence.some(item => item.id === id))
     || !strings(value.missingEvidence, 20, 1000) || (value.kind === 'answer' && value.sourceIds.length === 0)

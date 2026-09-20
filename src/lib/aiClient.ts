@@ -1,9 +1,11 @@
 import { DEFAULT_AI_MODEL, DEFAULT_AI_PROVIDER } from './aiTypes';
 import type { AiProvider, AiRequest, AiResponse, AiStatus } from './aiTypes';
+import { isStaticDemo } from './staticDemo';
 
 export const EMPTY_AI_STATUS: AiStatus = { configured: false, provider: DEFAULT_AI_PROVIDER, model: DEFAULT_AI_MODEL, source: 'none' };
 
 async function call<T>(path: string, body?: unknown, signal?: AbortSignal): Promise<T> {
+  if (isStaticDemo()) throw new Error('Live AI is unavailable in this hosted demo. Use the local evidence templates for answers and chat.');
   const response = await fetch(`/api/ai/${path}`, {
     method: body === undefined ? 'GET' : 'POST',
     headers: body === undefined ? {} : { 'Content-Type': 'application/json', 'X-GoodCall-Client': 'canvas' },
@@ -19,7 +21,7 @@ async function call<T>(path: string, body?: unknown, signal?: AbortSignal): Prom
   return result as T;
 }
 
-export const getAiStatus = (signal?: AbortSignal) => call<AiStatus>('status', undefined, signal);
+export const getAiStatus = (signal?: AbortSignal) => isStaticDemo() ? Promise.resolve({ ...EMPTY_AI_STATUS }) : call<AiStatus>('status', undefined, signal);
 export const connectAi = (apiKey: string, model: string, signal?: AbortSignal, provider: AiProvider = DEFAULT_AI_PROVIDER) => call<AiStatus>('connect', { apiKey, model, provider }, signal);
 export const setAiModel = (model: string, signal?: AbortSignal) => call<AiStatus>('model', { model }, signal);
 export const disconnectAi = (signal?: AbortSignal) => call<AiStatus>('disconnect', {}, signal);

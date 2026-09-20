@@ -2,6 +2,10 @@
 
 A canvas where creators can draft, review and reuse advice based on their own judgement.
 
+[Open the live GoodCall demo](https://goodcall-sigma.vercel.app) · [Follower view](https://goodcall-sigma.vercel.app/#/discover) · [Deployment guide](docs/DEPLOYMENT.md)
+
+The hosted demo uses local evidence templates for answers and chat. Work is saved in each browser; Claude, OpenAI, Tano and social accounts are not connected on the public site.
+
 [![Animated walkthrough of GoodCall](docs/demo/GoodCall-60-Second-Demo.gif)](docs/demo/GoodCall-60-Second-Demo.gif)
 
 The preview loops automatically. [View the full-size animation](docs/demo/GoodCall-60-Second-Demo.gif) or [view a still image](docs/demo/demo-poster.png). The [demo guide](docs/demo/README.md) explains how it was made.
@@ -190,7 +194,7 @@ The app keeps its `maya-*` storage names so existing data survives the GoodCall 
 
 ## Screenshots / demo
 
-Use the steps above to run the demo locally. There is no public live deployment.
+Open the [public demo](https://goodcall-sigma.vercel.app), or use the steps above to run it locally. The hosted version has no live AI backend; the [deployment guide](docs/DEPLOYMENT.md) describes its scope and verification.
 
 ### 60-second walkthrough
 

@@ -110,6 +110,29 @@ describe('Chat panel with simulated browser speech APIs', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Stop dictation' })); fireEvent.click(screen.getByRole('button', { name: 'Read aloud' }));
     view.unmount(); expect(synth.cancel).toHaveBeenCalledTimes(2);
   });
+  it('prevents reading a reply during every dictation phase without losing interim words', () => {
+    RecognitionMock.autoStart = false;
+    render(<ChatPanel {...props([message()])}/>);
+    const read = screen.getByRole('button', { name: 'Read aloud' }) as HTMLButtonElement;
+    fireEvent.click(screen.getByRole('button', { name: 'Start dictation' }));
+    const session = RecognitionMock.sessions[0];
+    expect(read.disabled).toBe(true);
+    act(() => session.onstart?.());
+    act(() => session.onresult?.({ results: [{ isFinal: false, 0: { transcript: 'Keep my dictated words' } }] }));
+    expect(read.disabled).toBe(true);
+    fireEvent.click(read);
+    expect(synth.speak).not.toHaveBeenCalled();
+    expect(session.abort).not.toHaveBeenCalled();
+    expect(screen.getByText('Hearing: Keep my dictated words')).toBeTruthy();
+    session.stop.mockImplementation(() => {});
+    fireEvent.click(screen.getByRole('button', { name: 'Stop dictation' }));
+    expect(read.disabled).toBe(true);
+    act(() => session.onend?.());
+    expect(read.disabled).toBe(false);
+    fireEvent.click(read);
+    expect(synth.speak).toHaveBeenCalledOnce();
+    expect((screen.getByRole('textbox', { name: 'Message Maya' }) as HTMLTextAreaElement).value).toBe('Keep my dictated words');
+  });
   it('reads only new replies after opt-in, using the selected browser voice', () => {
     const voice = { name: 'Device UK', voiceURI: 'device-uk', lang: 'en-GB', localService: true, default: false } as SpeechSynthesisVoice; synth.getVoices.mockReturnValue([voice]);
     const callbacks = props([message()]); const view = render(<ChatPanel {...callbacks}/>);

@@ -1,17 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowUp, ArrowUpRight, BookOpen, Check, ChevronDown, MessageCircle, Mic, MicOff, Plus, Square, Volume2, X } from 'lucide-react';
 import type { ChatMessage } from '../lib/chat';
+import { PARTIAL_TRANSCRIPT_NOTICE, useSpeechInput } from '../hooks/useSpeechInput';
 import './ChatPanel.css';
 
-type RecognitionResult = { isFinal: boolean; 0: { transcript: string } };
-type Recognition = {
-  lang: string; continuous: boolean; interimResults: boolean; maxAlternatives: number;
-  onstart: (() => void) | null; onend: (() => void) | null;
-  onresult: ((event: { results: ArrayLike<RecognitionResult> }) => void) | null;
-  onerror: ((event: { error: string }) => void) | null;
-  start: () => void; stop: () => void; abort: () => void;
-};
-type SpeechWindow = Window & { SpeechRecognition?: new () => Recognition; webkitSpeechRecognition?: new () => Recognition };
 interface ChatPanelProps {
   open: boolean;
   onClose: () => void;
@@ -33,55 +25,23 @@ interface ChatPanelProps {
 
 const LIMIT = 2000;
 const SUGGESTIONS = ['What’s missing?', 'Explain selected card', 'Is Cloud Cream worth £38?'];
-const INPUT_ERRORS: Record<string, string> = {
-  'not-allowed': 'Microphone access was not allowed. You can type your message instead.',
-  'service-not-allowed': 'This browser does not permit speech recognition. Type your message instead.',
-  'audio-capture': 'No microphone was available. Check the microphone, or type your message.',
-  'no-speech': 'No speech was detected. Try again, or type your message.',
-  'language-not-supported': 'UK English dictation is unavailable in this browser. You can type instead.',
-  network: 'The browser’s speech service could not connect. You can type your message instead.',
-};
-function inputConstructor() {
-  if (typeof window === 'undefined') return undefined;
-  const browser = window as SpeechWindow;
-  return browser.SpeechRecognition || browser.webkitSpeechRecognition;
-}
-
 export default function ChatPanel({ open, onClose, messages, onSend, onAddQuestion, onClear, selectedLabel, storageError, storageNotice, onRetryStorage, aiLabel = 'Local case-file assistant · no live AI', pending = false, error, onCancel, onRetry, onOpenAi }: ChatPanelProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const composerRef = useRef<HTMLTextAreaElement>(null);
   const historyRef = useRef<HTMLDivElement>(null);
-  const recognitionRef = useRef<Recognition | null>(null);
-  const stopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const readingAutoRef = useRef(false);
   const mountedRef = useRef(true);
   const seenIdsRef = useRef(new Set(messages.map(message => message.id)));
   const wasOpenRef = useRef(false);
-  const [composer, setComposer] = useState('');
-  const [interim, setInterim] = useState('');
-  const [phase, setPhase] = useState<'idle' | 'starting' | 'listening' | 'stopping'>('idle');
-  const [notice, setNotice] = useState('');
+  const { text: composer, setText: setComposer, interim, phase, status, notice, setNotice, hasPartial, active,
+    supported: supportsInput, start, stop: finishListening, cancel: abortListening, edit, isActive } = useSpeechInput(LIMIT);
   const [readingId, setReadingId] = useState<string | null>(null);
   const [speakReplies, setSpeakReplies] = useState(false);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [voiceURI, setVoiceURI] = useState('');
   const [addedIds, setAddedIds] = useState<Set<string>>(() => new Set());
-  const supportsInput = Boolean(inputConstructor());
   const supportsOutput = typeof window !== 'undefined' && Boolean(window.speechSynthesis) && typeof window.SpeechSynthesisUtterance === 'function';
-  const active = phase !== 'idle';
-
-  const abortListening = useCallback(() => {
-    if (stopTimerRef.current) clearTimeout(stopTimerRef.current);
-    stopTimerRef.current = null;
-    const session = recognitionRef.current;
-    recognitionRef.current = null;
-    if (session) {
-      session.onstart = session.onresult = session.onerror = session.onend = null;
-      try { session.abort(); } catch { /* A browser session may have already ended. */ }
-    }
-    if (mountedRef.current) { setPhase('idle'); setInterim(''); }
-  }, []);
 
   const stopReading = useCallback(() => {
     const utterance = utteranceRef.current;
@@ -154,61 +114,11 @@ export default function ChatPanel({ open, onClose, messages, onSend, onAddQuesti
     if (!open) { wasOpenRef.current = false; return; }
     if (!wasOpenRef.current) { wasOpenRef.current = true; return; }
     const latest = fresh.at(-1);
-    if (latest && speakReplies && !recognitionRef.current) readMessage(latest, true);
-  }, [open, messages, speakReplies, readMessage]);
+    if (latest && speakReplies && !isActive()) readMessage(latest, true);
+  }, [open, messages, speakReplies, readMessage, isActive]);
 
   function close() { abortListening(); stopReading(); onClose(); }
-  function edit(value: string) { abortListening(); setComposer(value.slice(0, LIMIT)); setNotice(''); }
-  function startListening() {
-    const Constructor = inputConstructor();
-    if (!Constructor || recognitionRef.current) return;
-    stopReading(); setNotice('');
-    if (composer.length >= LIMIT) { setNotice('Your message is full. Shorten it before dictating more.'); return; }
-    let session: Recognition;
-    try { session = new Constructor(); }
-    catch { setNotice('Speech recognition could not start. You can type your message instead.'); return; }
-    recognitionRef.current = session;
-    session.lang = 'en-GB'; session.continuous = true; session.interimResults = true; session.maxAlternatives = 1;
-    const prefix = composer.trim();
-    const current = () => mountedRef.current && recognitionRef.current === session;
-    session.onstart = () => { if (current()) setPhase('listening'); };
-    session.onresult = event => {
-      if (!current()) return;
-      const final: string[] = [], pending: string[] = [];
-      for (let i = 0; i < event.results.length; i++) {
-        const result = event.results[i];
-        (result.isFinal ? final : pending).push(result[0].transcript.trim());
-      }
-      const text = [prefix, final.join(' ')].filter(Boolean).join(' ').slice(0, LIMIT);
-      setComposer(text); setInterim(pending.join(' ').slice(0, LIMIT - text.length));
-      if (text.length >= LIMIT) { abortListening(); setNotice('Your message reached 2,000 characters. Review it before sending.'); }
-    };
-    session.onerror = event => {
-      if (!current()) return;
-      abortListening();
-      if (event.error !== 'aborted') setNotice(INPUT_ERRORS[event.error] || 'Dictation stopped. Try again when ready, or type your message.');
-    };
-    session.onend = () => {
-      if (!current()) return;
-      if (stopTimerRef.current) clearTimeout(stopTimerRef.current);
-      stopTimerRef.current = null; recognitionRef.current = null;
-      session.onstart = session.onresult = session.onerror = session.onend = null;
-      setPhase('idle'); setInterim('');
-    };
-    setPhase('starting');
-    try { session.start(); }
-    catch { abortListening(); setNotice('The microphone could not start. Check browser permissions, or type your message.'); }
-  }
-
-  function finishListening() {
-    const session = recognitionRef.current;
-    if (!session) return;
-    setPhase('stopping');
-    try {
-      session.stop();
-      if (recognitionRef.current === session) stopTimerRef.current = setTimeout(() => { if (recognitionRef.current === session) abortListening(); }, 3000);
-    } catch { abortListening(); }
-  }
+  function startListening() { stopReading(); start(); }
 
   function send() {
     const text = composer.trim();
@@ -237,7 +147,7 @@ export default function ChatPanel({ open, onClose, messages, onSend, onAddQuesti
         <div className="chat-message-text">{message.text}</div>
         {message.role === 'assistant' && <>
           {!!message.sourceRefs?.length && <details className="chat-message-sources"><summary><BookOpen size={12}/>Supporting evidence <span>{message.sourceRefs.length}</span><ChevronDown size={12}/></summary><div>{message.sourceRefs.map((source, sourceIndex) => <div className="chat-source" key={`${source.label}-${sourceIndex}`}>{source.page > 0 ? <a href={`/operation-shade-case-file.pdf#page=${source.page}`} target="_blank" rel="noreferrer">{source.label} · p. {source.page}<ArrowUpRight size={11}/></a> : <span>{source.label} · workspace note</span>}<p>{source.excerpt}</p></div>)}</div></details>}
-          <div className="chat-message-actions"><button type="button" disabled={!supportsOutput} onClick={() => readingId === message.id ? stopReading() : readMessage(message)}>{readingId === message.id ? <Square size={12}/> : <Volume2 size={13}/>} {readingId === message.id ? 'Stop reading' : 'Read aloud'}</button>{message.questionText && <button type="button" disabled={addedIds.has(message.id)} onClick={() => { onAddQuestion(message.questionText!); setAddedIds(previous => new Set([...previous, message.id])); }}>{addedIds.has(message.id) ? <Check size={12}/> : <Plus size={12}/>} {addedIds.has(message.id) ? 'Added to questions' : 'Add to audience questions'}</button>}</div>
+          <div className="chat-message-actions"><button type="button" disabled={!supportsOutput || active} onClick={() => readingId === message.id ? stopReading() : readMessage(message)}>{readingId === message.id ? <Square size={12}/> : <Volume2 size={13}/>} {readingId === message.id ? 'Stop reading' : 'Read aloud'}</button>{message.questionText && <button type="button" disabled={addedIds.has(message.id)} onClick={() => { onAddQuestion(message.questionText!); setAddedIds(previous => new Set([...previous, message.id])); }}>{addedIds.has(message.id) ? <Check size={12}/> : <Plus size={12}/>} {addedIds.has(message.id) ? 'Added to questions' : 'Add to audience questions'}</button>}</div>
         </>}
       </article>)}
     </div>
@@ -248,13 +158,14 @@ export default function ChatPanel({ open, onClose, messages, onSend, onAddQuesti
       {storageError && <div className="chat-notice chat-notice--error" role="alert">{storageError}{onRetryStorage&&<button type="button" onClick={onRetryStorage}>Retry saving chat</button>}</div>}
       {pending && <div className="chat-ai-status" role="status"><span>AI is checking the evidence and drafting a reply…</span>{onCancel&&<button type="button" onClick={onCancel}>Cancel AI request</button>}</div>}
       {error && <div className="chat-notice chat-notice--error" role="alert"><span>{error}</span>{onRetry&&!pending&&<button type="button" onClick={onRetry}>Retry AI answer</button>}</div>}
+      {hasPartial && <p className="chat-notice" role="status">{PARTIAL_TRANSCRIPT_NOTICE}</p>}
       {notice && <p className="chat-notice" role="status">{notice}</p>}
       {interim && <p className="chat-interim" aria-live="polite">Hearing: {interim}</p>}
       <form className={`chat-composer ${active ? 'is-listening' : ''}`} onSubmit={event => { event.preventDefault(); send(); }}>
         <label htmlFor="maya-chat-message" className="chat-sr-only">Message Maya</label>
         <textarea id="maya-chat-message" ref={composerRef} rows={3} maxLength={LIMIT} value={composer} placeholder="Ask a question, or talk it through…" onChange={event => edit(event.target.value)}
           onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); send(); } }}/>
-        <div className="chat-composer-tools"><span className="chat-input-status" role="status">{phase === 'starting' ? 'Starting microphone…' : phase === 'listening' ? 'Listening · review before sending' : phase === 'stopping' ? 'Finishing transcript…' : composer.length > 1700 ? `${composer.length.toLocaleString()} / 2,000` : 'Enter to send · Shift + Enter for a new line'}</span><div>
+        <div className="chat-composer-tools"><span className="chat-input-status" role="status">{active ? status : composer.length > 1700 ? `${composer.length.toLocaleString()} / 2,000` : 'Enter to send · Shift + Enter for a new line'}</span><div>
           <button type="button" className={`chat-mic ${active ? 'active' : ''}`} disabled={!supportsInput || phase === 'stopping'} aria-label={phase === 'starting' ? 'Cancel dictation' : phase === 'listening' ? 'Stop dictation' : phase === 'stopping' ? 'Finishing dictation' : 'Start dictation'} title={supportsInput ? 'Dictate your message' : 'Speech recognition is unavailable'} onClick={phase === 'starting' ? abortListening : active ? finishListening : startListening}>{active ? <MicOff size={17}/> : <Mic size={17}/>}</button>
           <button type="submit" className="chat-send" disabled={!composer.trim() || active || pending} aria-label="Send message"><ArrowUp size={18}/></button>
         </div></div>

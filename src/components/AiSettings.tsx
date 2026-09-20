@@ -3,6 +3,7 @@ import { ArrowUpRight, CheckCircle2, LoaderCircle, Plug, Unplug } from 'lucide-r
 import { connectAi, disconnectAi, getAiStatus, setAiModel } from '../lib/aiClient';
 import { AI_DEFAULT_MODELS, AI_PROVIDER_LABELS } from '../lib/aiTypes';
 import type { AiProvider, AiStatus } from '../lib/aiTypes';
+import { isStaticDemo } from '../lib/staticDemo';
 import './AiSettings.css';
 
 interface Props { status: AiStatus; enabled: boolean; onStatus: (status: AiStatus) => void; onEnabled: (enabled: boolean) => void; busy?: boolean }
@@ -24,7 +25,17 @@ const PROVIDER_OPTIONS: Record<AiProvider, { keyLabel: string; keyUrl: string; m
   },
 };
 
-export default function AiSettings({ status, enabled, onStatus, onEnabled, busy = false }: Props) {
+export default function AiSettings(props: Props) {
+  if (isStaticDemo()) return <section className="ai-settings" aria-label="AI connection settings">
+    <div className="ai-connection-state"><Plug size={18}/><div><strong>Hosted demo</strong><span>Answers and chat use local evidence templates.</span></div></div>
+    <p>Live AI is not connected in this hosted version. You can explore the canvas and review drafts using the example evidence.</p>
+    <p className="ai-settings-note">API keys cannot be entered here. Use the local app to connect Claude or OpenAI.</p>
+    <p className="ai-settings-note">Tano and social accounts are not connected. Voice uses your browser’s speech features.</p>
+  </section>;
+  return <LocalAiSettings {...props}/>;
+}
+
+function LocalAiSettings({ status, enabled, onStatus, onEnabled, busy = false }: Props) {
   const [apiKey, setApiKey] = useState('');
   const [provider, setProvider] = useState<AiProvider>(status.provider);
   const [model, setModel] = useState(status.model);

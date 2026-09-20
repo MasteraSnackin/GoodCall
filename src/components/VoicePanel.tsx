@@ -1,27 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowUpRight, AudioLines, Mic, MicOff, Play, Square, Volume2, X } from 'lucide-react';
 import { MAYA_PERSONA } from '../lib/persona';
+import { PARTIAL_TRANSCRIPT_NOTICE, useSpeechInput } from '../hooks/useSpeechInput';
 import './VoicePanel.css';
 
-type RecognitionResult = { isFinal: boolean; 0: { transcript: string } };
-type RecognitionEvent = { results: ArrayLike<RecognitionResult> };
-type Recognition = {
-  lang: string;
-  continuous: boolean;
-  interimResults: boolean;
-  maxAlternatives: number;
-  onstart: (() => void) | null;
-  onresult: ((event: RecognitionEvent) => void) | null;
-  onerror: ((event: { error: string }) => void) | null;
-  onend: (() => void) | null;
-  start: () => void;
-  stop: () => void;
-  abort: () => void;
-};
-type SpeechWindow = Window & {
-  SpeechRecognition?: new () => Recognition;
-  webkitSpeechRecognition?: new () => Recognition;
-};
 type VoicePanelProps = {
   open: boolean;
   onClose: () => void;
@@ -32,58 +14,22 @@ type VoicePanelProps = {
 
 const LIMIT = 2000;
 const COMMANDS = ['Show canvas', 'Show questions', 'Show knowledge', 'Show reports', 'Show published answers', 'Draft an answer for Sarah', 'What’s missing?', 'Explain this card', 'What is your approach?'];
-const ERRORS: Record<string, string> = {
-  'not-allowed': 'Microphone access was not allowed. Check this browser’s microphone permission, or type below.',
-  'service-not-allowed': 'Speech recognition is not permitted in this browser. You can type below instead.',
-  'no-speech': 'No speech was detected. Try again when you are ready, or type below.',
-  network: 'The browser’s speech service could not connect. Check your connection, or type below.',
-  'audio-capture': 'No microphone was available. Check your microphone, or type below.',
-  'language-not-supported': 'This browser’s speech service does not support UK English. You can type below instead.',
-};
-
-function recognitionConstructor() {
-  if (typeof window === 'undefined') return undefined;
-  const browser = window as SpeechWindow;
-  return browser.SpeechRecognition || browser.webkitSpeechRecognition;
-}
-
 export default function VoicePanel({ open, onClose, selectedText, onCommand, onQuestion }: VoicePanelProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const recognitionRef = useRef<Recognition | null>(null);
-  const stopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const readingKindRef = useRef<'card' | 'reply' | null>(null);
   const mountedRef = useRef(true);
   const closeRef = useRef(onClose);
   closeRef.current = onClose;
-  const [transcript, setTranscript] = useState('');
-  const [interim, setInterim] = useState('');
-  const [phase, setPhase] = useState<'idle' | 'starting' | 'listening' | 'stopping'>('idle');
-  const [message, setMessage] = useState('');
+  const { text: transcript, setText: setTranscript, interim, phase, status, notice: message, setNotice: setMessage,
+    hasPartial, active, supported: supportsInput, start, stop: finishListening, cancel: abortRecognition, edit: editTranscript } = useSpeechInput(LIMIT);
   const [reading, setReading] = useState<'card' | 'reply' | null>(null);
   const [reply, setReply] = useState<string>(MAYA_PERSONA.greeting);
   const [speakReplies, setSpeakReplies] = useState(false);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [voiceURI, setVoiceURI] = useState('');
-  const supportsInput = Boolean(recognitionConstructor());
   const supportsOutput = typeof window !== 'undefined' && Boolean(window.speechSynthesis) && typeof window.SpeechSynthesisUtterance === 'function';
-  const active = phase !== 'idle';
-
-  const abortRecognition = useCallback(() => {
-    if (stopTimerRef.current) clearTimeout(stopTimerRef.current);
-    stopTimerRef.current = null;
-    const current = recognitionRef.current;
-    recognitionRef.current = null;
-    if (current) {
-      current.onstart = current.onresult = current.onerror = current.onend = null;
-      try { current.abort(); } catch { /* A finished browser session may already be inactive. */ }
-    }
-    if (mountedRef.current) {
-      setPhase('idle');
-      setInterim('');
-    }
-  }, []);
 
   const stopReading = useCallback(() => {
     const current = utteranceRef.current;
@@ -136,84 +82,7 @@ export default function VoicePanel({ open, onClose, selectedText, onCommand, onQ
     closeRef.current();
   }
 
-  function startListening() {
-    const Constructor = recognitionConstructor();
-    if (!Constructor || recognitionRef.current) return;
-    abortRecognition();
-    stopReading();
-    setMessage('');
-    if (transcript.length >= LIMIT) {
-      setMessage('The transcript is full. Clear or shorten it before listening again.');
-      return;
-    }
-    let session: Recognition;
-    try { session = new Constructor(); } catch {
-      setMessage('Speech recognition could not start in this browser. You can type below instead.');
-      return;
-    }
-    const prefix = transcript.trim();
-    const join = (text: string) => [prefix, text].filter(Boolean).join(' ').slice(0, LIMIT);
-    recognitionRef.current = session;
-    session.lang = 'en-GB';
-    session.continuous = true;
-    session.interimResults = true;
-    session.maxAlternatives = 1;
-    const isCurrent = () => mountedRef.current && recognitionRef.current === session;
-    session.onstart = () => { if (isCurrent()) setPhase('listening'); };
-    session.onresult = event => {
-      if (!isCurrent()) return;
-      const finals: string[] = [];
-      const pending: string[] = [];
-      for (let i = 0; i < event.results.length; i++) {
-        const result = event.results[i];
-        (result.isFinal ? finals : pending).push(result[0].transcript.trim());
-      }
-      const finalText = join(finals.join(' '));
-      setTranscript(finalText);
-      setInterim(pending.join(' ').slice(0, Math.max(0, LIMIT - finalText.length)));
-      if (finalText.length >= LIMIT) {
-        abortRecognition();
-        setMessage('The transcript reached 2,000 characters. Review or shorten it before continuing.');
-      }
-    };
-    session.onerror = event => {
-      if (!isCurrent()) return;
-      abortRecognition();
-      if (event.error !== 'aborted') setMessage(ERRORS[event.error] || 'Speech recognition stopped. Try again when you are ready, or type below.');
-    };
-    session.onend = () => {
-      if (!isCurrent()) return;
-      if (stopTimerRef.current) clearTimeout(stopTimerRef.current);
-      stopTimerRef.current = null;
-      recognitionRef.current = null;
-      session.onstart = session.onresult = session.onerror = session.onend = null;
-      setPhase('idle');
-      setInterim('');
-    };
-    setPhase('starting');
-    try { session.start(); } catch {
-      abortRecognition();
-      setMessage('The microphone could not start. Check browser permissions, or type below.');
-    }
-  }
-
-  function finishListening() {
-    const current = recognitionRef.current;
-    if (!current) return;
-    setPhase('stopping');
-    try {
-      current.stop();
-      stopTimerRef.current = setTimeout(() => {
-        if (recognitionRef.current === current) abortRecognition();
-      }, 3000);
-    } catch { abortRecognition(); }
-  }
-
-  function editTranscript(value: string) {
-    abortRecognition();
-    setTranscript(value.slice(0, LIMIT));
-    setMessage('');
-  }
+  function startListening() { stopReading(); start(); }
 
   function readText(text: string, kind: 'card' | 'reply') {
     if (!supportsOutput || !text.trim()) return;
@@ -277,7 +146,7 @@ export default function VoicePanel({ open, onClose, selectedText, onCommand, onQ
     <div className="voice-persona-label"><strong>{MAYA_PERSONA.name} · {MAYA_PERSONA.tagline}</strong><span>Case-file-based persona. Synthetic browser speech, not Maya’s original voice.</span></div>
 
     <section className="voice-input-section" aria-labelledby="voice-input-title">
-      <div className="voice-section-title"><h3 id="voice-input-title">Speak or type</h3><span className={`voice-status ${active ? 'is-active' : ''}`} role="status">{phase === 'starting' ? 'Starting microphone…' : phase === 'listening' ? 'Listening' : phase === 'stopping' ? 'Finishing…' : 'Microphone off'}</span></div>
+      <div className="voice-section-title"><h3 id="voice-input-title">Speak or type</h3><span className={`voice-status ${active ? 'is-active' : ''}`} role="status">{status}</span></div>
       {supportsInput ? <button type="button" className={`voice-listen-button ${active ? 'is-active' : ''}`} onClick={phase === 'starting' ? abortRecognition : active ? finishListening : startListening} disabled={phase === 'stopping'}>
         {active ? <MicOff size={19}/> : <Mic size={19}/>}<span>{phase === 'starting' ? 'Cancel listening' : phase === 'listening' ? 'Stop listening' : phase === 'stopping' ? 'Finishing transcript…' : 'Start listening'}</span>
       </button> : <p className="voice-support-note"><MicOff size={17} aria-hidden="true"/><span>This browser does not offer speech recognition. Type a question or command below; all other canvas controls still work.</span></p>}
@@ -285,6 +154,7 @@ export default function VoicePanel({ open, onClose, selectedText, onCommand, onQ
       <textarea id="voice-transcript" ref={textareaRef} value={transcript} onChange={event => editTranscript(event.target.value)} maxLength={LIMIT} rows={4} placeholder="Try “Show reports”, or dictate a follower’s question…" aria-describedby="voice-transcript-help"/>
       {interim && <p className="voice-interim" aria-live="polite"><span>Hearing:</span> {interim}</p>}
       <div id="voice-transcript-help" className="voice-transcript-meta"><span>{active ? 'Editing the text stops dictation.' : 'Review your words, then choose an action.'}</span><span>{transcript.length.toLocaleString()} / 2,000</span></div>
+      {hasPartial && <p className="voice-message" role="status">{PARTIAL_TRANSCRIPT_NOTICE}</p>}
       {message && <p className="voice-message" role="status">{message}</p>}
       <div className="voice-transcript-actions">
         <button type="button" className="primary small" disabled={!transcript.trim() || active} onClick={() => { stopReading(); onQuestion(transcript.trim()); setTranscript(''); }}><ArrowUpRight size={15}/>Use as question</button>
