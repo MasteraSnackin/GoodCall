@@ -2,7 +2,19 @@
 
 Reviewed 20 September 2026. Local app: http://127.0.0.1:4341/
 
-## Current canvas tools — 20 September 2026
+## Current decision tools — 20 September 2026
+
+**446 automated tests passed: 274 Node tests and 172 DOM tests across 23 Vitest files.** This adds 50 tests covering readiness, comparison, follow-ups, sections and their integration. The final publication check repeated the full `npm test` and `npm run build` runs after the browser frame correction; both passed. JavaScript is **711.19 kB / 223.21 kB gzip** and CSS is **129.19 kB / 25.83 kB gzip**. The existing large-chunk advisory remains non-blocking.
+
+The update adds separate answer-readiness badges with complete evidence checks, two- or three-product comparison with explicit purchase roles and optional budget, one clarification follow-up per question, and named decision sections derived from member-card bounds. Tests cover changed/missing evidence on approved answers, alternative versus combined costs, owned products and repurchases, unknown or over-budget amounts, legacy backups, validation limits and references, and private workflow data remaining outside AI requests and published advice. An independent source review found no substantive blocker.
+
+Native Chrome interaction checks on `127.0.0.1:4341` verified creating a waiting follow-up for the existing Cloud Cream question, creating and focusing its named section, and both records surviving a reload. Actual box selection opened the comparison for Cloud Cream and Daily Gel. A temporary £30 comparison budget produced separate £38/£24 options (£8 over / £6 remaining); marking Cloud Cream already owned produced £0 new spending. A local Barrier Cream draft displayed **Checks needed · 3**, opened all blockers and source excerpts, and retained disabled approval. Escape closed evidence review and restored focus to its badge. The browser check caught and corrected section nodes remaining unmeasured/invisible; frames now have explicit dimensions and render beneath evidence cards.
+
+The live Claude connection was preserved, with generation temporarily paused only to prepare the local test draft and then re-enabled. No provider generation, approval or advice publication was performed. The local browser now contains the waiting follow-up, a sample **Cloud Cream value** section, Daily Gel evidence card and an unapproved local Barrier Cream draft with its supporting cards. Comparison settings remained temporary. The browser connector could not initialise, so these checks used the supported native Chrome interface.
+
+Desktop Chrome behaviour was checked; phone/touch layout, exhaustive screen-reader coverage and real clipboard copying were not re-verified for the new panels. Clipboard success/failure is covered by DOM tests. [Usage guide](docs/CANVAS-TOOLS.md).
+
+## Previous canvas editing tools — 20 September 2026
 
 **396 automated tests passed: 243 Node tests and 153 DOM tests across 19 Vitest files.** The full `npm test` and `npm run build` runs passed after the final canvas correction. JavaScript is **682.62 kB / 215.28 kB gzip** and CSS is **116.38 kB / 23.34 kB gzip**. The existing large-chunk advisory remains.
 

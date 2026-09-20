@@ -1,5 +1,6 @@
 import type { AiDraftMetadata } from './aiTypes';
 import type { DecisionProfile, ReuseReference } from './decisionTypes';
+import type { QuestionFollowUp, DecisionSection } from './canvasWorkflow';
 export type Intent = 'Product value' | 'Personal recommendation' | 'Routine & budget' | 'Missing context' | 'Relationship & trust';
 export type SourceRef = { page: number; label: string; excerpt: string };
 export interface Question { id: string; handle: string; text: string; intent: Intent; source: SourceRef; productIds: string[]; originalSource?: SourceRef; addedAt?: string }
@@ -12,6 +13,6 @@ export interface CanvasCard { id: string; kind: CardKind; entityId: string; x: n
 export interface ReviewNote { id: string; text: string; x: number; y: number; locked?: boolean; createdAt: string; updatedAt: string }
 export interface CanvasLink { evidenceOrigin?: 'generated' | 'manual'; id: string; source: string; target: string }
 export interface Activity { id: string; text: string; at: string }
-export interface Workspace { version: 1; questions: Question[]; products: Product[]; issues: Issue[]; drafts: Draft[]; cards: CanvasCard[]; links: CanvasLink[]; activity: Activity[]; reviewNotes?: ReviewNote[] }
+export interface Workspace { version: 1; questions: Question[]; products: Product[]; issues: Issue[]; drafts: Draft[]; cards: CanvasCard[]; links: CanvasLink[]; activity: Activity[]; reviewNotes?: ReviewNote[]; questionFollowUps?: QuestionFollowUp[]; decisionSections?: DecisionSection[] }
 export interface PublishedAdvice { decision?: DecisionProfile; version: 1; id: string; title: string; text: string; products: {name:string;price:number;note:string}[]; sourceRefs: SourceRef[]; publishedAt: string; demo: true }
 export const INTENTS: Intent[] = ['Product value','Personal recommendation','Routine & budget','Missing context','Relationship & trust'];

@@ -5,6 +5,7 @@ import {
   useReactFlow, useViewport, MiniMap, SelectionMode,
 } from '@xyflow/react';
 import type { Node, NodeProps, NodeChange, Edge, Connection } from '@xyflow/react';
+import type { ReactNode } from 'react';
 import {
   ArrowUpRight, Check, FileText, Link2, Maximize2, MessageCircle,
   Minus, Move, Plus, ShoppingBag, Sparkles, TriangleAlert,
@@ -12,7 +13,12 @@ import {
   StickyNote, Trash2, Undo2, Redo2, AlignStartVertical, AlignStartHorizontal,
   Columns3, Rows3, ChevronDown,
 } from 'lucide-react';
-import type { CanvasCard, CardKind, Workspace } from '../lib/types';
+import type { CanvasCard, CardKind, Draft, Workspace } from '../lib/types';
+import { EvidenceReadinessBadge, EvidenceReadinessPanel } from './EvidenceReadiness';
+import { ProductComparison } from './ProductComparison';
+import { CanvasWorkflowPanel } from './CanvasWorkflow';
+import { deriveEvidenceReadiness } from '../lib/evidenceReadiness';
+import './CanvasDecisionTools.css';
 import { mayaNotes } from '../lib/seed';
 import { alignCanvasItems } from '../lib/canvasLayout';
 import { findCaseEvidence } from '../lib/caseEvidence';
@@ -42,6 +48,8 @@ interface AnswerCanvasProps {
   onRedoLayout?: () => void;
   canUndoLayout?: boolean;
   canRedoLayout?: boolean;
+  onWorkflowChange?: (update: (workspace: Workspace) => Workspace) => void;
+  onClarifyQuestion?: (questionId: string) => void;
 }
 
 type CardData = {
@@ -59,11 +67,14 @@ type CardData = {
   hasDraft?: boolean;
   decision?: DecisionProfile;
   locked?: boolean;
+  readiness?: { draft: Draft; workspace: Workspace; onOpen: () => void };
+  followUp?: { prompt: string; status: string; onOpen: () => void };
 };
 type EvidenceNode = Node<CardData, 'evidence'>;
 type ReviewData = { text: string; locked?: boolean; focusText?: boolean; onTextFocused?: (id: string) => void; onEdit?: (id: string, text: string) => void; onDelete?: (id: string) => void };
 type ReviewNode = Node<ReviewData, 'review'>;
 type CanvasNode = EvidenceNode | ReviewNode;
+type SectionNode = Node<{ title: string; summary: string; locked: boolean }, 'section'>;
 
 
 const kindIcons = {
@@ -97,6 +108,8 @@ const EvidenceCard = memo(function EvidenceCard({ data, selected }: NodeProps<Ev
         <span>{data.footer}</span>
         <span className="evidence-card__page">{data.page}</span>
       </div>
+      {data.readiness && <div className="canvas-card-readiness"><EvidenceReadinessBadge {...data.readiness} /></div>}
+      {data.followUp && <button type="button" className="canvas-card-followup nodrag nopan" onClick={event => { event.stopPropagation(); data.followUp?.onOpen(); }}><strong>{data.followUp.status}</strong><span>{data.followUp.prompt}</span></button>}
       {data.kind === 'question' && (
         <button className="evidence-card__draft nodrag nopan" onClick={event => {
           event.stopPropagation();
@@ -132,7 +145,22 @@ const ReviewNoteCard = memo(function ReviewNoteCard({ id, data, selected, width,
   </article>;
 });
 
-const nodeTypes = { evidence: EvidenceCard, review: ReviewNoteCard };
+const DecisionSectionCard = memo(function DecisionSectionCard({ data }: NodeProps<SectionNode>) {
+  return <div className="canvas-decision-section"><div className="canvas-decision-section__label"><strong>{data.title}</strong><span>{data.summary}</span></div></div>;
+});
+
+const nodeTypes = { evidence: EvidenceCard, review: ReviewNoteCard, section: DecisionSectionCard };
+
+function CanvasToolDialog({ label, onClose, children }: { label: string; onClose: () => void; children: ReactNode }) {
+  const ref = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const origin = document.activeElement;
+    const dialog = ref.current;
+    dialog?.showModal();
+    return () => { dialog?.close(); if (origin instanceof HTMLElement && origin.isConnected) origin.focus({ preventScroll: true }); };
+  }, []);
+  return <dialog ref={ref} className={`canvas-tool-dialog${label === 'Follow-ups and decision sections' ? ' canvas-tool-dialog--workflow' : ''}`} aria-label={label} onCancel={event => { event.preventDefault(); onClose(); }} onKeyDown={event => event.stopPropagation()}>{children}</dialog>;
+}
 
 function presentCard(card: CanvasCard, workspace: Workspace, onDraft: AnswerCanvasProps['onDraft']): CardData {
   if (card.kind === 'question') {
@@ -214,7 +242,12 @@ function CanvasControls({ selectedId, showMap, onToggleMap, onFitAll }: { select
   );
 }
 
-function CanvasInner({ workspace, selectedId, onSelect, onMove, onMoveMany, onLock, onAddReviewNote, onEditReviewNote, onDeleteReviewNote, onUndoLayout, onRedoLayout, canUndoLayout = false, canRedoLayout = false, onConnect, onRemoveLink, onDraft, focusCardId, focusKey, arrangeKey }: AnswerCanvasProps) {
+function CanvasInner({ workspace, selectedId, onSelect, onMove, onMoveMany, onLock, onAddReviewNote, onEditReviewNote, onDeleteReviewNote, onUndoLayout, onRedoLayout, canUndoLayout = false, canRedoLayout = false, onConnect, onRemoveLink, onDraft, focusCardId, focusKey, arrangeKey, onWorkflowChange, onClarifyQuestion }: AnswerCanvasProps) {
+  const [toolPanel, setToolPanel] = useState<'comparison' | 'readiness' | 'workflow' | null>(null);
+  const [comparisonIds, setComparisonIds] = useState<string[]>([]);
+  const [readinessId, setReadinessId] = useState<string | null>(null);
+  const openReadiness = useCallback((draftId: string) => { setReadinessId(draftId); setToolPanel('readiness'); }, []);
+  const openWorkflow = useCallback(() => setToolPanel('workflow'), []);
   const [query, setQuery] = useState('');
   const [focusConnections, setFocusConnections] = useState(false);
   const [showMap, setShowMap] = useState(false);
@@ -271,18 +304,21 @@ function CanvasInner({ workspace, selectedId, onSelect, onMove, onMoveMany, onLo
 
   const nodeModels = useMemo<CanvasNode[]>(() => [
     ...workspace.cards.map(card => ({
-      id: card.id, type: 'evidence' as const, position: { x: card.x, y: card.y },
-      data: { ...presentCard(card, workspace, onDraft), locked: card.locked },
+      id: card.id, type: 'evidence' as const, position: { x: card.x, y: card.y }, zIndex: 1,
+      data: { ...presentCard(card, workspace, onDraft), locked: card.locked,
+        ...(card.kind === 'draft' && workspace.drafts.find(draft => draft.id === card.entityId) ? { readiness: { draft: workspace.drafts.find(draft => draft.id === card.entityId)!, workspace, onOpen: () => openReadiness(card.entityId) } } : {}),
+        ...(card.kind === 'question' && workspace.questionFollowUps?.find(item => item.questionId === card.entityId) ? { followUp: { ...workspace.questionFollowUps.find(item => item.questionId === card.entityId)!, onOpen: openWorkflow } } : {}),
+      },
       hidden: isFocused && !contextIds.has(card.id),
       deletable: false, draggable: !card.locked, ariaLabel: `${canvasCardKindLabel(card.kind)}: ${canvasCardLabel(card, workspace)}${card.locked ? ', position locked' : ''}`,
     })),
     ...(workspace.reviewNotes || []).map(note => ({
-      id: note.id, type: 'review' as const, position: { x: note.x, y: note.y },
+      id: note.id, type: 'review' as const, position: { x: note.x, y: note.y }, zIndex: 1,
       data: { text: note.text, locked: note.locked, onEdit: onEditReviewNote, onDelete: onDeleteReviewNote, focusText: note.id === noteTextFocusId, onTextFocused: finishNoteTextFocus },
       hidden: isFocused, deletable: false, connectable: false, draggable: !note.locked,
       ariaLabel: `Private review note${note.locked ? ', position locked' : ''}`,
     })),
-  ], [workspace, onDraft, isFocused, contextIds, onEditReviewNote, onDeleteReviewNote, noteTextFocusId, finishNoteTextFocus]);
+  ], [workspace, onDraft, isFocused, contextIds, onEditReviewNote, onDeleteReviewNote, noteTextFocusId, finishNoteTextFocus, openReadiness, openWorkflow]);
   const edgeModels = useMemo<Edge[]>(() => workspace.links.map(link => ({
     id: link.id, source: link.source, target: link.target, type: 'smoothstep',
     animated: false,
@@ -294,6 +330,21 @@ function CanvasInner({ workspace, selectedId, onSelect, onMove, onMoveMany, onLo
   const [nodes, setNodes, onNodesChange] = useNodesState<CanvasNode>(nodeModels);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(edgeModels);
   const { fitView, getNode, screenToFlowPosition } = useReactFlow<CanvasNode>();
+
+  const sectionNodes = useMemo<SectionNode[]>(() => (workspace.decisionSections || []).flatMap(section => {
+    const members = nodes.filter(node => node.type === 'evidence' && section.cardIds.includes(node.id) && !node.hidden);
+    if (!members.length) return [];
+    const left = Math.min(...members.map(node => node.position.x)) - 22;
+    const top = Math.min(...members.map(node => node.position.y)) - 58;
+    const right = Math.max(...members.map(node => node.position.x + (node.measured?.width || 274))) + 22;
+    const bottom = Math.max(...members.map(node => node.position.y + (node.measured?.height || 300))) + 22;
+    const drafts = workspace.drafts.filter(draft => members.some(node => node.type === 'evidence' && node.data.kind === 'draft' && node.data.entityId === draft.id));
+    const blocked = drafts.filter(draft => deriveEvidenceReadiness(draft, workspace).blockers.length).length;
+    const waiting = (workspace.questionFollowUps || []).filter(item => item.status === 'Waiting for reply' && members.some(node => node.type === 'evidence' && node.data.kind === 'question' && node.data.entityId === item.questionId)).length;
+    let frameId = `decision-frame:${section.id}`;
+    while (nodes.some(node => node.id === frameId)) frameId = `frame:${frameId}`;
+    return [{ id: frameId, type: 'section' as const, position: { x: left, y: top }, width: right - left, height: bottom - top, data: { title: section.title, summary: `${members.length} ${members.length === 1 ? 'card' : 'cards'}${blocked ? ` · ${blocked} ${blocked === 1 ? 'answer needs' : 'answers need'} checks` : ''}${waiting ? ` · ${waiting} waiting for reply` : ''}`, locked: true }, style: { width: right - left, height: bottom - top, pointerEvents: 'none' as const }, zIndex: 0, selectable: false, draggable: false, connectable: false, deletable: false, focusable: false }];
+  }), [workspace, nodes]);
 
   const persistPositions = useCallback((moved: { id: string; x: number; y: number }[]) => {
     const items = [...workspace.cards, ...(workspace.reviewNotes || [])];
@@ -360,6 +411,16 @@ function CanvasInner({ workspace, selectedId, onSelect, onMove, onMoveMany, onLo
   const selectedNodes = nodes.filter(node => selectedIds.has(node.id) && !node.hidden);
   const allLocked = selectedNodes.length > 0 && selectedNodes.every(node => node.data.locked);
   const movableSelectionCount = selectedNodes.filter(node => !node.data.locked).length;
+  const selectedEvidenceIds = selectedNodes.filter(node => node.type === 'evidence').map(node => node.id);
+  const selectedProductIds = [...new Set(selectedNodes.flatMap(node => node.type === 'evidence' && node.data.kind === 'product' ? [node.data.entityId] : []))];
+  const readinessDraft = workspace.drafts.find(draft => draft.id === readinessId);
+
+  const focusSection = (ids: string[]) => {
+    setToolPanel(null);
+    setFocusConnections(false);
+    updateSelection(new Set(ids));
+    requestAnimationFrame(() => fitView({ nodes: ids.map(id => ({ id })), padding: .2, duration: motionDuration(350), maxZoom: 1 }));
+  };
 
   // React Flow emits both callbacks for a selection-box drag. Treat that one
   // pointer-up as one history entry while supporting either callback path.
@@ -495,6 +556,8 @@ function CanvasInner({ workspace, selectedId, onSelect, onMove, onMoveMany, onLo
           <span className="canvas-toolbar-divider" />
           <button type="button" className="canvas-toolbar-icon" aria-label="Undo layout change" title="Undo layout change (Cmd/Ctrl+Z)" aria-keyshortcuts="Meta+Z Control+Z" disabled={!canUndoLayout || !onUndoLayout} onClick={onUndoLayout}><Undo2 size={15} /></button>
           <button type="button" className="canvas-toolbar-icon" aria-label="Redo layout change" title="Redo layout change (Cmd/Ctrl+Shift+Z)" aria-keyshortcuts="Meta+Shift+Z Control+Shift+Z" disabled={!canRedoLayout || !onRedoLayout} onClick={onRedoLayout}><Redo2 size={15} /></button>
+          {onWorkflowChange && <><span className="canvas-toolbar-divider" /><button type="button" aria-label="Follow-ups and decision sections" onClick={openWorkflow}><MessageCircle size={14} /><span>Follow-ups & sections</span></button></>}
+          {selectedProductIds.length > 0 && <button type="button" aria-label="Compare selected products" disabled={selectedProductIds.length < 2 || selectedProductIds.length > 3} title="Select two or three product cards to compare" onClick={() => { setComparisonIds(selectedProductIds); setToolPanel('comparison'); }}><ShoppingBag size={14} /><span>Compare ({selectedProductIds.length})</span></button>}
         </div>
         {showAlign && <div className="canvas-align-actions" id="canvas-align-actions" role="group" aria-label="Alignment actions">
           <button type="button" disabled={movableSelectionCount < 2} onClick={() => alignSelection('left')}><AlignStartVertical size={15} />Align left</button>
@@ -505,11 +568,11 @@ function CanvasInner({ workspace, selectedId, onSelect, onMove, onMoveMany, onLo
         </div>}
       </div>
       <div className="canvas-tip"><Move size={13} /><span>{interactionMode === 'select' ? 'Drag a box to select · Shift/Cmd-click to add · Drag cards to arrange' : 'Drag the background to pan · Select cards to edit'}</span></div>
-      <ReactFlow<CanvasNode>
-        nodes={nodes}
+      <ReactFlow<CanvasNode | SectionNode>
+        nodes={[...sectionNodes, ...nodes]}
         edges={edges}
         nodeTypes={nodeTypes}
-        onNodesChange={handleNodesChange}
+        onNodesChange={changes => handleNodesChange(changes.filter(change => !('id' in change) || !sectionNodes.some(node => node.id === change.id)) as NodeChange<CanvasNode>[])}
         onEdgesChange={onEdgesChange}
         onNodeClick={(event, node) => {
           const additive = event?.shiftKey || event?.metaKey || event?.ctrlKey;
@@ -518,9 +581,9 @@ function CanvasInner({ workspace, selectedId, onSelect, onMove, onMoveMany, onLo
         }}
         onSelectionStart={() => { boxSelecting.current = true; }}
         onSelectionEnd={() => { boxSelecting.current = false; }}
-        onSelectionDragStop={persistDrag}
+        onSelectionDragStop={(event, moved) => persistDrag(event, moved.filter((node): node is CanvasNode => node.type !== 'section'))}
         onPaneClick={clearSelection}
-        onNodeDragStop={(event, node, movedNodes) => persistDrag(event, movedNodes?.length ? movedNodes : [node])}
+        onNodeDragStop={(event, node, movedNodes) => persistDrag(event, (movedNodes?.length ? movedNodes : [node]).filter((item): item is CanvasNode => item.type !== 'section'))}
         onConnect={connect}
         onEdgesDelete={deleted => deleted.forEach(edge => onRemoveLink(edge.id))}
         isValidConnection={connection => workspace.cards.some(card => card.id === connection.source) && workspace.cards.some(card => card.id === connection.target) && connection.source !== connection.target && !workspace.links.some(link => link.source === connection.source && link.target === connection.target)}
@@ -544,6 +607,9 @@ function CanvasInner({ workspace, selectedId, onSelect, onMove, onMoveMany, onLo
         {showMap && <MiniMap ariaLabel="Canvas overview" pannable zoomable nodeColor={node => node.selected ? '#9b3d2d' : '#c3bdaf'} maskColor="#f6f4efbb" />}
       </ReactFlow>
       <CanvasControls selectedId={selectionExists ? selectedId : null} showMap={showMap} onToggleMap={() => setShowMap(value => !value)} onFitAll={showAllCards} />
+      {toolPanel === 'comparison' && <CanvasToolDialog label="Compare products" onClose={() => setToolPanel(null)}><ProductComparison workspace={workspace} productIds={comparisonIds} onClose={() => setToolPanel(null)} /></CanvasToolDialog>}
+      {toolPanel === 'readiness' && <CanvasToolDialog label="Review answer evidence" onClose={() => setToolPanel(null)}>{readinessDraft ? <EvidenceReadinessPanel draft={readinessDraft} workspace={workspace} onClose={() => setToolPanel(null)} /> : <div className="canvas-tool-unavailable"><p>This answer is no longer in the workspace.</p><button type="button" onClick={() => setToolPanel(null)}>Close evidence review</button></div>}</CanvasToolDialog>}
+      {toolPanel === 'workflow' && onWorkflowChange && <CanvasToolDialog label="Follow-ups and decision sections" onClose={() => setToolPanel(null)}><CanvasWorkflowPanel workspace={workspace} selectedCardIds={selectedEvidenceIds} onChange={onWorkflowChange} onClose={() => setToolPanel(null)} onFocusCards={focusSection} onClarifyQuestion={id => { setToolPanel(null); onClarifyQuestion?.(id); }} /></CanvasToolDialog>}
       {!workspace.cards.length && !workspace.reviewNotes?.length && <div className="canvas-empty"><FileText size={27} /><h3>A clear space to think</h3><p>Add a question or a source from the library to start connecting Maya’s knowledge.</p></div>}
     </section>
   );

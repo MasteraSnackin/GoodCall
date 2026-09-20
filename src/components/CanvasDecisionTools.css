@@ -1,0 +1,17 @@
+.canvas-card-readiness { margin: 0 16px 14px; }
+.canvas-card-followup { display: grid; gap: 4px; text-align: left; width: calc(100% - 32px); margin: 0 16px 14px; padding: 10px; border: 1px solid #d9c9aa; border-radius: 7px; background: #faf3e7; color: #685127; font: inherit; cursor: pointer; }
+.canvas-card-followup strong { font-size: 12px; }
+.canvas-card-followup span { font-size: 12px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.canvas-card-followup:focus-visible { outline: 2px solid #9b3d2d; outline-offset: 3px; }
+.canvas-decision-section { box-sizing: border-box; height: 100%; width: 100%; border: 1px dashed #ab9680; border-radius: 16px; background: #dbc9a418; }
+.canvas-decision-section__label { display: flex; align-items: baseline; gap: 14px; padding: 12px 20px; color: #665843; }
+.canvas-decision-section__label strong { font-family: Georgia, serif; font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60%; }
+.canvas-decision-section__label span { font-size: 11px; }
+.canvas-tool-dialog { width: min(1000px, calc(100vw - 32px)); max-height: calc(100dvh - 48px); padding: 0; border: 1px solid #d9d2c4; border-radius: 14px; background: #fffdf8; color: #292a26; box-shadow: 0 24px 80px #2c211a33; overflow: auto; }
+.canvas-tool-dialog::backdrop { background: #28241e73; }
+.canvas-tool-dialog > section { max-width: none; border: 0; border-radius: 0; }
+.canvas-tool-unavailable { padding: 24px; }
+@media (max-width: 620px) { .canvas-tool-dialog { width: calc(100vw - 16px); max-height: calc(100dvh - 24px); border-radius: 10px; } }
+
+.canvas-tool-dialog--workflow { width: min(620px, calc(100vw - 32px)); }
+.canvas-tool-dialog > .canvas-workflow { width: 100%; max-width: none; max-height: none; border: 0; border-radius: 0; box-shadow: none; }

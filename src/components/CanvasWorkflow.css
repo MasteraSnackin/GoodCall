@@ -1,0 +1,33 @@
+.canvas-workflow { width: min(390px, 100%); max-height: min(760px, 80vh); display: flex; flex-direction: column; background: #fffefa; border: 1px solid #d9d3c7; border-radius: 12px; box-shadow: 0 10px 34px #342c201c; color: #34372e; font-size: 13px; overflow: hidden; }
+.canvas-workflow__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 17px 18px; border-bottom: 1px solid #e5dfd4; }
+.canvas-workflow__header p { margin: 0 0 5px; color: #897665; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+.canvas-workflow__header h2 { margin: 0; font-family: Georgia, serif; font-size: 23px; font-weight: 400; }
+.canvas-workflow__header > button { flex: 0 0 auto; width: 32px; height: 32px; display: grid; place-items: center; padding: 0; border: 0; background: transparent; }
+.canvas-workflow__body { overflow-y: auto; padding: 18px; overscroll-behavior: contain; }
+.canvas-workflow__body > section + section { padding-top: 20px; margin-top: 20px; border-top: 1px solid #ded7ca; }
+.canvas-workflow h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font-size: 15px; font-weight: 650; }
+.canvas-workflow__intro, .canvas-workflow__question { font-size: 13px; line-height: 1.6; margin: 0 0 12px; overflow-wrap: anywhere; }
+.canvas-workflow__intro { color: #66695b; }
+.canvas-workflow__boundary { margin: 9px 0 14px; padding: 10px 11px; border-left: 2px solid #b8866f; background: #f8f2eb; color: #735341; font-size: 12px; line-height: 1.6; }
+.canvas-workflow__empty { padding: 13px; border: 1px dashed #d6cfbf; border-radius: 7px; color: #6e705f; line-height: 1.6; }
+.canvas-workflow__item { padding: 13px; margin-top: 12px; border: 1px solid #e4ddcf; border-radius: 8px; background: #fcfaf5; }
+.canvas-workflow__item-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 7px; margin-bottom: 8px; }
+.canvas-workflow__item-heading strong { font-size: 13px; overflow-wrap: anywhere; }
+.canvas-workflow__status { padding: 3px 6px; background: #f3e8dc; color: #795d39; border-radius: 4px; font-size: 11px; }
+.canvas-workflow__status.is-received { background: #e8ede1; color: #506047; }
+.canvas-workflow label { display: block; font-size: 12px; font-weight: 600; color: #505548; margin: 9px 0 6px; }
+.canvas-workflow input, .canvas-workflow textarea { width: 100%; box-sizing: border-box; background: #fffefa; border: 1px solid #d4cebf; border-radius: 6px; color: #34372e; font: inherit; padding: 9px 10px; line-height: 1.5; }
+.canvas-workflow textarea { display: block; min-height: 78px; resize: vertical; }
+.canvas-workflow__hint { color: #737160; font-size: 11px; line-height: 1.6; margin: 7px 0 10px; }
+.canvas-workflow__count { color: #6a6d5c; font-size: 12px; margin: 16px 0 0; }
+.canvas-workflow button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 32px; border: 1px solid #d8cfc0; border-radius: 6px; padding: 6px 9px; background: #fffefa; color: #5b594b; font: inherit; font-size: 12px; line-height: 1.4; cursor: pointer; }
+.canvas-workflow button[type="submit"] { color: #813e2f; border-color: #d8bdb0; background: #f7ece5; }
+.canvas-workflow button:hover:not(:disabled) { background: #eee9dd; }
+.canvas-workflow button:disabled { opacity: .48; cursor: not-allowed; }
+.canvas-workflow button:focus-visible, .canvas-workflow input:focus-visible, .canvas-workflow textarea:focus-visible { outline: 2px solid #9b3d2d; outline-offset: 2px; }
+.canvas-workflow__actions { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+.canvas-workflow__actions--secondary { margin-top: 10px; padding-top: 9px; border-top: 1px solid #e9e2d5; }
+.canvas-workflow__actions--secondary button { font-size: 11px; }
+.canvas-workflow__feedback { margin: 10px 0 0; color: #526444; font-size: 12px; line-height: 1.5; }
+.canvas-workflow__new-section { padding-bottom: 5px; }
+@media (max-width: 620px) { .canvas-workflow { max-height: 74vh; width: 100%; } .canvas-workflow__header, .canvas-workflow__body { padding: 14px; } .canvas-workflow button { min-height: 38px; } }
