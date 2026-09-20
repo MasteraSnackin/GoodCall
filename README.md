@@ -1,8 +1,8 @@
 # GoodCall
 
-A canvas where creators can draft, review and reuse advice based on their own judgement.
-
 [Open the live GoodCall demo](https://goodcall-sigma.vercel.app) · [Follower view](https://goodcall-sigma.vercel.app/#/discover) · [Deployment guide](docs/DEPLOYMENT.md)
+
+A canvas where creators can draft, review and reuse advice based on their own judgement.
 
 The hosted demo uses local evidence templates for answers and chat. Work is saved in each browser; Claude, OpenAI, Tano and social accounts are not connected on the public site.
 
