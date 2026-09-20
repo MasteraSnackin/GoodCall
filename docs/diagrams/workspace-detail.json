@@ -1,0 +1,443 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "GoodCall browser workspace",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/MasteraSnackin/GoodCall",
+      "revision": "34c5f15ba3838f608657ca647b65849b07d37957"
+    },
+    "views": [
+      {
+        "id": "evidence",
+        "label": "Evidence and drafting",
+        "focus": [
+          "app",
+          "canvas",
+          "rules",
+          "persona",
+          "catalogue",
+          "pdf"
+        ],
+        "note": "Local modules use the fictional catalogue and its page references."
+      },
+      {
+        "id": "recovery",
+        "label": "Validation and recovery",
+        "focus": [
+          "app",
+          "validator",
+          "store",
+          "backup"
+        ],
+        "note": "Browser storage and private JSON exports retain workspace records."
+      },
+      {
+        "id": "publication",
+        "label": "Public advice",
+        "focus": [
+          "app",
+          "public",
+          "advice",
+          "store"
+        ],
+        "note": "Reviewed snapshots open in the follower view; saves and feedback stay local."
+      }
+    ]
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [
+      80,
+      85
+    ],
+    "cols": 4,
+    "cellW": 195,
+    "cellH": 68,
+    "gapX": 100,
+    "gapY": 70
+  },
+  "components": [
+    {
+      "id": "fonts",
+      "type": "external",
+      "label": "Google Fonts",
+      "sublabel": "External font stylesheet",
+      "row": 0,
+      "col": 0,
+      "sources": [
+        {
+          "path": "src/styles.css"
+        }
+      ],
+      "size": [
+        195,
+        68
+      ]
+    },
+    {
+      "id": "canvas",
+      "type": "frontend",
+      "label": "Canvas and inspectors",
+      "sublabel": "React Flow; source details",
+      "row": 0,
+      "col": 1,
+      "sources": [
+        {
+          "path": "src/components/AnswerCanvas.tsx"
+        },
+        {
+          "path": "src/App.tsx"
+        }
+      ],
+      "size": [
+        195,
+        68
+      ]
+    },
+    {
+      "id": "rules",
+      "type": "frontend",
+      "label": "Draft and evidence rules",
+      "sublabel": "Templates; bounded checks",
+      "row": 0,
+      "col": 2,
+      "sources": [
+        {
+          "path": "src/lib/engine.ts"
+        },
+        {
+          "path": "src/lib/purchaseContext.ts"
+        }
+      ],
+      "size": [
+        195,
+        68
+      ]
+    },
+    {
+      "id": "catalogue",
+      "type": "frontend",
+      "label": "Case-file catalogue",
+      "sublabel": "Bundled products and notes",
+      "row": 0,
+      "col": 3,
+      "sources": [
+        {
+          "path": "src/lib/seed.ts"
+        },
+        {
+          "path": "src/lib/caseEvidence.ts"
+        }
+      ],
+      "size": [
+        195,
+        68
+      ]
+    },
+    {
+      "id": "app",
+      "type": "frontend",
+      "label": "React application",
+      "sublabel": "Workspace state; user actions",
+      "row": 1,
+      "col": 1,
+      "sources": [
+        {
+          "path": "src/App.tsx"
+        },
+        {
+          "path": "src/main.tsx"
+        }
+      ],
+      "size": [
+        195,
+        68
+      ]
+    },
+    {
+      "id": "persona",
+      "type": "frontend",
+      "label": "Persona, chat, commands",
+      "sublabel": "Local rules; explicit actions",
+      "row": 1,
+      "col": 2,
+      "sources": [
+        {
+          "path": "src/lib/chat.ts"
+        },
+        {
+          "path": "src/lib/personaReplies.ts"
+        },
+        {
+          "path": "src/lib/voiceCommands.ts"
+        }
+      ],
+      "size": [
+        195,
+        68
+      ]
+    },
+    {
+      "id": "pdf",
+      "type": "external",
+      "label": "Source PDF",
+      "sublabel": "Included case-file pages",
+      "row": 1,
+      "col": 3,
+      "sources": [
+        {
+          "path": "public/operation-shade-case-file.pdf"
+        },
+        {
+          "path": "src/components/CaseEvidenceLibrary.tsx"
+        }
+      ],
+      "size": [
+        195,
+        68
+      ]
+    },
+    {
+      "id": "backup",
+      "type": "frontend",
+      "label": "Private JSON backup",
+      "sublabel": "Download; preview; restore",
+      "row": 2,
+      "col": 0,
+      "sources": [
+        {
+          "path": "src/components/WorkspaceRecovery.tsx"
+        },
+        {
+          "path": "src/lib/storage.ts"
+        }
+      ],
+      "size": [
+        195,
+        68
+      ]
+    },
+    {
+      "id": "validator",
+      "type": "frontend",
+      "label": "Storage and validation",
+      "sublabel": "Validate; preserve; save",
+      "row": 2,
+      "col": 2,
+      "sources": [
+        {
+          "path": "src/lib/workspaceValidation.ts"
+        },
+        {
+          "path": "src/lib/share.ts"
+        },
+        {
+          "path": "src/lib/storage.ts"
+        }
+      ],
+      "size": [
+        195,
+        68
+      ]
+    },
+    {
+      "id": "store",
+      "type": "database",
+      "label": "Browser localStorage",
+      "sublabel": "Separate workspace / follower keys",
+      "row": 2,
+      "col": 3,
+      "sources": [
+        {
+          "path": "src/lib/storage.ts"
+        },
+        {
+          "path": "src/lib/chatStorage.ts"
+        },
+        {
+          "path": "src/lib/feedback.ts"
+        }
+      ],
+      "size": [
+        195,
+        68
+      ]
+    },
+    {
+      "id": "public",
+      "type": "frontend",
+      "label": "Public advice snapshot",
+      "sublabel": "Validated URL fragment",
+      "row": 3,
+      "col": 1,
+      "sources": [
+        {
+          "path": "src/lib/publication.ts"
+        },
+        {
+          "path": "src/lib/share.ts"
+        }
+      ],
+      "size": [
+        195,
+        68
+      ]
+    },
+    {
+      "id": "advice",
+      "type": "frontend",
+      "label": "Follower view",
+      "sublabel": "Local saves and feedback",
+      "row": 3,
+      "col": 3,
+      "sources": [
+        {
+          "path": "src/components/AdvicePage.tsx"
+        },
+        {
+          "path": "src/components/FollowerFeedback.tsx"
+        }
+      ],
+      "size": [
+        195,
+        68
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "app-canvas",
+      "from": "app",
+      "to": "canvas",
+      "label": "render / callbacks",
+      "variant": "default",
+      "labelAt": [
+        465,
+        188
+      ]
+    },
+    {
+      "id": "app-rules",
+      "from": "app",
+      "to": "rules",
+      "label": "draft / check",
+      "variant": "default",
+      "fromSide": "top",
+      "toSide": "left"
+    },
+    {
+      "id": "app-persona",
+      "from": "app",
+      "to": "persona",
+      "label": "chat / commands",
+      "variant": "default"
+    },
+    {
+      "id": "rules-catalogue",
+      "from": "rules",
+      "to": "catalogue",
+      "label": "source records",
+      "variant": "default"
+    },
+    {
+      "id": "persona-catalogue",
+      "from": "persona",
+      "to": "catalogue",
+      "label": "source context",
+      "variant": "default"
+    },
+    {
+      "id": "catalogue-pdf",
+      "from": "catalogue",
+      "to": "pdf",
+      "label": "page references",
+      "variant": "default",
+      "labelAt": [
+        1063,
+        167
+      ]
+    },
+    {
+      "id": "app-validator",
+      "from": "app",
+      "to": "validator",
+      "label": "validate / save",
+      "variant": "default"
+    },
+    {
+      "id": "validator-store",
+      "from": "validator",
+      "to": "store",
+      "label": "validated JSON",
+      "variant": "default"
+    },
+    {
+      "id": "app-backup",
+      "from": "app",
+      "to": "backup",
+      "label": "backup / restore",
+      "variant": "default"
+    },
+    {
+      "id": "app-public",
+      "from": "app",
+      "to": "public",
+      "label": "preview / publish",
+      "variant": "default",
+      "labelAt": [
+        473,
+        305
+      ]
+    },
+    {
+      "id": "public-advice",
+      "from": "public",
+      "to": "advice",
+      "label": "encoded snapshot",
+      "variant": "default"
+    },
+    {
+      "id": "advice-store",
+      "from": "advice",
+      "to": "store",
+      "label": "follower saves / feedback",
+      "variant": "default"
+    },
+    {
+      "id": "app-fonts",
+      "from": "app",
+      "to": "fonts",
+      "label": "load stylesheet",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Browser modules",
+      "items": [
+        "Browser code coordinates local actions. Chat and commands cannot approve or publish.",
+        "Bundled fictional sources link to PDF pages; the PDF is not parsed."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Local data boundaries",
+      "items": [
+        "Workspace saves and backup imports are validated. Recovery copies share browser storage.",
+        "Follower data uses separate keys. Public links exclude raw questions and private provenance; they are unsigned and cannot be revoked."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Optional services",
+      "items": [
+        "The system overview details optional Node AI (Claude/OpenAI) and browser speech.",
+        "Credentials stay in Node. Fonts load externally. No Tano, social inbox or shared database is connected."
+      ]
+    }
+  ]
+}

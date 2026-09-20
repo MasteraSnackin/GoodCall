@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Preview and publish approved advice",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "column_fit": "spread",
+    "viewBox": [
+      1080,
+      480
+    ]
+  },
+  "participants": [
+    {
+      "id": "creator",
+      "type": "external",
+      "label": "Creator",
+      "sublabel": "Maya's decisions"
+    },
+    {
+      "id": "workspace",
+      "type": "frontend",
+      "label": "Workspace",
+      "sublabel": "React interface"
+    },
+    {
+      "id": "rules",
+      "type": "frontend",
+      "label": "Local rules",
+      "sublabel": "Browser functions"
+    },
+    {
+      "id": "storage",
+      "type": "database",
+      "label": "Browser storage",
+      "sublabel": "localStorage"
+    },
+    {
+      "id": "preview",
+      "type": "frontend",
+      "label": "Follower preview",
+      "sublabel": "Public content"
+    }
+  ],
+  "segments": [
+    {
+      "from": 150,
+      "to": 203,
+      "label": "Preview"
+    },
+    {
+      "from": 211,
+      "to": 346,
+      "label": "Publish"
+    },
+    {
+      "from": 353,
+      "to": 403,
+      "label": "Share"
+    }
+  ],
+  "messages": [
+    {
+      "id": "open-preview",
+      "from": "creator",
+      "to": "workspace",
+      "y": 164,
+      "label": "Open publication preview"
+    },
+    {
+      "id": "preview-payload",
+      "from": "workspace",
+      "to": "preview",
+      "y": 192,
+      "label": "Validated public payload",
+      "note": "Schema and encoded size checks run before preview. The creator checks wording and personal details."
+    },
+    {
+      "id": "request-publication",
+      "from": "creator",
+      "to": "workspace",
+      "y": 220,
+      "label": "Publish this version"
+    },
+    {
+      "id": "revalidate-answer",
+      "from": "workspace",
+      "to": "rules",
+      "y": 248,
+      "label": "Revalidate",
+      "variant": "security"
+    },
+    {
+      "id": "publication-valid",
+      "from": "rules",
+      "to": "workspace",
+      "y": 276,
+      "label": "No bounded-rule holds",
+      "variant": "return",
+      "note": "Invalid content or encoding failure stops publication before saving."
+    },
+    {
+      "id": "persist-publication",
+      "from": "workspace",
+      "to": "storage",
+      "y": 304,
+      "label": "Save published workspace",
+      "note": "Persist the complete proposed workspace before visible publication state changes."
+    },
+    {
+      "id": "publication-saved",
+      "from": "storage",
+      "to": "workspace",
+      "y": 332,
+      "label": "Save succeeds",
+      "variant": "return",
+      "note": "Failure leaves the answer approved and reports that publication was not saved."
+    },
+    {
+      "id": "open-share",
+      "from": "creator",
+      "to": "workspace",
+      "y": 360,
+      "label": "Share approved answer",
+      "note": "The published state is visible only after successful persistence."
+    },
+    {
+      "id": "snapshot-link",
+      "from": "workspace",
+      "to": "creator",
+      "y": 388,
+      "label": "Snapshot link to copy",
+      "variant": "return"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Save before showing publication",
+      "items": [
+        "A failed save keeps the answer approved, with no new published state. Existing snapshot links do not update.",
+        "Preview and publication both check the public schema and encoded size. The creator reviews wording and personal details."
+      ]
+    }
+  ]
+}

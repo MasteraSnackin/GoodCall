@@ -1,0 +1,30 @@
+{
+  "diagram_type": "architecture",
+  "validation": "9/9 showcase, 0 errors, 0 warnings",
+  "browser_evidence": "passed",
+  "visual_review": "passed",
+  "correction_rounds": 1,
+  "artifact_sha256": "ec5196448e710085633a82be3419d42b1e57a9a8df98b8479794c87bee9d5eaf",
+  "specification_sha256": "1ab392fc9b33dc278fe20c77452f0cec59d80dd54a83b879ac6d4bf210479853",
+  "reviewed_captures": [
+    "1440x900 light",
+    "1440x900 dark",
+    "2048x1320 light",
+    "2048x1320 dark"
+  ],
+  "observations": [
+    "The main creator-to-follower path is distinct from optional service branches.",
+    "Labels and routes remain separate in both themes.",
+    "Reducing unused row spacing resolved desktop overflow without reducing text size.",
+    "The large viewport uses the available height with the scope cards below."
+  ],
+  "interaction_checks": "Not run. The in-app browser denied opening the local HTML URL. No alternate browser navigation or manual export was used for this map.",
+  "static_preview_review": {
+    "status": "passed",
+    "method": "Rendered declarative SVG with sharp/libvips, without browser or HTML script execution",
+    "preview_sha256": "69662ad8ed548ac239f62929f52fc4c71c1d1195152e6e966402def0f0220f72",
+    "geometry_and_labels": "Copied from final checked HTML",
+    "reading_depth": "full",
+    "notes": "Labels, call directions, branch conditions and node styles inspected. No overlapping labels in the delivered preview."
+  }
+}

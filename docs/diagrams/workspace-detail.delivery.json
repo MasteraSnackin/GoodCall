@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/private/tmp/goodcall-diagrams-20260920/docs/diagrams/workspace-detail.json",
+  "output": "/private/tmp/goodcall-diagrams-20260920/docs/diagrams/workspace-detail.html",
+  "specification": {
+    "sha256": "3a4c564f84449f2e0e343cba9eb1c393a924490f182ba7566626efe615f75379",
+    "bytes": 9201
+  },
+  "artifact": {
+    "sha256": "84573f0fa77c4ffb42d7e993327e8db283c46098061a8ea10b63ec54782667c2",
+    "bytes": 822682
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  },
+  "evidence": {
+    "verified": true,
+    "repository": "https://github.com/MasteraSnackin/GoodCall",
+    "revision": "34c5f15ba3838f608657ca647b65849b07d37957",
+    "references": 26
+  }
+}

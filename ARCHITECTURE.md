@@ -23,30 +23,19 @@ No production capacity, uptime, accessibility conformance or latency target has 
 
 `src/App.tsx` coordinates the workspace, selected cards, views, dialogs and review transitions. Components render the canvas, advice pages, chat, voice, feedback and recovery controls. TypeScript modules provide the rules and validation; browser storage persists the results.
 
-```mermaid
-flowchart TB
-  Person[Creator] --> App[React application]
-  App --> Canvas[Canvas and inspectors]
-  App --> Rules[Drafting and evidence rules]
-  App --> Persona[Persona, chat and voice commands]
-  Rules --> Catalogue[Bundled case-file catalogue]
-  Persona --> Catalogue
-  App --> Validator[Workspace and snapshot validation]
-  Validator --> Store[(Browser localStorage)]
-  App --> Backup[Private JSON backup]
-  App --> Public[Public advice snapshot]
-  Public --> Advice[Follower view]
-  Advice --> Store
-  App --> Speech[Browser speech APIs]
-  Speech -. optional online processing .-> Vendor[Browser vendor service]
-  App -. optional AI request .-> Proxy[Local Node AI proxy]
-  Proxy --> Claude[Anthropic Messages API]
-  Proxy --> OpenAI[OpenAI Responses API]
-  App --> Fonts[Google Fonts]
-  Catalogue --> PDF[Included source PDF]
-```
+### System overview
 
-The diagram separates local workspace storage from optional AI providers and browser-managed services. The proxy passes selected request context to the chosen provider without becoming a workspace database. Public advice remains a copied payload rather than a remotely stored publication; neither a share link nor local approval proves creator identity.
+[![GoodCall system overview with local storage and optional service dependencies](docs/diagrams/system-overview.preview.svg)](docs/diagrams/system-overview.preview.svg)
+
+### Inside the browser workspace
+
+[![GoodCall workspace modules, evidence references, validation, recovery and follower data](docs/diagrams/workspace-detail.preview.svg)](docs/diagrams/workspace-detail.preview.svg)
+
+[Download the interactive maps](docs/diagrams/GoodCall-diagrams.zip) · Editable sources: [overview](docs/diagrams/system-overview.architecture.json), [workspace detail](docs/diagrams/workspace-detail.json)
+
+Source links point to the reviewed code revision. The [diagram guide](docs/diagrams/README.md) records that revision, the scope of each view and the checks performed.
+
+The maps separate local workspace storage from optional AI providers and browser-managed services. The proxy passes selected request context to the chosen provider without becoming a workspace database. Public advice remains a copied payload rather than a remotely stored publication; neither a share link nor local approval proves creator identity.
 
 ## Component Details
 
@@ -149,32 +138,21 @@ The public payload excludes raw question records and private provenance by const
 
 ### Question to reviewed advice
 
-```mermaid
-sequenceDiagram
-  actor Creator
-  participant UI as React workspace
-  participant Rules as Local rule engine
-  participant Store as Browser storage
-  participant Preview as Follower preview
-  Creator->>UI: Select question and draft
-  UI->>Rules: Question and current products
-  Rules-->>UI: Draft, decision and source revisions
-  UI->>Store: Save draft and canvas links
-  Creator->>UI: Edit and approve
-  UI->>Rules: Validate current wording and evidence
-  alt Evidence holds remain
-    Rules-->>UI: Review findings
-  else Checks pass
-    Rules-->>UI: No bounded-rule holds
-    UI->>Store: Save local approval
-    Creator->>UI: Open publication preview
-    UI->>Preview: Public payload
-    Creator->>UI: Publish this version
-    UI->>Rules: Revalidate
-    UI->>Store: Save published state
-    UI-->>Creator: Copy snapshot link
-  end
-```
+The sequence is split at the approval boundary so each view remains readable.
+
+#### Draft and review
+
+[![Sequence from selecting a question to checking evidence and saving local approval](docs/diagrams/review-drafting.preview.svg)](docs/diagrams/review-drafting.preview.svg)
+
+Evidence holds stop approval. The passing branch saves local approval; it does not publish the answer.
+
+#### Preview and publish
+
+[![Sequence from follower preview through revalidation and successful persistence to sharing](docs/diagrams/review-publication.preview.svg)](docs/diagrams/review-publication.preview.svg)
+
+This view starts with an approved draft. Publication must save successfully before the app exposes the new published state. If the save fails, the answer stays approved and no new publication becomes visible.
+
+Editable sources: [draft and review](docs/diagrams/review-drafting.sequence.json), [preview and publish](docs/diagrams/review-publication.sequence.json). Both interactive views are in the [diagram download](docs/diagrams/GoodCall-diagrams.zip).
 
 The sequence keeps the review and publication actions explicit and rechecks evidence before producing a shareable card. Passing the implemented rules permits local review progression; it does not establish external fact verification or product suitability.
 

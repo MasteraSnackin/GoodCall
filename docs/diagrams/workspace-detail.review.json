@@ -1,0 +1,31 @@
+{
+  "diagram_type": "architecture",
+  "validation": "9/9 showcase, 0 errors, 0 warnings",
+  "browser_evidence": "passed",
+  "visual_review": "passed",
+  "correction_rounds": 1,
+  "artifact_sha256": "84573f0fa77c4ffb42d7e993327e8db283c46098061a8ea10b63ec54782667c2",
+  "specification_sha256": "3a4c564f84449f2e0e343cba9eb1c393a924490f182ba7566626efe615f75379",
+  "reviewed_captures": [
+    "1440x900 light",
+    "1440x900 dark",
+    "2048x1320 light",
+    "2048x1320 dark"
+  ],
+  "observations": [
+    "All labels and source markers fit; routes remain distinct and directional.",
+    "Both themes preserve readable labels and legends.",
+    "The composition and context cards fit all four tested viewports without clipped content.",
+    "The large viewport uses the available height without an excessive empty lower band."
+  ],
+  "scope": "Browser modules and their static/external dependencies at the pinned source revision. Optional AI and browser speech are documented in the system overview.",
+  "interaction_checks": "Search, focus and route interactions were not tested. An exploratory viewer export is excluded from the published assets; the published previews use static filesystem extraction.",
+  "static_preview_review": {
+    "status": "passed",
+    "method": "Rendered declarative SVG with sharp/libvips, without browser or HTML script execution",
+    "preview_sha256": "661ed762dca6f2978733cb07a99dc649116a90f2b68e82fc7986bcc54e104ee8",
+    "geometry_and_labels": "Copied from final checked HTML",
+    "reading_depth": "full",
+    "notes": "Labels, call directions, branch conditions and node styles inspected. No overlapping labels in the delivered preview."
+  }
+}

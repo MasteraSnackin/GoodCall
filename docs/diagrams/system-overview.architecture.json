@@ -1,0 +1,441 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "GoodCall system overview",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/MasteraSnackin/GoodCall",
+      "revision": "34c5f15ba3838f608657ca647b65849b07d37957"
+    },
+    "views": [
+      {
+        "id": "review-and-share",
+        "label": "Review and share",
+        "focus": [
+          "creator",
+          "workspace",
+          "snapshot",
+          "follower"
+        ],
+        "note": "A creator reviews, approves and previews the wording before confirming publication."
+      },
+      {
+        "id": "local-data",
+        "label": "Local evidence and data",
+        "focus": [
+          "workspace",
+          "evidence",
+          "private-store",
+          "follower",
+          "follower-store"
+        ],
+        "note": "Private work and follower saves use separate browser storage keys. Feedback stays on the same origin."
+      },
+      {
+        "id": "optional-ai",
+        "label": "Optional AI",
+        "focus": [
+          "workspace",
+          "proxy",
+          "claude",
+          "openai"
+        ],
+        "note": "The local proxy calls one selected provider. Its suggestion still needs local checks and human review."
+      },
+      {
+        "id": "optional-speech",
+        "label": "Optional speech",
+        "focus": [
+          "workspace",
+          "speech",
+          "speech-vendor"
+        ],
+        "note": "Browser speech may use online processing. Commands cannot approve or publish answers."
+      }
+    ]
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [
+      60,
+      60
+    ],
+    "cols": 4,
+    "cellW": 180,
+    "cellH": 76,
+    "gapX": 150,
+    "gapY": 70
+  },
+  "components": [
+    {
+      "id": "creator",
+      "type": "external",
+      "label": "Creator",
+      "sublabel": "Maya's review",
+      "row": 1,
+      "col": 0,
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "workspace",
+      "type": "frontend",
+      "label": "Browser workspace",
+      "sublabel": "Canvas, rules and review",
+      "row": 1,
+      "col": 1,
+      "sources": [
+        {
+          "path": "src/App.tsx",
+          "line": 50,
+          "end_line": 107,
+          "label": "Workspace actions"
+        },
+        {
+          "path": "src/lib/engine.ts",
+          "line": 102,
+          "end_line": 221,
+          "label": "Local rules"
+        }
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "evidence",
+      "type": "database",
+      "label": "Bundled evidence",
+      "sublabel": "Case-file records and notes",
+      "row": 0,
+      "col": 2,
+      "sources": [
+        {
+          "path": "src/lib/seed.ts",
+          "label": "Exercise fixtures"
+        },
+        {
+          "path": "src/lib/caseEvidence.ts",
+          "label": "Case-file evidence"
+        }
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "private-store",
+      "type": "database",
+      "label": "Private workspace",
+      "sublabel": "Browser localStorage",
+      "row": 0,
+      "col": 1,
+      "sources": [
+        {
+          "path": "src/lib/storage.ts",
+          "line": 32,
+          "end_line": 115,
+          "label": "Load, save and recovery"
+        }
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "snapshot",
+      "type": "frontend",
+      "label": "Reviewed snapshot",
+      "sublabel": "Public URL payload",
+      "tag": "Review + preview",
+      "row": 1,
+      "col": 2,
+      "sources": [
+        {
+          "path": "src/lib/publication.ts",
+          "line": 24,
+          "end_line": 47,
+          "label": "Publication checks and save"
+        },
+        {
+          "path": "src/lib/share.ts",
+          "line": 5,
+          "end_line": 8,
+          "label": "Validated URL payload"
+        }
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "follower",
+      "type": "frontend",
+      "label": "Follower view",
+      "sublabel": "Copied advice",
+      "row": 1,
+      "col": 3,
+      "sources": [
+        {
+          "path": "src/components/AdvicePage.tsx",
+          "label": "Follower reading view"
+        }
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "follower-store",
+      "type": "database",
+      "label": "Follower local data",
+      "sublabel": "Saves and feedback",
+      "row": 2,
+      "col": 3,
+      "sources": [
+        {
+          "path": "src/lib/feedback.ts",
+          "label": "Local feedback"
+        },
+        {
+          "path": "src/components/AdvicePage.tsx",
+          "line": 10,
+          "end_line": 27,
+          "label": "Saved advice"
+        }
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "speech",
+      "type": "frontend",
+      "label": "Browser speech APIs",
+      "sublabel": "Dictation and read-aloud",
+      "row": 2,
+      "col": 0,
+      "sources": [
+        {
+          "path": "src/components/VoicePanel.tsx",
+          "label": "Browser speech controls"
+        },
+        {
+          "path": "src/components/ChatPanel.tsx",
+          "label": "Chat dictation and speech"
+        }
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "speech-vendor",
+      "type": "external",
+      "label": "Speech service",
+      "sublabel": "Browser dependent",
+      "row": 3,
+      "col": 0,
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "proxy",
+      "type": "backend",
+      "label": "Local Node AI proxy",
+      "sublabel": "Vite dev and preview",
+      "tag": "Session credentials",
+      "row": 2,
+      "col": 1,
+      "sources": [
+        {
+          "path": "vite.config.ts",
+          "line": 7,
+          "end_line": 19,
+          "label": "Local proxy middleware"
+        },
+        {
+          "path": "src/lib/aiClient.ts",
+          "line": 7,
+          "end_line": 9,
+          "label": "Same-origin AI requests"
+        }
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "claude",
+      "type": "external",
+      "label": "Claude",
+      "sublabel": "Anthropic Messages API",
+      "row": 2,
+      "col": 2,
+      "sources": [
+        {
+          "path": "server/aiServer.ts",
+          "line": 262,
+          "end_line": 289,
+          "label": "Anthropic request"
+        }
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "openai",
+      "type": "external",
+      "label": "OpenAI",
+      "sublabel": "Responses API",
+      "row": 3,
+      "col": 2,
+      "sources": [
+        {
+          "path": "server/aiServer.ts",
+          "line": 229,
+          "end_line": 254,
+          "label": "OpenAI request"
+        }
+      ],
+      "size": [
+        180,
+        76
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "creator-workspace",
+      "from": "creator",
+      "to": "workspace",
+      "label": "Use workspace",
+      "variant": "emphasis"
+    },
+    {
+      "id": "workspace-evidence",
+      "from": "workspace",
+      "to": "evidence",
+      "label": "Read fixtures"
+    },
+    {
+      "id": "workspace-private-store",
+      "from": "workspace",
+      "to": "private-store",
+      "label": "Load / save"
+    },
+    {
+      "id": "workspace-snapshot",
+      "from": "workspace",
+      "to": "snapshot",
+      "label": "Approve + publish",
+      "variant": "emphasis",
+      "labelDy": 20
+    },
+    {
+      "id": "snapshot-follower",
+      "from": "snapshot",
+      "to": "follower",
+      "label": "Open link",
+      "variant": "emphasis"
+    },
+    {
+      "id": "follower-local-data",
+      "from": "follower",
+      "to": "follower-store",
+      "label": "Read / write",
+      "labelAt": [
+        1140,
+        296
+      ]
+    },
+    {
+      "id": "workspace-speech",
+      "from": "workspace",
+      "to": "speech",
+      "label": "Optional voice",
+      "variant": "dashed"
+    },
+    {
+      "id": "speech-network",
+      "from": "speech",
+      "to": "speech-vendor",
+      "label": "May use network",
+      "variant": "dashed",
+      "labelAt": [
+        150,
+        442
+      ]
+    },
+    {
+      "id": "workspace-proxy",
+      "from": "workspace",
+      "to": "proxy",
+      "label": "Optional AI",
+      "variant": "dashed",
+      "labelAt": [
+        480,
+        296
+      ]
+    },
+    {
+      "id": "proxy-claude",
+      "from": "proxy",
+      "to": "claude",
+      "label": "Select Claude",
+      "variant": "dashed"
+    },
+    {
+      "id": "proxy-openai",
+      "from": "proxy",
+      "to": "openai",
+      "label": "Select OpenAI",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Local by default",
+      "items": [
+        "The browser runs the canvas, evidence rules and review workflow.",
+        "Bundled records supply facts; the PDF is a linked reference, not parsed at runtime.",
+        "Workspace detail shows internal modules, PDF links and Google Fonts."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Explicit publication",
+      "items": [
+        "Approval, follower preview and confirmed publication are separate actions.",
+        "Public links contain unsigned, non-revocable copies, not private workspace records.",
+        "Follower saves and feedback stay in the same browser and origin."
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Optional services",
+      "items": [
+        "The Node proxy calls one selected provider and returns a suggestion for review.",
+        "Voice commands cannot approve or publish; the app stores no audio.",
+        "No Tano connection, social inbox, account service or shared database is present."
+      ]
+    }
+  ]
+}

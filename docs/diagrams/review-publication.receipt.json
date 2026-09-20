@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "sequence",
+  "input": "/private/tmp/goodcall-diagrams-20260920/docs/diagrams/review-publication.sequence.json",
+  "output": "/private/tmp/goodcall-diagrams-20260920/docs/diagrams/review-publication.html",
+  "specification": {
+    "sha256": "0f9cb11119bd1e223cb0254fbd83e793e541a87c77d5e9d2ac3a1f7de8c491e5",
+    "bytes": 3480
+  },
+  "artifact": {
+    "sha256": "43a64cc533bcedd00fe75f4706487b6db14e335d9cba1e7d530beda4c3cb969a",
+    "bytes": 807119
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  }
+}

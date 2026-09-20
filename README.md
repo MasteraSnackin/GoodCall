@@ -62,21 +62,11 @@ The checks cover this exercise dataset. They cannot audit arbitrary uploaded doc
 
 ## Architecture overview
 
-```mermaid
-flowchart LR
-  Creator[Creator] --> Workspace[React workspace and canvas]
-  Workspace --> Rules[Local rules and evidence checks]
-  Rules --> Sources[Case-file data and PDF]
-  Workspace <--> Storage[(Browser localStorage)]
-  Workspace --> Snapshot[Public advice snapshot]
-  Snapshot --> Follower[Follower view]
-  Follower <--> Storage
-  Workspace --> Speech[Browser speech APIs]
-  Speech -. browser dependent .-> SpeechService[Browser vendor speech service]
-  Workspace -. optional AI .-> Proxy[Local Node AI proxy]
-  Proxy --> Claude[Anthropic Messages API]
-  Proxy --> OpenAI[OpenAI Responses API]
-```
+[![GoodCall system overview: local workspace, reviewed sharing, separate browser stores and optional AI and speech](docs/diagrams/system-overview.preview.svg)](docs/diagrams/system-overview.preview.svg)
+
+[Download the interactive maps](docs/diagrams/GoodCall-diagrams.zip) · [Editable source](docs/diagrams/system-overview.architecture.json) · [Diagram guide and checks](docs/diagrams/README.md)
+
+The main path follows a creator through review and publication to the follower view. The branches show local evidence and storage, plus optional AI and speech services. Click the preview to enlarge it, or extract the download and open `index.html` to explore the maps.
 
 The React app manages the workspace and runs local rules for drafting, evidence checks and changes in review status. Browser storage holds private work and local follower data. Share links contain validated public snapshots. The optional local Node proxy holds AI credentials and calls the selected provider; it has no accounts or remote workspace database. See [ARCHITECTURE.md](ARCHITECTURE.md).
 

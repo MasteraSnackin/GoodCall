@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Prepare and review an answer",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "column_fit": "spread",
+    "viewBox": [
+      1080,
+      480
+    ]
+  },
+  "participants": [
+    {
+      "id": "creator",
+      "type": "external",
+      "label": "Creator",
+      "sublabel": "Maya's decisions"
+    },
+    {
+      "id": "workspace",
+      "type": "frontend",
+      "label": "Workspace",
+      "sublabel": "React interface"
+    },
+    {
+      "id": "rules",
+      "type": "frontend",
+      "label": "Local rules",
+      "sublabel": "Browser functions"
+    },
+    {
+      "id": "storage",
+      "type": "database",
+      "label": "Browser storage",
+      "sublabel": "localStorage"
+    }
+  ],
+  "segments": [
+    {
+      "from": 150,
+      "to": 261,
+      "label": "Prepare a local draft"
+    },
+    {
+      "from": 267,
+      "to": 403,
+      "label": "Review: alternative outcomes"
+    }
+  ],
+  "messages": [
+    {
+      "id": "select-question",
+      "from": "creator",
+      "to": "workspace",
+      "y": 164,
+      "label": "Select question; draft"
+    },
+    {
+      "id": "draft-context",
+      "from": "workspace",
+      "to": "rules",
+      "y": 192,
+      "label": "Question + products"
+    },
+    {
+      "id": "draft-result",
+      "from": "rules",
+      "to": "workspace",
+      "y": 220,
+      "label": "Draft, decision + revisions",
+      "variant": "return",
+      "note": "Includes the suggested decision."
+    },
+    {
+      "id": "save-draft",
+      "from": "workspace",
+      "to": "storage",
+      "y": 248,
+      "label": "Save draft + canvas links"
+    },
+    {
+      "id": "request-approval",
+      "from": "creator",
+      "to": "workspace",
+      "y": 276,
+      "label": "Edit; request approval"
+    },
+    {
+      "id": "validate-answer",
+      "from": "workspace",
+      "to": "rules",
+      "y": 304,
+      "label": "Check wording + evidence",
+      "variant": "security"
+    },
+    {
+      "id": "evidence-holds",
+      "from": "rules",
+      "to": "workspace",
+      "y": 332,
+      "label": "If holds: findings; stop",
+      "variant": "return",
+      "note": "Alternative outcome: approval remains blocked while evidence holds remain."
+    },
+    {
+      "id": "checks-pass",
+      "from": "rules",
+      "to": "workspace",
+      "y": 360,
+      "label": "Else: no rule holds",
+      "variant": "return",
+      "note": "Alternative outcome: only this branch continues below."
+    },
+    {
+      "id": "save-approval",
+      "from": "workspace",
+      "to": "storage",
+      "y": 388,
+      "label": "Save local approval"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Only the passing branch continues",
+      "items": [
+        "Evidence holds stop approval. Correct the wording or evidence and review again.",
+        "An approved draft can proceed to the separate publication preview. Local rules do not establish product suitability or external fact verification."
+      ]
+    }
+  ]
+}

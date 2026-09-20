@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "artifact": {
+    "sha256": "43a64cc533bcedd00fe75f4706487b6db14e335d9cba1e7d530beda4c3cb969a",
+    "bytes": 807119
+  },
+  "scope": "Local browser template drafting, human approval and persisted publication. Local rules are browser functions, represented as frontend.",
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  },
+  "browser_evidence": "not run",
+  "browser_evidence_reason": "Browser access was blocked for this task before the final semantic correction. No browser command was run against this artifact.",
+  "visual_review": "not run",
+  "visual_review_reason": "No browser screenshots of this final artifact are available. Earlier screenshots belong to a superseded artifact and are excluded from the published files.",
+  "superseded_artifact_sha256": "0b1940fce3c97059528107762264938e4e68ec18f0762d96e88947ccbf25d02f",
+  "change_since_earlier_checks": "The Local rules participant type changed from backend to frontend; messages, coordinates and content remain unchanged.",
+  "interaction_tests": "not run",
+  "correction_rounds": 1,
+  "static_preview_review": {
+    "status": "passed",
+    "method": "Rendered declarative SVG with sharp/libvips, without browser or HTML script execution",
+    "preview_sha256": "6183c3f2762987966692276bae559196647f73862c040aced0f8e53a3b7a7628",
+    "geometry_and_labels": "Copied from final checked HTML",
+    "reading_depth": "read",
+    "notes": "Labels, call directions, branch conditions and node styles inspected. No overlapping labels in the delivered preview."
+  }
+}
