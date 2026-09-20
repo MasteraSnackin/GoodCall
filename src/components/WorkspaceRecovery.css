@@ -1,0 +1,14 @@
+.workspace-recovery { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line, #dedbd2); }
+.workspace-recovery h3 { margin: 0 0 10px; font-size: 16px; }
+.workspace-recovery h4 { margin: 0 0 8px; font-size: 14px; }
+.workspace-recovery p { font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.workspace-recovery .workspace-save-status { padding: 10px 12px; border-radius: 8px; background: var(--bg, #f5f3ed); }
+.workspace-recovery .workspace-save-status.unsaved, .workspace-recovery .workspace-recovery-error { color: #933e25; }
+.workspace-import { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; font-size: 13px; font-weight: 600; }
+.workspace-import input { max-width: 100%; padding: 8px 0; font: inherit; }
+.workspace-recovery-copies { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.workspace-recovery-copies h4, .workspace-recovery-copies p { width: 100%; margin-bottom: 0; }
+.workspace-recovery-copies p { margin-top: 0; }
+.workspace-restore-preview { border: 1px solid var(--line, #dedbd2); background: var(--bg, #f5f3ed); border-radius: 12px; margin-top: 20px; padding: 16px; }
+.workspace-restore-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.workspace-recovery button:focus-visible, .workspace-import input:focus-visible { outline: 3px solid var(--accent, #63775c); outline-offset: 3px; }

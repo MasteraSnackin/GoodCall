@@ -1,0 +1,74 @@
+.voice-panel {
+  position: fixed;
+  inset: 18px 18px 18px auto;
+  margin: 0;
+  width: min(450px, calc(100vw - 36px));
+  max-width: none;
+  height: fit-content;
+  max-height: calc(100dvh - 36px);
+  padding: 27px;
+  border: 1px solid #dedfcf;
+  border-radius: 13px;
+  background: #fffefa;
+  color: #3b4635;
+  box-shadow: 0 18px 90px #29371b2e;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.voice-panel::backdrop { background: #26301f47; backdrop-filter: blur(2px); }
+.voice-panel-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.voice-panel-header .eyebrow { color: #788269; font-size: 9px; letter-spacing: 1.4px; }
+.voice-panel-header h2 { margin: 12px 0 0; font: 37px/1.1 var(--serif); letter-spacing: -.5px; }
+.voice-panel-header .icon-button { margin-top: -5px; margin-right: -8px; }
+.voice-intro { margin: 14px 0 24px; font-size: 12px; line-height: 1.75; color: #75816b; max-width: 330px; }
+.voice-persona-label { margin: -8px 0 24px; border-left: 2px solid #c3ccb5; padding-left: 11px; }
+.voice-persona-label strong { display: block; font-size: 10px; font-weight: 550; color: #718060; }
+.voice-persona-label span { display: block; font-size: 9px; line-height: 1.8; color: #8c957f; margin-top: 4px; }
+.voice-panel h3 { font-size: 12px; font-weight: 600; margin: 0; color: #5f7050; }
+.voice-section-title { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.voice-status { font-size: 10px; color: #7f8576; display: flex; align-items: center; gap: 6px; }
+.voice-status::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #b2b8a9; }
+.voice-status.is-active { color: #914d3f; }
+.voice-status.is-active::before { background: #a45745; box-shadow: 0 0 0 3px #a4574514; }
+.voice-listen-button { display: flex; align-items: center; justify-content: center; gap: 11px; width: 100%; min-height: 48px; margin: 16px 0 20px; background: #eef1e5; border: 1px solid #d8dfcb; border-radius: 6px; color: #65794f; font-size: 12px; font-weight: 550; }
+.voice-listen-button:hover:not(:disabled) { background: #e7ecdc; border-color: #bfcdac; }
+.voice-listen-button.is-active { background: #f7eae3; border-color: #e5c9bb; color: #935746; }
+.voice-transcript-label { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 11px; color: #68775a; margin: 12px 0 9px; }
+.voice-transcript-label span { font-size: 10px; color: #959c8c; }
+.voice-panel textarea { display: block; width: 100%; border: 1px solid #dde3d2; border-radius: 6px; background: #fffffd; padding: 12px; font-size: 12px; line-height: 1.8; color: #485d36; min-height: 106px; max-height: 250px; resize: vertical; }
+.voice-panel textarea::placeholder { color: #939e86; }
+.voice-transcript-meta { display: flex; gap: 10px; justify-content: space-between; font-size: 9px; line-height: 1.6; color: #8a967d; margin-top: 8px; }
+.voice-transcript-meta > span:last-child { flex-shrink: 0; }
+.voice-interim { margin: 10px 0 0; padding: 9px 11px; background: #f4f6ed; border-left: 2px solid #b5c2a5; color: #78876b; font-size: 11px; line-height: 1.7; overflow-wrap: anywhere; }
+.voice-interim span { color: #596a4c; }
+.voice-transcript-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 17px 0 0; }
+.voice-transcript-actions .primary, .voice-transcript-actions .secondary { font-size: 11px; padding: 10px 11px; }
+.voice-transcript-actions .quiet-button { font-size: 11px; margin-left: auto; }
+.voice-reply-section { margin-top: 22px; padding: 16px; border: 1px solid #e2e6d7; border-radius: 7px; background: #f7f8f0; }
+.voice-reply-label { font-size: 9px; color: #8e9980; }
+.voice-reply-text { font-size: 13px; line-height: 1.85; color: #566a43; white-space: pre-wrap; margin: 13px 0 16px; overflow-wrap: anywhere; }
+.voice-speak-replies { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; font-size: 11px; color: #6e805c; cursor: pointer; }
+.voice-speak-replies input { width: 14px; height: 14px; accent-color: #829867; margin: 0; }
+.voice-speak-replies small { color: #929d84; font-size: 9px; margin-left: auto; }
+.voice-reply-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; margin-top: 14px; }
+.voice-reply-actions .secondary, .voice-reply-actions .quiet-button { font-size: 10px; }
+.voice-reply-unavailable { font-size: 10px; line-height: 1.7; color: #929d84; margin: 12px 0 0; }
+.voice-command-section, .voice-output-section { border-top: 1px solid #e4e8da; padding-top: 21px; margin-top: 24px; }
+.voice-command-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 13px; }
+.voice-command-list button { border: 1px solid #e2e7d8; background: #f8f9f1; color: #7a896a; border-radius: 4px; font-size: 10px; padding: 7px 9px; line-height: 1.3; }
+.voice-command-list button:hover { border-color: #bfcdae; background: #eef3e4; color: #5c704a; }
+.voice-command-section > p, .voice-output-section > p { font-size: 11px; line-height: 1.8; color: #839076; margin: 12px 0 0; }
+.voice-output-section .voice-section-title > svg { color: #94a181; }
+.voice-picker { display: block; font-size: 10px; color: #76846b; margin-top: 15px; }
+.voice-picker select { margin-top: 7px; width: 100%; min-height: 36px; padding: 7px 9px; border: 1px solid #dfe5d5; border-radius: 4px; background: #fffffb; color: #697b57; font-size: 11px; }
+.voice-output-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
+.voice-output-actions .secondary, .voice-output-actions .quiet-button { font-size: 11px; }
+.voice-support-note, .voice-message { background: #fbf4e5; border: 1px solid #ecdfc0; border-radius: 5px; color: #8c754d; font-size: 11px; line-height: 1.75; padding: 11px 12px; margin: 14px 0; }
+.voice-support-note { display: flex; gap: 9px; align-items: flex-start; }
+.voice-support-note svg { margin-top: 2px; }
+.voice-privacy-note { border-top: 1px solid #e7eadf; padding-top: 16px; margin-top: 24px; font-size: 9px; line-height: 1.85; color: #8d9882; }
+@media (max-width: 600px) {
+  .voice-panel { inset: auto 10px 10px; width: calc(100vw - 20px); max-height: calc(100dvh - 20px); padding: 22px; border-radius: 12px; }
+  .voice-panel-header h2 { font-size: 33px; }
+  .voice-panel textarea { font-size: 16px; }
+}

@@ -1,0 +1,26 @@
+.persona-profile { color: var(--ink, #3b4635); }
+.persona-intro { display: flex; gap: 16px; align-items: flex-start; margin: 5px 0 20px; }
+.persona-monogram { display: grid; place-items: center; flex: 0 0 53px; width: 53px; height: 60px; background: #f1e4db; color: #8c5042; border: 1px solid #e4d3c5; border-radius: 13px; font: 29px var(--serif, Georgia); }
+.persona-intro h3 { margin: 8px 0; font: 25px/1.2 var(--serif, Georgia); }
+.persona-profile p, .persona-profile li { font-size: 13px; line-height: 1.7; color: #64705b; }
+.persona-intro p { margin: 0; }
+.persona-applies { display: flex; flex-wrap: wrap; gap: 8px; }
+.persona-applies span { display: flex; align-items: center; gap: 6px; padding: 7px 10px; color: #536b41; background: #eef3e7; border: 1px solid #dce5d2; border-radius: 5px; font-size: 12px; }
+.persona-profile section { border-top: 1px solid #e2e5d9; margin-top: 23px; padding-top: 20px; }
+.persona-profile section > h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 13px; font-size: 14px; font-weight: 600; }
+.persona-traits { display: grid; gap: 10px; }
+.persona-traits article { border: 1px solid #e2e5d9; border-radius: 6px; padding: 12px 14px; background: #fafbf5; }
+.persona-traits article > div { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+.persona-traits strong { font-size: 13px; font-weight: 600; }
+.persona-traits a { display: flex; align-items: center; gap: 3px; color: #81604c; font-size: 11px; white-space: nowrap; }
+.persona-traits p { margin: 6px 0; }
+.persona-traits summary { font-size: 11px; color: #717b66; cursor: pointer; }
+.persona-traits blockquote { margin: 8px 0 0; border-left: 2px solid #c8d1bc; padding-left: 10px; font-size: 12px; line-height: 1.6; color: #5b6950; }
+.persona-explanation { margin: -4px 0 12px; }
+.persona-profile ul { padding-left: 19px; }
+.persona-profile li + li { margin-top: 6px; }
+.persona-example { margin: 17px 0 0; padding: 16px; border: 1px solid #e6d8c8; background: #faf4eb; font: 18px/1.5 var(--serif, Georgia); border-radius: 6px; color: #6e5948; }
+.persona-example small { display: block; margin-top: 12px; font: 11px/1.6 var(--sans, sans-serif); color: #7e7366; }
+.persona-profile .persona-preservation { font-size: 12px; padding-top: 18px; margin-top: 18px; border-top: 1px solid #e2e5d9; }
+.persona-draft-label { display: flex; align-items: center; gap: 6px; color: #805748; font-size: 11px; margin: 8px 0 14px; }
+@media(max-width:480px) { .persona-intro { gap: 12px; } .persona-intro h3 { font-size: 23px; } }

@@ -1,0 +1,513 @@
+/* Canvas-only layout. Other workspace views retain their existing presentation. */
+.app-shell.canvas-workspace {
+  height: 100dvh;
+  min-height: 0;
+}
+
+.canvas-workspace .main-shell {
+  min-height: 0;
+  min-width: 0;
+}
+
+.canvas-workspace .sidebar {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+}
+
+.canvas-workspace .topbar {
+  min-height: 58px;
+  height: 58px;
+  flex-shrink: 0;
+  padding-inline: 24px;
+  gap: 16px;
+}
+
+.canvas-workspace .top-actions {
+  min-width: 0;
+  gap: 14px;
+}
+
+.canvas-workspace .top-actions > button {
+  flex-shrink: 0;
+  min-height: 36px;
+  font-size: 11px;
+}
+
+.canvas-workspace .top-actions > .quiet-button {
+  display: inline-flex;
+  color: #65695e;
+  padding-inline: 3px;
+}
+
+.canvas-workspace .page-heading {
+  padding: 19px 25px 13px;
+  gap: 18px;
+  flex-shrink: 0;
+}
+
+.canvas-workspace .page-heading h1 {
+  font-size: clamp(29px, 2.4vw, 37px);
+  margin: 5px 0 5px;
+}
+
+.canvas-workspace .page-heading p {
+  color: #73776a;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.canvas-workspace .page-heading .eyebrow {
+  color: #737466;
+  font-size: 9px;
+  letter-spacing: 1.2px;
+}
+
+.canvas-workspace .page-heading > .primary {
+  min-height: 38px;
+  font-size: 11px;
+}
+
+.canvas-workspace .workspace-summary {
+  flex-shrink: 0;
+  margin: 0 25px 13px;
+  gap: 19px;
+  color: #757867;
+  font-size: 10px;
+}
+
+.canvas-workspace .workspace-summary button {
+  color: #757867;
+  font-size: 10px;
+}
+
+.canvas-workspace .workspace-summary .summary-tail {
+  color: #7c806f;
+  font-size: 9px;
+}
+
+.canvas-workspace .work-area {
+  position: relative;
+  min-height: 240px;
+  margin-inline: 24px;
+  border-color: color-mix(in srgb, var(--line) 80%, #aaa394);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px #40362705;
+}
+
+.canvas-workspace .view-panel {
+  min-height: 0;
+}
+
+.canvas-workspace .canvas-review-start {
+  padding: 13px 17px;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.canvas-workspace .canvas-review-start strong {
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.canvas-workspace .canvas-review-start p {
+  font-size: 11px;
+  line-height: 1.55;
+  color: #737966;
+  margin-top: 3px;
+}
+
+.canvas-workspace .canvas-review-start > button {
+  min-height: 36px;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.canvas-workspace .canvas-toolbar {
+  height: auto;
+  min-height: 57px;
+  padding: 9px 15px;
+  gap: 9px 18px;
+  flex-wrap: wrap;
+  align-content: center;
+}
+
+.canvas-workspace .board-title {
+  font-size: 12px;
+  gap: 8px;
+  color: #4d5548;
+}
+
+.canvas-workspace .board-title > span:last-child {
+  font-size: 10px;
+  color: #727668;
+  background: var(--paper);
+  padding: 3px 6px;
+}
+
+.canvas-workspace .canvas-toolbar > div:last-child {
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.canvas-workspace .canvas-toolbar .quiet-button {
+  font-size: 11px;
+  gap: 6px;
+  min-height: 36px;
+  padding: 7px 9px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: #626a59;
+}
+
+.canvas-workspace .canvas-toolbar .quiet-button:hover {
+  background: var(--paper);
+  border-color: var(--line);
+  color: var(--accent);
+}
+
+.canvas-workspace .canvas-toolbar .canvas-expand-toggle {
+  border-color: var(--line);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.canvas-workspace .canvas-toolbar .canvas-expand-toggle[aria-pressed='true'] {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.canvas-workspace .canvas-caption {
+  min-height: 38px;
+  padding: 9px 16px;
+  align-items: center;
+  color: #777b6b;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.canvas-workspace .canvas-caption > span {
+  white-space: normal;
+}
+
+.canvas-workspace .canvas-caption button {
+  color: #58664d;
+  font-size: 10px;
+  min-height: 26px;
+}
+
+.canvas-workspace .workspace-footer {
+  padding: 9px 25px;
+  font-size: 9px;
+  color: #868676;
+}
+
+.canvas-workspace .inspector {
+  width: 355px;
+  flex-basis: 355px;
+  min-width: 0;
+}
+
+.canvas-workspace .inspector-header {
+  min-height: 57px;
+  height: 57px;
+  padding-inline: 18px;
+  background: var(--surface);
+  position: relative;
+  z-index: 1;
+}
+
+.canvas-workspace .inspector-header .eyebrow {
+  color: #737766;
+  font-size: 10px;
+}
+
+.canvas-workspace .inspector-header .icon-button {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line);
+  color: #626957;
+  background: var(--paper);
+}
+
+.canvas-workspace .inspector-body {
+  padding: 21px 20px;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
+}
+
+.canvas-workspace .inspector-body .field {
+  font-size: 12px;
+  color: #616957;
+}
+
+.canvas-workspace .inspector-body .field input,
+.canvas-workspace .inspector-body .field textarea,
+.canvas-workspace .inspector-body .field select {
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.canvas-workspace .inspector-body .answer-editor {
+  min-height: 230px;
+}
+
+.canvas-workspace .inspector-body .primary,
+.canvas-workspace .inspector-body .secondary {
+  min-height: 38px;
+  font-size: 11px;
+}
+
+/* Expanded mode preserves app actions and the review drawer. */
+.canvas-workspace.canvas-workspace--expanded .sidebar,
+.canvas-workspace.canvas-workspace--expanded .page-heading,
+.canvas-workspace.canvas-workspace--expanded .workspace-summary,
+.canvas-workspace.canvas-workspace--expanded .workspace-footer,
+.canvas-workspace.canvas-workspace--expanded .canvas-review-start {
+  display: none;
+}
+
+.canvas-workspace.canvas-workspace--expanded .work-area {
+  margin: 12px;
+}
+
+.canvas-workspace.canvas-workspace--expanded .toast {
+  left: 50%;
+}
+
+@media (min-width: 1550px) {
+  .canvas-workspace .inspector {
+    width: 380px;
+    flex-basis: 380px;
+  }
+}
+
+@media (max-width: 1180px) {
+  .canvas-workspace .topbar .breadcrumb {
+    display: none;
+  }
+
+  .canvas-workspace .topbar .top-actions {
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .canvas-workspace .canvas-review-start {
+    flex-wrap: wrap;
+    gap: 8px 16px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .canvas-workspace .work-area.with-inspector > .inspector {
+    position: absolute;
+    inset: 0 0 0 auto;
+    z-index: 12;
+    width: min(380px, calc(100% - 32px));
+    max-width: 100%;
+    border-left: 1px solid #c9c8b9;
+    box-shadow: -12px 0 32px #3933211a;
+  }
+
+  .canvas-workspace .canvas-review-start > div {
+    flex: 1 1 280px;
+  }
+}
+
+@media (max-width: 960px) {
+  .app-shell.canvas-workspace .sidebar .settings-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin: 5px auto;
+    padding: 10px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 0;
+    gap: 0;
+    color: #6d7361;
+  }
+
+  .app-shell.canvas-workspace .sidebar .settings-button:hover {
+    border-color: var(--line);
+    background: var(--surface);
+    color: var(--accent);
+  }
+
+  .app-shell.canvas-workspace .sidebar .settings-button svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 720px) {
+  .canvas-workspace .topbar {
+    padding-inline: 12px;
+    min-height: 55px;
+    height: 55px;
+  }
+
+  .canvas-workspace .topbar .top-actions {
+    justify-content: flex-start;
+    overflow-x: auto;
+    gap: 9px;
+    padding-block: 5px;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .canvas-workspace .topbar .top-actions > .quiet-button {
+    display: inline-flex;
+    padding-inline: 5px;
+    font-size: 11px;
+    min-height: 36px;
+  }
+
+  .canvas-workspace .topbar .top-actions > .secondary {
+    font-size: 11px;
+    min-height: 36px;
+    padding: 7px 9px;
+  }
+
+  .canvas-workspace .page-heading {
+    padding: 14px 14px 10px;
+    align-items: center;
+  }
+
+  .canvas-workspace .page-heading h1 {
+    font-size: 29px;
+    line-height: 1.1;
+  }
+
+  .canvas-workspace .page-heading p {
+    font-size: 10px;
+  }
+
+  .canvas-workspace .page-heading > .primary {
+    width: 38px;
+    height: 38px;
+    min-height: 38px;
+    font-size: 0;
+    margin-top: 0;
+    flex-shrink: 0;
+  }
+
+  .canvas-workspace .workspace-summary {
+    margin: 0 14px 11px;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 9px;
+  }
+
+  .canvas-workspace .workspace-summary button {
+    font-size: 9px;
+  }
+
+  .canvas-workspace .work-area {
+    margin-inline: 10px;
+    border-radius: 9px;
+    min-height: 270px;
+  }
+
+  .canvas-workspace .canvas-review-start {
+    padding: 10px 12px;
+  }
+
+  .canvas-workspace .canvas-review-start strong {
+    font-size: 12px;
+  }
+
+  .canvas-workspace .canvas-review-start p {
+    display: none;
+  }
+
+  .canvas-workspace .canvas-toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 8px 10px;
+    gap: 5px 12px;
+  }
+
+  .canvas-workspace .canvas-toolbar > div:last-child {
+    gap: 3px;
+    flex-wrap: nowrap;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    padding-block: 2px;
+  }
+
+  .canvas-workspace .canvas-toolbar .quiet-button {
+    flex-shrink: 0;
+    padding-inline: 7px;
+    font-size: 11px;
+    min-height: 36px;
+  }
+
+  .canvas-workspace .canvas-caption {
+    padding: 6px 11px;
+    min-height: 34px;
+    gap: 8px;
+  }
+
+  .canvas-workspace .canvas-caption > span {
+    display: block;
+    font-size: 9px;
+    line-height: 1.45;
+  }
+
+  .canvas-workspace .workspace-footer {
+    padding: 7px 12px;
+    font-size: 8px;
+  }
+
+  .canvas-workspace .inspector-body {
+    padding-inline: 15px;
+  }
+
+  .canvas-workspace .inspector-body .field input,
+  .canvas-workspace .inspector-body .field textarea,
+  .canvas-workspace .inspector-body .field select {
+    font-size: 16px;
+  }
+
+  .canvas-workspace.canvas-workspace--expanded .work-area {
+    margin: 8px;
+  }
+}
+
+/* Short laptop and landscape windows keep the actual board usable. */
+@media (max-height: 700px) {
+  .canvas-workspace .page-heading {
+    padding-block: 10px;
+  }
+
+  .canvas-workspace .page-heading .eyebrow,
+  .canvas-workspace .page-heading p,
+  .canvas-workspace .canvas-review-start p,
+  .canvas-workspace .workspace-footer {
+    display: none;
+  }
+
+  .canvas-workspace .page-heading h1 {
+    margin-block: 2px;
+    font-size: 29px;
+  }
+
+  .canvas-workspace .workspace-summary {
+    margin-bottom: 8px;
+  }
+
+  .canvas-workspace .canvas-review-start {
+    padding-block: 8px;
+  }
+
+  .canvas-workspace .work-area {
+    margin-bottom: 10px;
+  }
+}

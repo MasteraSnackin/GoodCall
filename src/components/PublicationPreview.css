@@ -1,0 +1,7 @@
+.publication-preview { border: 1px solid var(--line, #ddd8cf); border-radius: 14px; overflow: hidden; margin: 18px 0; }
+.publication-preview .advice-page { min-height: 0; }
+.publication-preview .advice-page main { padding: 26px 22px; margin: 0 auto; }
+.publication-preview-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 12px; position: sticky; bottom: -24px; padding: 16px 0; background: var(--paper, #fffdf8); }
+.publication-contact-check { padding: 14px; border: 1px solid #cfaf77; background: #fff5df; border-radius: 10px; overflow-wrap: anywhere; }
+.publication-contact-check p { margin: 6px 0 0; font-size: 13px; }
+@media (max-width: 600px) { .publication-preview-actions { position: static; flex-direction: column-reverse; } .publication-preview .advice-page main { padding: 18px 14px; } }

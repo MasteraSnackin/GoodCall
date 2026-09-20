@@ -1,0 +1,35 @@
+.decision-editor, .decision-summary { min-width: 0; color: var(--ink, #394533); }
+.decision-editor { margin-block: 22px; border-top: 1px solid #dedfd3; padding-top: 20px; }
+.decision-editor-heading { display: flex; align-items: baseline; flex-wrap: wrap; gap: 7px 14px; }
+.decision-editor-heading h3 { margin: 0; font-size: 16px; font-weight: 650; line-height: 1.4; }
+.decision-editor-heading > span { color: #7c604c; font-size: 12px; }
+.decision-editor .decision-editor-guidance { margin: 10px 0 17px; font-size: 13px; line-height: 1.65; color: #626b58; }
+.decision-editor label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 600; line-height: 1.5; color: #394533; }
+.decision-editor select, .decision-editor textarea { box-sizing: border-box; width: 100%; border: 1px solid #cfd3c3; border-radius: 6px; color: #364230; background: #fffdf8; padding: 11px 12px; font: inherit; font-size: 14px; line-height: 1.6; }
+.decision-editor select { min-height: 44px; }
+.decision-editor textarea { display: block; min-height: 106px; resize: vertical; }
+.decision-editor select:focus-visible, .decision-editor textarea:focus-visible { outline: 2px solid #71835f; outline-offset: 3px; }
+.decision-editor-fields { display: grid; gap: 17px; margin-top: 18px; }
+.decision-editor-field > p { margin: -2px 0 8px; font-size: 13px; line-height: 1.5; color: #66705b; }
+.decision-editor-count { display: block; margin-top: 5px; color: #737b68; text-align: right; font-size: 12px; line-height: 1.5; font-variant-numeric: tabular-nums; }
+.decision-summary { margin-block: 16px; padding: 16px; background: #fbfaf3; border: 1px solid #e1e2d4; border-radius: 8px; }
+.decision-summary-heading { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.decision-summary-heading > span { font-size: 13px; font-weight: 600; }
+.decision-verdict { display: inline-block; padding: 4px 9px; border: 1px solid transparent; border-radius: 5px; font-size: 13px; line-height: 1.5; font-weight: 600; }
+.decision-verdict-consider { color: #476134; background: #edf2e5; border-color: #d7e1cc; }
+.decision-verdict-skip { color: #84533f; background: #f6eae2; border-color: #e9d6c9; }
+.decision-verdict-context { color: #72613c; background: #f5efdd; border-color: #e6ddbf; }
+.decision-summary-fields { display: grid; gap: 15px; margin: 17px 0 0; }
+.decision-summary-field { min-width: 0; border-left: 2px solid #b8c5a8; padding-left: 11px; }
+.decision-summary-skipIf { border-left-color: #cfae99; }
+.decision-summary-unknowns { border-left-color: #cabd91; }
+.decision-summary-field dt { color: #586548; font-size: 13px; line-height: 1.5; font-weight: 600; }
+.decision-summary-field dd { margin: 4px 0 0; color: #48543e; font-size: 14px; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
+.decision-summary-compact { padding: 12px; margin-block: 10px; }
+.decision-summary-compact .decision-summary-fields { gap: 10px; margin-top: 12px; }
+.decision-summary-compact .decision-summary-field dd { font-size: 13px; line-height: 1.5; }
+@media (max-width: 520px) {
+  .decision-editor select, .decision-editor textarea { font-size: 16px; }
+  .decision-summary { padding: 14px; }
+  .decision-summary-compact { padding: 11px; }
+}
