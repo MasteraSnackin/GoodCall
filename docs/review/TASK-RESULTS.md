@@ -1,35 +1,37 @@
 # Results for the nine supplied Markdown tasks
 
-Completed 20 September 2026 for GoodCall's existing local implementation. Original attachments and synced source files were not edited. Examples naming other tools/frameworks were adapted to the actual React/Vite/TypeScript project; no unrequested migration or cloud deployment was introduced.
+Completed 20 September 2026 for GoodCall's existing local implementation. Original attachments and synced source files were not edited. The named framework, style and cloud examples were adapted to React/Vite/TypeScript, CSS, Warm studio and the local Node proxy. No instruction to migrate or deploy a new cloud stack was received.
 
-## Deliverables
+## Task-by-task deliverables
 
-| Supplied task | Completed output |
+| Supplied file | Completed output |
 | --- | --- |
-| `!)README.md` | [Project README](../../README.md): required ordered sections, setup, configuration, feature/API boundaries, screenshots, tests, licence status and support. |
-| `£)ARCHITECTURE.md` | [Architecture](../../ARCHITECTURE.md): actual components, data flows, Mermaid diagrams, storage, local proxy, security/reliability limits and trade-offs. |
-| `1)AUDIT.md` | [Visual and functional audit](AUDIT.md): numbered real browser journey, seven saved captures, reviewed scores, repairs and scoped acceptance. |
-| `2)DEBUG.md` | [Debugging report](DEBUG.md): ranked hypotheses, reproduced causes, minimal fixes and before/after regression evidence. |
-| `3)ERRORHANDING.md` | [Error handling](ERROR-HANDLING.md): implemented preservation/retry contract, typed failure boundaries and 21 focused chat-storage regressions. |
-| `A)DESIGNLEAD.md` | [Design review](DESIGN-LEAD.md) and [DESIGN.md](../../DESIGN.md): preserve the editorial style, repair mobile layout/contrast and document the current design system. |
-| `B)BUILDER.md` | [Builder delivery](BUILDER.md): publication durability, chat recovery, exact reuse matching, local AI endpoints and honest deployment boundaries. |
-| `C)NERD.md` | [Performance review](PERFORMANCE.md): top three findings, profiling, collision repair, indexed retrieval and reproducible raw measurements. |
-| `D)RESEARCHER.md` | [Research report](RESEARCH.md): primary-source rationale, quick wins/medium work/research bets, measured first implementation and acceptance criteria. |
+| `!)README.md` | [Project README](../../README.md): required ordered sections, actual setup/configuration, architecture diagram, usage/API examples, image gallery, real interaction clips, tests, licence status and support. |
+| `£)ARCHITECTURE.md` | [Architecture](../../ARCHITECTURE.md): current components, Mermaid flows, data model, local providers/storage, deployment limits, security, observability and trade-offs. |
+| `1)AUDIT.md` | [Current audit](AUDIT.md): seven fresh browser steps, visual/functional/trust scorecard, repairs, a local feedback sample and explicit participant/device limits. [Initial audit](AUDIT-INITIAL.md) retained as history. |
+| `2)DEBUG.md` | [Debugging report](DEBUG.md): recent Git history, ranked parallel investigations, reproduced causes, focused fixes, regression evidence and actual [before](current-audit/dialog-before.mp4)/[after](current-audit/dialog-after.mp4) recordings. |
+| `3)ERRORHANDING.md` | [Error handling](ERROR-HANDLING.md): typed safe errors, exact damaged-data preservation, cancellation/cleanup, provider boundaries and explicit retries. Unused distributed/multilanguage examples were not copied into the app. |
+| `A)DESIGNLEAD.md` | [Design review](DESIGN-LEAD.md) and [DESIGN.md](../../DESIGN.md): retain the established visual language, document earlier responsive/contrast repairs and recheck the rendered phone/desktop views. |
+| `B)BUILDER.md` | [Builder delivery](BUILDER.md): all five local AI endpoints, Claude/OpenAI configuration, atomic connection changes, safe failure paths and durable publication/recovery. |
+| `C)NERD.md` | [Performance review](PERFORMANCE.md): top findings, correctness-first repair, paired retrieval measurements and explicit larger-scale costs. |
+| `D)RESEARCHER.md` | [Research report](RESEARCH.md): maintained runtime/UI/test coverage, primary-source rationale, quick/medium/research tiers, implemented first improvement and final before/after benchmark. |
 
-## Verified outcome
+## Verified changes and results
 
-All **288 automated tests passed** (167 Node + 121 DOM, 17 Vitest files). The production build passed after the final runtime repair. A separate read-only review found no actionable issue in the scoped fixes. Desktop 1440 × 1000 and phone-width 390 × 844 inspection covered canvas/review, source browsing, empty-state recovery and keyboard dialog exit.
+The follow-up fixes budget roles, explicit purchases/selections, quantities, selected remainders, negated comparison intent, unrelated AI context, accidental dialog dismissal and inaccurate provider copy. Source attachments, human review, current evidence, publication durability and storage recovery remain in place.
 
-The measured large mixed-topic reuse fixture improved from 41.8151 ms to 38.1364 ms median, **8.8% lower in that Node benchmark**. Small fixtures were effectively unchanged. This is not an end-user latency claim.
+**354 automated tests passed: 215 Node + 139 DOM across 18 Vitest files. The production build passed.** Independent review rechecked the reported defects and read the maintained source/test suite without finding a further concrete release blocker. [Verification JSON and source snapshot](verification-2026-09-20.json) · [Full test report](../../TEST-REPORT.md).
 
-[PLAN.md](../../PLAN.md) records “Verified & Polished” for this tested local scope. [TEST-REPORT.md](../../TEST-REPORT.md) separates current results from historical snapshots; [USABILITY-CHECKS.md](../../USABILITY-CHECKS.md) separates actual browser inspection from remaining participant/device acceptance.
+The current audit has real screenshots and two silent H.264 interaction recordings. The phone evidence-library state has no page overflow at 390 × 844. A single instrumented opening action measured 87.2 ms to its second animation frame. Reviewer scores are 9/10 for the inspected visual, functional and trust criteria; these are judgements, not measured user satisfaction or certification.
 
-## Boundaries and template adaptations
+Live Claude drafting and a cited factual reply were verified. Two intermediate chat checks were held, their client causes were repaired, and the final factual retest passed its price/label/finish/citation checks. It omitted the requested quotation, so exact prompt fulfilment and general answer quality remain subject to review. No answer was approved or published automatically, and no real key was saved to a file.
 
-- One user-authorised live OpenAI request was attempted and rejected with HTTP 429. The app displayed the rate-limit/quota error and left answers unchanged; successful generation and answer quality remain unverified. No Tano/social connection, physical microphone/speaker test or real audience session is claimed.
-- The API implementation is local Node middleware; no Modal/cloud endpoints were deployed. The template's example infrastructure and visual trends were not treated as project requirements.
-- Screenshots and regression tests provide debugging evidence; no video was recorded. Mermaid source was structurally reviewed, not exported as a rendered diagram.
-- The production bundle advisory remains (655.93 kB JavaScript / 206.41 kB gzip). Route splitting is a documented next measurement, not an unverified speed claim.
-- The requested Git commit prefix is `[AUTO-HEALED]`. Publication is coordinated by the separate Design task, which owns staging, commit and push; this review does not perform competing Git mutations.
+## Boundaries and deferred acceptance
 
-The nine task areas are completed for the agreed existing-app scope. The items above remain explicit limits of the prototype and verification, not hidden claims of production readiness.
+- The three-second information-hierarchy target requires participants; it has not been measured. One feedback sample does not prove all actions meet 100 ms.
+- Physical audio, touch/dragging, full accessibility, clipboard/download behaviour and real follower usability remain separate acceptance checks.
+- The final retrieval benchmark preserves correctness. Its mixed-fixture median improves within the paired comparison, but p90 worsens and absolute validation time is higher after added checks. No overall speed claim is made.
+- JavaScript is 666.46 kB / 210.20 kB gzip, with the existing bundle advisory. Splitting/profile work remains a measured follow-up.
+- No Tano/social connection, Modal deployment or new cloud persistence was created. Public share links remain local, unsigned snapshots.
+
+[PLAN.md](../../PLAN.md) records “Verified & Polished” for this tested local scope. The reports distinguish completed implementation from the remaining device, participant and content-quality checks.

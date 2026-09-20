@@ -9,6 +9,31 @@ vi.mock('../src/components/AnswerCanvas', () => ({ default: ({ onDraft }: { onDr
 const stored = () => JSON.parse(localStorage.getItem('maya-answer-canvas-v1')!) as Workspace;
 
 describe('publication failure recovery', () => {
+  it('keeps an unfinished question when the dialog interior padding is clicked', () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'Add question', exact: true }));
+    const dialog = screen.getByRole('dialog', { name: 'Add an audience question' });
+    vi.spyOn(dialog, 'getBoundingClientRect').mockReturnValue({ x: 100, y: 100, left: 100, top: 100, right: 600, bottom: 600, width: 500, height: 500, toJSON: () => ({}) });
+    fireEvent.change(within(dialog).getByRole('textbox', { name: 'Their question' }), { target: { value: 'Keep this unfinished question.' } });
+    fireEvent.click(dialog, { clientX: 110, clientY: 250 });
+    expect(screen.getByRole('dialog', { name: 'Add an audience question' })).toBe(dialog);
+    expect((within(dialog).getByRole('textbox', { name: 'Their question' }) as HTMLTextAreaElement).value).toBe('Keep this unfinished question.');
+    expect(stored().questions).toHaveLength(12);
+  });
+
+  it('still closes on a genuine backdrop click and restores the opener', () => {
+    render(<App />);
+    const trigger = screen.getByRole('button', { name: 'Case evidence', exact: true });
+    trigger.focus();
+    fireEvent.click(trigger);
+    const dialog = screen.getByRole('dialog', { name: 'Case-file evidence' });
+    within(dialog).getByRole('button', { name: 'Close dialog' }).focus();
+    vi.spyOn(dialog, 'getBoundingClientRect').mockReturnValue({ x: 100, y: 100, left: 100, top: 100, right: 600, bottom: 600, width: 500, height: 500, toJSON: () => ({}) });
+    fireEvent.click(dialog, { clientX: 80, clientY: 250 });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.activeElement).toBe(trigger);
+  });
+
   it('returns keyboard focus to the control that opened a dialog', () => {
     render(<App />);
     const trigger = screen.getByRole('button', { name: 'Case evidence', exact: true });

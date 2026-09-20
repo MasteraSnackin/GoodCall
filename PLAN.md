@@ -1,41 +1,42 @@
 # GoodCall task plan
 
-Status: **Verified & Polished — tested local prototype scope**, 20 September 2026.
+## Current result
 
-## Scope and acceptance
+Status: **Verified & Polished — tested local prototype scope**, 20 September 2026. The repeated nine-file review is complete with the existing React/Vite/CSS implementation. The original attachments and synced sources remain unchanged. Example references to Next.js, Tailwind, Framer Motion and Modal were adapted to the established app; no stack migration or cloud deployment was added.
 
-Applied the nine supplied review templates to the existing React/Vite/TypeScript app. Preserved the source attachments, synced references, existing workspace data and concurrent case-evidence, design and optional AI work. Framework and visual-style examples were adapted to the actual application. The result is not a cloud deployment or production certification.
-
-| Template | Deliverable | Status |
+| Supplied task | Result | Status |
 | --- | --- | --- |
-| README | [Project README](README.md), ordered sections, setup, configuration, screenshots and boundaries | Complete |
-| ARCHITECTURE | [Architecture](ARCHITECTURE.md), components, flows, data, deployment, security and trade-offs | Complete |
-| AUDIT | [Audit](docs/review/AUDIT.md), real browser captures, scored review, repairs and recheck | Complete for inspected scope |
-| DEBUG | [Debug](docs/review/DEBUG.md), hypotheses, root causes, focused repairs and regressions | Complete |
-| ERRORHANDING | [Error handling](docs/review/ERROR-HANDLING.md), preservation, retry and failure contracts | Complete |
-| DESIGNLEAD | [Design review](docs/review/DESIGN-LEAD.md) and [DESIGN.md](DESIGN.md), current style and visual repairs | Complete |
-| BUILDER | [Builder](docs/review/BUILDER.md), publication/recovery/reuse and local optional AI contract | Complete; cloud example adapted to local stack |
-| NERD | [Performance](docs/review/PERFORMANCE.md), top three findings and measured improvement | Complete |
-| RESEARCHER | [Research](docs/review/RESEARCH.md), primary sources, opportunity tiers and first implementation | Complete |
+| README | [README](README.md), required ordered sections, current providers, screenshots and actual recording links | Complete |
+| ARCHITECTURE | [Architecture](ARCHITECTURE.md), actual components, flows, storage, endpoints, limits and trade-offs | Complete |
+| AUDIT | [Current audit](docs/review/AUDIT.md), seven fresh steps, reviewer scorecard, repairs and precise measurement limits | Complete for inspected scope |
+| DEBUG | [Debug report](docs/review/DEBUG.md), Git history, parallel hypotheses, minimal repairs, regressions and real before/after video | Complete |
+| ERRORHANDING | [Error handling](docs/review/ERROR-HANDLING.md), typed boundaries, preservation, cancellation, safe failures and explicit retry | Complete |
+| DESIGNLEAD | [Design review](docs/review/DESIGN-LEAD.md) and [DESIGN.md](DESIGN.md), preserved Warm studio direction and responsive evidence | Complete |
+| BUILDER | [Builder](docs/review/BUILDER.md), actual local provider endpoints and durable review/publication/storage behaviour | Complete; cloud example adapted |
+| NERD | [Performance](docs/review/PERFORMANCE.md), ranked findings, reproducible measurements and current correctness cost | Complete |
+| RESEARCHER | [Research](docs/review/RESEARCH.md), full maintained code/test review coverage, primary sources, three tiers and measured implementation | Complete |
 
-## Completed sequence
+## Implemented in the follow-up
 
-1. Read templates/current implementation and assign separate ownership lanes.
-2. Document actual architecture; reproduce defects; capture desktop and phone-width UI.
-3. Repair publication, chat preservation, reuse matching, mobile layout/contrast and dialog focus.
-4. Run focused regressions, final combined tests/build and independent review.
-5. Reconcile the nine outputs, actual browser evidence and live-provider failure result; prepare a single Git publication handoff.
+- Distinguish owned products, individual alternatives and intended new purchases while keeping every evidence link.
+- Check explicit purchase/selection wording, selected remainders and unsupported multi-unit quantities; request clarification when roles are uncertain.
+- Distinguish “Do not compare” from a comparison request. Keep unrelated prior chat/selection out of fresh named AI questions while preserving actual follow-ups.
+- Preserve unfinished forms on interior-padding clicks; retain true backdrop dismissal and focus return.
+- Correct the persona's local-command versus optional-provider explanation.
+- Reconcile Claude/OpenAI setup, endpoints, errors, current tests and live acceptance in the documents.
 
-## Acceptance evidence
+## Verification
 
-- **288 tests passed:** 167 Node tests and 121 DOM tests across 17 Vitest files.
-- Production build passed after the last runtime change. JavaScript: 655.93 kB / 206.41 kB gzip; CSS: 111.92 kB / 22.62 kB gzip. The bundle-size advisory remains non-blocking.
-- Real browser inspection at 1440 × 1000 and 390 × 844: board/review, evidence library and empty-state recovery, no page overflow in inspected phone states, and keyboard focus return.
-- Visual, functional and trust review judgements each reached 9/10 for that scope; independent code review found no actionable issue in the scoped repairs.
-- One authorised live AI request was rejected with HTTP 429. The rate-limit/quota message was visible and no answer was saved or overwritten. Successful live generation remains unverified.
+**354 tests passed** (215 Node + 139 DOM across 18 Vitest files); production build passed after the final source change. Independent code review found no further concrete blocker in the scoped repairs. All 39 test/support files and the maintained runtime/UI/configuration source were read across the review lanes; generated/dependency/private files were excluded explicitly.
+
+Seven fresh browser steps and actual before/after dialog recordings are saved. The phone evidence dialog has no page overflow in the 390 × 844 state. One local feedback sample measured 87.2 ms to the second animation frame; the three-second comprehension target remains unmeasured.
+
+A live Claude clarification draft and final cited catalogue reply succeeded. Two intermediate chat checks exposed and led to client repairs. The final reply omitted a requested quote, so human wording review remains necessary. No automated approval or publication occurred. The running server and memory-only credential were preserved.
 
 ## Remaining boundaries
 
-Physical audio, real touch/dragging, complete screen-reader/keyboard acceptance, clipboard/download behaviour and participant usability sessions remain separate checks. Tano/social access is absent. Local snapshots remain unsigned and non-revocable; local recovery is not a remote backup. See [task results](docs/review/TASK-RESULTS.md) for the full mapping.
+Physical audio/touch/dragging, full accessibility/device acceptance and representative participant sessions remain unverified. The bundle-size advisory remains. The final benchmark shows correctness checks add validation cost; it does not establish an overall acceleration. Tano/social access, shared cloud persistence and public deployment are not implemented. Local snapshots remain unsigned and non-revocable.
 
-The separate Design task owns final staging, commit and push to avoid concurrent Git mutations. The requested commit prefix is `[AUTO-HEALED]`; remote publication is verified by that task after this documentation handoff.
+[Task-by-task results](docs/review/TASK-RESULTS.md) · [Final checks](TEST-REPORT.md) · [Current audit](docs/review/AUDIT.md)
+
+The requested publication commit uses the `[AUTO-HEALED]` prefix. The coordinating GitHub task owns staging and remote verification for this snapshot; subsequent canvas-tool work is a separate change.

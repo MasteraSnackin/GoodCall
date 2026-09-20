@@ -1,10 +1,17 @@
 import type { DecisionProfile } from './decisionTypes';
 import type { SourceRef } from './types';
 
-export const DEFAULT_AI_MODEL = 'gpt-5.4-mini';
+export type AiProvider = 'openai' | 'anthropic';
+export const DEFAULT_AI_PROVIDER: AiProvider = 'anthropic';
+export const AI_DEFAULT_MODELS: Record<AiProvider, string> = {
+  openai: 'gpt-4.1-mini',
+  anthropic: 'claude-haiku-4-5-20251001',
+};
+export const AI_PROVIDER_LABELS: Record<AiProvider, string> = { openai: 'OpenAI', anthropic: 'Claude' };
+export const DEFAULT_AI_MODEL = AI_DEFAULT_MODELS[DEFAULT_AI_PROVIDER];
 export interface AiStatus {
   configured: boolean;
-  provider: 'openai';
+  provider: AiProvider;
   model: string;
   source: 'environment' | 'session' | 'none';
 }
@@ -36,12 +43,12 @@ export interface AiAnswer {
 }
 export interface AiResponse {
   answer: AiAnswer;
-  provider: 'openai';
+  provider: AiProvider;
   model: string;
   generatedAt: string;
 }
 export interface AiDraftMetadata {
-  provider: 'openai';
+  provider: AiProvider;
   model: string;
   generatedAt: string;
   missingEvidence: string[];

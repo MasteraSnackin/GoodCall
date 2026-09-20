@@ -1,0 +1,10 @@
+{
+  "result": {
+    "type": "object",
+    "value": {
+      "action": "Open case evidence",
+      "clickToSecondAnimationFrameMs": 87.19999999925494,
+      "dialogOpen": true
+    }
+  }
+}

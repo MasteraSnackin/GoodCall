@@ -10,7 +10,7 @@ Turn a creator’s judgement into reviewed, reusable advice.
 
 GoodCall is a working local prototype for the fictional Operation Shade / Tano Creator Heist exercise. It helps Maya organise follower questions, connect supporting evidence, draft answers in her style and check missing or conflicting information before sharing an advice card. A movable canvas keeps the question, sources, decision and review state together.
 
-The app works with browser storage and bounded local rules without credentials. Optional OpenAI assistance routes drafts and chat through a local Node proxy when configured and enabled; every answer still needs review. Tano and social inboxes are not connected. Browser speech is optional and may use the browser vendor’s online services.
+The app works with browser storage and bounded local rules without credentials. Optional Claude or OpenAI assistance routes drafts and chat through a local Node proxy when configured and enabled; every answer still needs review. Tano and social inboxes are not connected. Browser speech is optional and may use the browser vendor’s online services.
 
 ## Table of Contents
 
@@ -34,13 +34,13 @@ The app works with browser storage and bounded local rules without credentials. 
 - **Evidence canvas:** movable question, product, note, answer, issue and case-evidence cards; saved positions and connections; card search, focused connections, zoom, minimap and expanded view.
 - **Case-file library:** searchable source cards for creator context, audience profiles, content, behaviour, missing materials and the exercise brief. Page references, tables and caveats distinguish reported figures from verified findings. Adding context cards preserves existing work; linking one does not validate an answer.
 - **Question management:** the 12 supplied questions, 10 products and four note/transcript summaries, plus reviewed typed or dictated questions. Keyword grouping preserves each original question; clarification retains its original source.
-- **Reviewed drafting:** editable evidence-template answers in Maya’s documented style. Bounded checks flag missing records, stale product revisions, budget/context conflicts, unsupported claims and altered known prices or quotations. Approval and publication are separate actions.
+- **Reviewed drafting:** editable evidence-template answers in Maya’s documented style. Bounded checks flag missing records, stale product revisions, budget/context conflicts, unsupported claims and altered known prices or quotations. Explicit owned products, alternative choices and new purchases are treated separately; unclear roles or quantities need clarification. Approval and publication are separate actions.
 - **Reusable decisions:** record Maya’s call, who an answer suits, when to skip and what remains unknown. Search reviewed advice and reuse a matching product/topic answer as a new, unapproved draft. See [DECISIONS.md](DECISIONS.md).
 - **History and recovery:** compare refreshed wording, keep edits, and restore up to 20 earlier draft versions while retaining current evidence and requiring fresh approval. Export, validate, preview and restore private workspace backups; preserve recovery copies.
 - **Evidence reports:** ten focused case-file checks with source excerpts, affected records, next actions and resolution references. Export a Markdown report. Resolving a report does not bypass answer validation.
 - **Follower cards:** preview the exact public content before publishing, then save or share an encoded snapshot. Generated payloads exclude raw question records and private workspace provenance. Feedback can become a follow-up question after explicit review; it stays on the same browser and origin.
 - **Chat and voice:** typed conversation, reviewed dictation, bounded navigation/drafting commands and synthetic read-aloud. Commands cannot approve or publish. Chat can explicitly add a question; it does not silently change the workspace.
-- **Optional AI assistance:** configure an OpenAI connection for source-referenced draft suggestions and chat. Existing answers remain unchanged until a suggestion is explicitly applied. Local evidence checks, stale-response checks and human approval remain in the path.
+- **Optional AI assistance:** choose Claude or OpenAI for source-referenced draft suggestions and chat. Existing answers remain unchanged until a suggestion is explicitly applied. Local evidence checks, stale-response checks and human approval remain in the path.
 - **Maya persona and appearance:** source-backed traits and examples for drafts and voice replies; Warm studio, Beauty editorial and Case-file desk themes. See [PERSONA.md](PERSONA.md).
 
 These checks are specific to the exercise dataset. They do not audit arbitrary uploaded documents, establish product safety or provide comprehensive semantic fact checking. The app is a single-user prototype without authentication, a shared database or an immutable audit log.
@@ -53,7 +53,7 @@ These checks are specific to the exercise dataset. They do not audit arbitrary u
 | Canvas | React Flow 12 (`@xyflow/react`) |
 | Local development and build | Vite 7, Node.js 26, npm lockfile |
 | Application logic | Local TypeScript rules, evidence templates and source fixtures |
-| Optional AI | Node middleware in the local Vite server; OpenAI Responses API |
+| Optional AI | Node middleware in the local Vite server; Anthropic Messages API or OpenAI Responses API |
 | Persistence | Browser `localStorage`, JSON backup files, URL snapshot payloads |
 | Voice | Browser speech recognition and speech synthesis, where supported |
 | Tests | Node test runner via `tsx`; Vitest, Testing Library and jsdom |
@@ -72,10 +72,11 @@ flowchart LR
   Workspace --> Speech[Browser speech APIs]
   Speech -. browser dependent .-> SpeechService[Browser vendor speech service]
   Workspace -. optional AI .-> Proxy[Local Node AI proxy]
+  Proxy --> Claude[Anthropic Messages API]
   Proxy --> OpenAI[OpenAI Responses API]
 ```
 
-The React app owns the workspace and invokes local rules for drafting, checks and review transitions. Browser storage holds private work and local follower data; share links contain validated public snapshots. An optional local Node proxy holds AI credentials and calls OpenAI, but does not provide accounts or a remote workspace database; see [ARCHITECTURE.md](ARCHITECTURE.md).
+The React app owns the workspace and invokes local rules for drafting, checks and review transitions. Browser storage holds private work and local follower data; share links contain validated public snapshots. An optional local Node proxy holds AI credentials and calls the selected provider, but does not provide accounts or a remote workspace database; see [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Installation
 
@@ -129,11 +130,15 @@ In **Voice**, review the transcript before choosing **Run command** or **Use as 
 
 ### Optional live AI
 
-Choose **Set up AI** in the header to open **AI connection** and configure a key/model, or use the server environment settings below. A connected session can enable **Use live AI for new answers and chat**. Turning it off returns new requests to local templates. A server environment key is detected at startup and can also be disabled through this control.
+Choose **Set up AI** in the header. Select **Claude (Anthropic)**, enter an Anthropic API key and choose **Connect and enable AI**. Claude Haiku 4.5 (`claude-haiku-4-5-20251001`) is the default for a fresh connection. OpenAI remains available as an alternative with its own API key. An OpenAI key cannot connect to Claude.
 
-Live requests send the current question, supporting catalogue/case-file records, selected context and a short chat history to OpenAI. The app strips common follower-handle patterns but does not provide comprehensive personal-data redaction. Review what you enter. Generation uses your API account. On 20 September 2026, a user-authorised live request reached OpenAI but was rejected with HTTP 429; the interface displayed the rate-limit/quota message without saving or overwriting an answer. Successful generation and answer quality remain unverified.
+Connecting checks access to the selected model; it does not prove that the account can generate an answer. A connected session can change its model without re-entering the key. Switching provider requires that provider's key and replaces the active connection only after the check succeeds. Failed checks preserve the existing connection. **Use live AI for new answers and chat** controls whether new requests use the provider or local templates.
 
-For an existing answer, **Suggest with AI** opens a comparison before replacement. Applying it returns the answer to draft. Errors or cancellation do not silently substitute a local answer or overwrite the current wording. Disconnecting clears the active server credential and cancels pending requests; environment configuration can return after a server restart.
+Live requests send the current question, supporting catalogue/case-file records, selected context and a short chat history to the selected provider. Common follower-handle patterns are stripped, but personal-data redaction is incomplete. Review what you enter. Generation uses your API account. The earlier OpenAI live request on 20 September 2026 returned HTTP 429 without saving or overwriting an answer; a later live Claude check produced a sourced, unapproved clarification draft. Two chat checks exposed context/wording holds; see [TEST-REPORT.md](TEST-REPORT.md) for their repair and acceptance status. A successful draft is not a general answer-quality guarantee.
+
+For an existing answer, **Suggest with AI** opens a comparison before replacement. Applying it returns the answer to draft. Errors or cancellation preserve current wording and do not silently switch providers or substitute a local answer. Provider errors are shown without forwarding private response details. Disconnecting clears the active server credential and cancels pending requests; environment configuration can return after a server restart.
+
+**Keys entered in the form last only for the current server session.** A server restart forgets them. To configure your own persistent local setup, use the server environment variables below; the app does not automatically save form keys to disk or browser storage.
 
 ### Protect work and review publication
 
@@ -154,15 +159,19 @@ Stop the development server before previewing; both use port 4341 with strict po
 
 ## Configuration
 
-No environment variables are required for local templates. The optional AI proxy accepts `OPENAI_API_KEY` and `OPENAI_MODEL` in the server environment or a local Vite environment file. The current code default is `gpt-5.4-mini`; access and Responses API compatibility depend on the configured account/model. Do not prefix the key with `VITE_`, place it in client source or commit a populated environment file.
+No environment variables are required for local templates. The optional proxy accepts `AI_PROVIDER=anthropic` with `ANTHROPIC_API_KEY` and `ANTHROPIC_MODEL`, or `AI_PROVIDER=openai` with `OPENAI_API_KEY` and `OPENAI_MODEL`. The model defaults are `claude-haiku-4-5-20251001` and `gpt-4.1-mini` respectively. Account access and generation capability need verification.
 
-Alternatively, enter a key through **AI connection**. It is held in the local server process for that session, not browser storage or workspace backups. The proxy runs in both `npm run dev` and `npm run preview`; a static `dist/` deployment does not contain it.
+Use the server environment or a private `.env.local` file. The repository ignores populated environment files and includes a blank `.env.example`. Restrict any populated file to your user account; never prefix a key with `VITE_`, place it in client source or commit it. The selected provider only receives its matching credential. Without an explicit selection, an Anthropic environment key takes precedence, an existing OpenAI-only configuration remains supported, and an unconfigured app defaults to Claude.
+
+Alternatively, enter a key through **AI connection** for the current session. It is held in the local server process, not browser storage or workspace backups. The proxy runs in both `npm run dev` and `npm run preview`; a static `dist/` deployment does not contain it.
 
 | Setting | Location | Behaviour |
 | --- | --- | --- |
 | Node version | `.nvmrc` | Node 26 development baseline |
 | Server address | `package.json` scripts | `127.0.0.1:4341`, strict port |
-| Optional AI key/model | `OPENAI_API_KEY`, `OPENAI_MODEL` | Server-side configuration; no key required for local mode |
+| AI provider | `AI_PROVIDER` | `anthropic` or `openai`; fresh setup defaults to Claude |
+| Claude key/model | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | Server-only Claude configuration |
+| OpenAI key/model | `OPENAI_API_KEY`, `OPENAI_MODEL` | Server-only alternative; no key required for local mode |
 | Build | `vite.config.ts`, `tsconfig.json` | React plugin and strict TypeScript checking |
 | UI tests | `vitest.config.ts` | jsdom, `tests/**/*.test.tsx`, shared setup |
 | Main workspace | `maya-answer-canvas-v1` | Local workspace, plus recovery and pre-restore copies |
@@ -225,6 +234,12 @@ Browse and search case-file evidence on a phone-width screen.
 
 These captures document the inspected local interface. They do not establish physical microphone/speaker operation or live provider access; consult the [final review report](docs/review/TASK-RESULTS.md) for interaction coverage.
 
+The current audit also includes short recordings of a reproduced dialog defect and its repair. They show actual browser interactions with fictional, unsaved test text:
+
+- [Before: clicking inside the dialog loses the form](docs/review/current-audit/dialog-before.mp4)
+- [After: the same click preserves the form](docs/review/current-audit/dialog-after.mp4)
+- [Current seven-step audit and fresh screenshots](docs/review/AUDIT.md)
+
 The five-slide presentation includes a 60-second pitch with speaker notes:
 
 - [View the pitch as a PDF](docs/pitch/GoodCall-60-Second-Pitch.pdf)
@@ -250,7 +265,8 @@ The local Vite server also mounts these AI endpoints:
 | Method and route | Purpose |
 | --- | --- |
 | `GET /api/ai/status` | Return configured state, provider, model and credential source; never the key |
-| `POST /api/ai/connect` | Check the supplied key/model and hold the credential for this server session |
+| `POST /api/ai/connect` | Check the selected provider/key/model and hold the credential for this server session |
+| `POST /api/ai/model` | Check and change the model using the existing server credential; keep the previous model if the check fails |
 | `POST /api/ai/disconnect` | Clear the active credential and cancel pending operations |
 | `POST /api/ai/answer` | Validate a draft/chat request and return a checked AI suggestion |
 
@@ -277,10 +293,10 @@ See [TEST-REPORT.md](TEST-REPORT.md) for dated results and [USABILITY-CHECKS.md]
 
 Possible next steps, not current capabilities:
 
-- Record product roles explicitly: already owned, being compared or proposed for purchase.
+- Add editable, persisted product roles beyond the current derived ownership, comparison and purchase checks.
 - Extend browser and phone acceptance evidence, including physical speech and storage-denial paths.
 - Evaluate an authenticated backend, revocable public records and cross-device feedback before using real private messages.
-- Complete live AI acceptance with an authorised account, and evaluate Tano/social integrations when access is supplied.
+- Extend live Claude checks to response completeness and broader questions; evaluate Tano/social integrations when access is supplied.
 - Measure performance with larger workspaces and consider splitting the initial bundle.
 
 ## Contributing

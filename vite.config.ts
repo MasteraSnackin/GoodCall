@@ -2,17 +2,18 @@ import { defineConfig, loadEnv } from 'vite';
 import type { Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { createAiMiddleware } from './server/aiServer';
+import { resolveAiConfiguration } from './server/aiConfiguration';
 
-function localAiPlugin(apiKey: string | undefined, model: string | undefined): Plugin {
+function localAiPlugin(configuration: ReturnType<typeof resolveAiConfiguration>): Plugin {
   return {
     name: 'goodcall-local-ai',
     configureServer(server) {
-      const ai = createAiMiddleware({ apiKey, model });
+      const ai = createAiMiddleware(configuration);
       server.middlewares.use(ai.middleware);
       server.httpServer?.once('close', ai.dispose);
     },
     configurePreviewServer(server) {
-      const ai = createAiMiddleware({ apiKey, model });
+      const ai = createAiMiddleware(configuration);
       server.middlewares.use(ai.middleware);
       server.httpServer.once('close', ai.dispose);
     },
@@ -21,9 +22,9 @@ function localAiPlugin(apiKey: string | undefined, model: string | undefined): P
 
 export default defineConfig(({ mode }) => {
   // These values stay in the Node process. Never define a VITE_ API key.
-  const env = loadEnv(mode, process.cwd(), 'OPENAI_');
+  const env = loadEnv(mode, process.cwd(), ['OPENAI_', 'ANTHROPIC_', 'AI_PROVIDER']);
   return {
-    plugins: [react(), localAiPlugin(env.OPENAI_API_KEY, env.OPENAI_MODEL)],
+    plugins: [react(), localAiPlugin(resolveAiConfiguration(env))],
     server: { host: '127.0.0.1', allowedHosts: ['localhost', '127.0.0.1'], cors: false },
     preview: { host: '127.0.0.1', allowedHosts: ['localhost', '127.0.0.1'], cors: false },
   };

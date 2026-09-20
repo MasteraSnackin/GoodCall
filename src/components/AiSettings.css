@@ -8,7 +8,8 @@
 .ai-enable { display: flex; align-items: center; gap: 9px; font-weight: 600; color: var(--ink); }
 .ai-enable input { accent-color: var(--accent); width: 16px; height: 16px; }
 .ai-settings .field { margin-top: 15px; }
-.ai-settings .field input { font-size: 14px; }
+.ai-settings .field input,.ai-settings .field select { font-size: 14px; }
+.ai-model-form { margin-top: 20px; padding-top: 4px; border-top: 1px solid var(--line); }
 .ai-settings-note { font-size: 12px; line-height: 1.65; }
 .ai-key-link { display: inline-flex; gap: 5px; align-items: center; margin-top: 12px; color: var(--accent); }
 .ai-message { padding: 10px 12px; border-radius: 6px; background: #edf3e8; color: #415c36; }

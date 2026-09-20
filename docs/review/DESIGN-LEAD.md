@@ -2,6 +2,10 @@
 
 Reviewed 20 September 2026 against the rendered desktop and phone-width app, [DESIGN.md](../../DESIGN.md) and the current plan. The visual lane changed CSS/readability only; publication, storage, provider and modal lifecycle logic were handled in the functionality lane.
 
+## Current recheck
+
+The repeat nine-file review captured fresh desktop and 390 × 844 evidence-library views, answer review, empty-state recovery and the persona explanation. The phone document width remains 390 px; its dialog is 352 px wide. The existing visual system still fits this scope, so no new aesthetic refactor was introduced. The shared-dialog padding repair and provider copy correction belong to the functionality/copy lanes. See the [current numbered audit](AUDIT.md); the measurements and screenshots below are the earlier visual repair record.
+
 ## Direction
 
 Retain the warm editorial case-file canvas: cream surfaces, charcoal text, muted rust actions and labelled source colours. This fits the exercise's evidence-review task and Maya's documented judgement. The principal dashboard improvement is more usable space and clearer reading, not a change of visual identity.

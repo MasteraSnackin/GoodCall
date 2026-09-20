@@ -2,7 +2,44 @@
 
 Reviewed 20 September 2026. Local app: http://127.0.0.1:4341/
 
-## Current integrated review — 20 September 2026
+## Current nine-file completion — 20 September 2026
+
+**354 automated tests passed: 215 Node tests and 139 DOM tests across 18 Vitest files.** `npm test` and `npm run build` both passed after the last quantity/recommendation correction. Node 26.8.1 and npm 11.19.0 were used. Production JavaScript is **666.46 kB / 210.20 kB gzip**; CSS is **112.03 kB / 22.64 kB gzip**. The existing large-chunk advisory remains. [Machine-readable verification and source snapshot](docs/review/verification-2026-09-20.json).
+
+The repeated review repairs purchase roles, explicit selection/articles, multi-unit clarification, selection-specific spending/remainders, negated comparison intent, standalone AI conversation context, shared-dialog padding dismissal and stale persona copy. Existing source, clinical-claim, review, publication and storage gates remain in place. A separate read-only reviewer rechecked the concrete failures and preservation cases, then read all 39 maintained test/support files; no further release blocker was found in that scoped review.
+
+Fresh browser evidence covers seven steps: unsaved-form failure, its repair, existing-answer review, evidence browsing, empty-state recovery, phone-width layout/keyboard exit and persona/provider wording. Real before/after recordings are included. A single Case evidence click reached its second animation frame with the dialog open in 87.2 ms. This is an animation-frame proxy on one machine, not a universal latency or participant comprehension result. See [AUDIT.md](docs/review/AUDIT.md).
+
+### Live Claude acceptance
+
+The user entered the Anthropic key directly into the app. Four authorised Claude Haiku 4.5 generation requests were observed by the provider-testing task:
+
+| Request | Observed result |
+| --- | --- |
+| Barrier Cream question (`q-05`) | Sourced clarification draft created; `Need more context`, three sources and approval disabled. Minor wording still needed human review. |
+| Daily Gel recommendation | Provider responded, but a Cloud Cream mention lacked linked product evidence and the client correctly held it. Unrelated history/selection was still being sent to the provider. |
+| Daily Gel facts with “Do not compare” | Provider responded, but a negated comparison triggered comparison/role/context holds. The same false hold was reproduced locally without history. |
+| Final facts retest after client repairs | Correct £24 price, Oily / Combo catalogue label and Light finish, with the product-inventory citation. No false spending/comparison hold. The requested recorded quotation was omitted after an empty note heading. |
+
+Live drafting and a factual chat response are verified within that scope. Exact prompt fulfilment and general answer quality are not guaranteed. The client now drops stale conversation/selection for fresh named questions while retaining genuine follow-ups, and distinguishes negative comparison instructions from actual comparison requests. It still validates sources and required review. No tested action approved or published an answer; no real credential was written to a file, and the running server was not restarted.
+
+### Remaining acceptance and performance limits
+
+Physical microphone/speaker operation, real touch/dragging, complete keyboard/screen-reader coverage, clipboard/download behaviour and representative participant sessions remain separate checks. The three-second scan target is unmeasured. No Tano/social integration or cloud deployment is claimed.
+
+The final paired retrieval benchmark retains a correct delimiter-collision fix. The large mixed fixture's median was 130.7987 → 124.1090 ms, but its p90 worsened; the all-matching improvement was negligible. New correctness checks increased absolute validation time against the earlier snapshot. This is **not an overall speed improvement claim**. See [PERFORMANCE.md](docs/review/PERFORMANCE.md).
+
+The sections below are dated historical snapshots; their earlier counts and acceptance status do not replace the current result.
+
+## Historical Claude provider baseline — 20 September 2026
+
+The provider switch passed **327 automated tests**: **190 Node tests and 137 DOM tests across 18 Vitest files**. The final full suite and production build passed after resolving an independently reproduced Claude enum-capitalisation edge case. The adapter canonicalises known enum values only; all evidence and format checks remain enforced. Independent review confirmed the correction with no further actionable findings. JavaScript is 659.51 kB / 207.49 kB gzip; CSS is 112.03 kB / 22.64 kB gzip. The existing bundle-size advisory remains non-blocking.
+
+Coverage includes Claude request headers/schema adaptation, provider-specific credential routing, atomic replacement failure in both directions, refusal/truncation/error handling, existing OpenAI model switching, UI lifecycle cancellation, and Claude provenance through workspace history/backups. Source checks and human approval requirements remain shared across providers. The real browser displayed Claude (Anthropic), Claude Haiku 4.5 and the password-key field, with Connect disabled while the key was blank.
+
+At that baseline, the integration was implemented and locally verified, while account connection and a live answer were still pending; no successful Claude generation is claimed by these automated results. Form keys remain server-session-only and are forgotten on restart; persistent local server variables are supported but no real credential was written to a file by this change.
+
+## Previous integrated review — 20 September 2026
 
 The final combined run after the dialog-focus repair passed **288 automated tests**: **167 Node tests and 121 DOM tests across 17 Vitest files**. `npm run build` passed with Node.js 26.8.1 and npm 11.19.0. JavaScript is 655.93 kB minified / 206.41 kB gzip; CSS is 111.92 kB / 22.62 kB gzip. The JavaScript bundle advisory is non-blocking.
 
@@ -80,7 +117,7 @@ These recommendations describe that review snapshot. Consult the README for subs
 
 Record whether a product is already owned, being compared or proposed for purchase. This is the most useful next correctness improvement.
 
-Two current examples still expose the gap:
+At that earlier review, these two examples exposed the gap; the current derived purchase-context repair above covers them:
 
 - “Cloud Cream or Daily Gel, just one under £40” is treated as a £62 basket, although the question is choosing one item.
 - “I already have Cloud Cream, budget £0. Do I need anything?” counts the owned cream as a new £38 purchase.

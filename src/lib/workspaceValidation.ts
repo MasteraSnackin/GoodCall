@@ -21,7 +21,7 @@ const sources = (value: unknown) => list(value, source, 200);
 const decision = (value: unknown) => object(value) && oneOf(value.verdict, ['Consider', 'Skip for now', 'Need more context']) && ['suits', 'skipIf', 'unknowns'].every(key => string(value[key], 800));
 const reuse = (value: unknown) => object(value) && id(value.draftId) && string(value.title) && optional(value.approvedAt, date);
 const revisions = (value: unknown) => object(value) && Object.entries(value).length <= 1_000 && Object.entries(value).every(([key, revision]) => id(key) && integer(revision));
-const aiMetadata = (value: unknown) => object(value) && value.provider === 'openai' && string(value.model, 120) && value.model.length > 0 && date(value.generatedAt) && list(value.missingEvidence, item => string(item, 1000), 20);
+const aiMetadata = (value: unknown) => object(value) && oneOf(value.provider, ['openai', 'anthropic']) && string(value.model, 120) && value.model.length > 0 && date(value.generatedAt) && list(value.missingEvidence, item => string(item, 1000), 20);
 const persona = (value: unknown) => object(value) && id(value.id) && integer(value.version);
 
 function draft(value: unknown, historyAllowed = true): boolean {

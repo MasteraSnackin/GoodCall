@@ -31,8 +31,12 @@ The integrated browser was available for the current review. Desktop 1440 × 100
 
 [The visual audit](docs/review/AUDIT.md) records the numbered actions and saved before/after captures. These are agent-operated browser checks, not participant research or a physical-phone test. They do not establish full keyboard or screen-reader accessibility.
 
+## Current repeat audit
+
+The current seven-step browser audit rechecked an unsaved question dialog, answer review, the 18-card evidence library, empty-state recovery, 390 × 844 layout and persona/provider wording. Interior padding now preserves the form; outside clicks still close it and restore focus. Fresh screenshots and actual before/after recordings are linked in [AUDIT.md](docs/review/AUDIT.md). One Case evidence click reached a second animation frame with the dialog open in 87.2 ms; this single local sample is not a participant timing result or a universal sub-100 ms guarantee. The three-second scan target remains unmeasured.
+
 ## Device and participant checks still required
 
 Pending manual checks: physical phone touch and scrolling, complete keyboard/screen-reader navigation, real canvas dragging, file download/selection, clipboard behaviour, microphone permission/capture, audible speech and stop controls. Test speech with text still available when permission is refused. Use the app on the same local origin for existing saved data.
 
-One user-authorised live OpenAI request was rejected with HTTP 429 and the error was shown without an answer mutation. Successful generation and answer quality need a later acceptance run after the account limit is resolved. No Tano/social integration or human usability session has been verified.
+The earlier OpenAI request was rejected with HTTP 429 without an answer mutation. Later Claude checks produced a sourced clarification draft and, after two client repairs, a cited Daily Gel facts reply. The latter omitted a requested quotation; general answer quality remains a human review task. See [TEST-REPORT.md](TEST-REPORT.md) for all four live requests. No Tano/social integration or human usability session has been verified.

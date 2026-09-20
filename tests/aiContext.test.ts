@@ -7,6 +7,7 @@ import { findCaseEvidence } from '../src/lib/caseEvidence';
 import type { AiResponse } from '../src/lib/aiTypes';
 import type { ChatMessage } from '../src/lib/chat';
 import { validateWorkspace } from '../src/lib/workspaceValidation';
+import { recordDraftRevision, restoreDraftRevision } from '../src/lib/draftHistory';
 
 const response = (changes: Partial<AiResponse['answer']> = {}): AiResponse => ({
   provider: 'openai', model: 'test-model', generatedAt: '2026-09-20T12:00:00.000Z',
@@ -22,8 +23,8 @@ test('AI context includes the catalogue and bounded chat text without leaking un
   w.questions[0].handle = '@private_person'; w.questions[0].text = 'UNRELATED_PRIVATE_QUESTION';
   w.activity.push({ id: 'hidden-event', at: '', text: 'PRIVATE_ACTIVITY' });
   const draft = draftAnswer(w.questions[3], w.products); draft.text = 'PRIVATE_UNSELECTED_DRAFT'; w.drafts.push(draft);
-  const history: ChatMessage[] = Array.from({ length: 9 }, (_, index) => ({ id: `message-${index}`, role: index % 2 ? 'assistant' : 'user', text: `History ${index} @private_handle`, createdAt: 'PRIVATE_TIMESTAMP', sourceRefs: [{ page: 5, label: 'PRIVATE_HISTORY_SOURCE', excerpt: 'private source' }] }));
-  const request = buildAiRequest('chat', 'Is Cloud Cream worth £38?', w, history);
+  const history: ChatMessage[] = Array.from({ length: 9 }, (_, index) => ({ id: `message-${index}`, role: index % 2 ? 'assistant' : 'user', text: index % 2 ? `History ${index} @private_handle` : 'My budget is £20. Is Cloud Cream worth it? @private_handle', createdAt: 'PRIVATE_TIMESTAMP', sourceRefs: [{ page: 5, label: 'PRIVATE_HISTORY_SOURCE', excerpt: 'private source' }] }));
+  const request = buildAiRequest('chat', 'What about Daily Gel?', w, history);
   const json = JSON.stringify(request);
   assert.equal(request.evidence.filter(item => item.kind === 'product').length, w.products.length);
   assert.equal(request.history.length, 6);
@@ -57,6 +58,32 @@ test('an AI suggestion pins current revisions and always starts unapproved with 
   assert.equal(draft.approvedAt, undefined); assert.equal(draft.publishedAt, undefined);
   assert.deepEqual(validateDraft(draft, w), []); assert.throws(() => toPublishedAdvice(draft, w), /approve/);
   assert.equal(JSON.stringify(w), before);
+});
+
+test('Claude drafts retain provider provenance through workspace backup and history restoration', () => {
+  const w = createWorkspace(), q = w.questions[3], request = buildAiRequest('draft', q.text, w);
+  const claude: AiResponse = { ...response(), provider: 'anthropic', model: 'claude-haiku-4-5-20251001' };
+  const draft = applyAiDraft(claude, q, w, request);
+  assert.equal(draft.status, 'draft');
+  assert.equal(draft.ai?.provider, 'anthropic');
+  const edited = recordDraftRevision(draft, { ...draft, text: 'Reviewed wording with current evidence.' }, 'Edited Claude wording');
+  const recovered = restoreDraftRevision(edited, edited.history![0].id);
+  const checked = validateWorkspace(JSON.parse(JSON.stringify({ ...w, drafts: [recovered] })));
+  assert.equal(checked.ok, true);
+  if (checked.ok) assert.equal(checked.workspace.drafts[0].ai?.provider, 'anthropic');
+  assert.equal(recovered.approvedAt, undefined);
+  assert.throws(() => toPublishedAdvice(recovered, w), /approve/);
+});
+
+test('Claude uses the same source and missing-evidence gates and unknown providers are rejected', () => {
+  const w = createWorkspace(), q = w.questions[3], request = buildAiRequest('draft', q.text, w);
+  const claude: AiResponse = { ...response({ missingEvidence: ['Confirm the existing routine.'] }), provider: 'anthropic', model: 'claude-haiku-4-5-20251001' };
+  const draft = applyAiDraft(claude, q, w, request);
+  assert.ok(validateDraft(draft, w).length > 0);
+  assert.equal(draft.decision?.verdict, 'Need more context');
+  assert.throws(() => applyAiDraft({ ...claude, answer: { ...claude.answer, sourceIds: ['invented:source'] } }, q, w, request), /not supplied/);
+  assert.throws(() => applyAiDraft({ ...claude, provider: 'unknown' as AiResponse['provider'] }, q, w, request), /generation details/);
+  assert.equal(validateWorkspace({ ...w, drafts: [{ ...draft, ai: { ...draft.ai, provider: 'unknown' } }] }).ok, false);
 });
 
 test('fingerprints ignore canvas position but change with current evidence, question or selected case context', () => {
@@ -107,8 +134,97 @@ test('chat retains a prior explicit budget when the user asks about an alternati
   const w = createWorkspace();
   const history: ChatMessage[] = [{ id: 'earlier', role: 'user', text: 'My budget is £20. Is Cloud Cream worth it?', createdAt: '' }];
   const request = buildAiRequest('chat', 'What about Daily Gel?', w, history);
+  assert.deepEqual(request.history, [{ role: 'user', text: history[0].text }]);
+  assert.ok(request.checks.some(check => check.includes('£20')));
   const result = validateAiChat(response({ title: 'Daily Gel', text: 'Daily Gel costs £24.', productIds: ['daily-gel'], sourceIds: ['product:daily-gel'] }), request, w);
   assert.equal(result.kind, 'clarification'); assert.match(result.text, /£20/);
+});
+
+test('standalone named product questions exclude previous chat and an unrelated selected draft', () => {
+  const w = createWorkspace();
+  const selectedDraft = draftAnswer(w.questions[4], w.products);
+  selectedDraft.text = 'PRIVATE_SELECTED_BARRIER_DRAFT';
+  w.drafts.push(selectedDraft);
+  const selected = { id: 'selected-draft', kind: 'draft' as const, entityId: selectedDraft.id, x: 0, y: 0 };
+  const history: ChatMessage[] = [
+    { id: 'prior-user', role: 'user', text: 'My budget is £20. Is Cloud Cream worth it?', createdAt: '' },
+    { id: 'prior-answer', role: 'assistant', text: 'PRIVATE_PREVIOUS_CLOUD_ANSWER', createdAt: '', questionText: 'My budget is £20. Is Cloud Cream worth it?' },
+  ];
+  for (const question of ['What does the catalogue record for Daily Gel?', 'Separate question, unrelated to the selected card: what does the catalogue record for Daily Gel?']) {
+    const request = buildAiRequest('chat', question, w, history, selected);
+    assert.deepEqual(request.history, []);
+    assert.deepEqual(JSON.parse(request.selectedContext), {});
+    assert.ok(!JSON.stringify(request).includes('PRIVATE_SELECTED_BARRIER_DRAFT'));
+    assert.ok(!JSON.stringify(request).includes('PRIVATE_PREVIOUS_CLOUD_ANSWER'));
+    assert.ok(!request.checks.some(check => /£20|Barrier Cream/.test(check)));
+    assert.equal(request.evidence.filter(item => item.kind === 'product').length, w.products.length);
+    assert.ok(!request.evidence.some(item => item.id.startsWith('issue:issue-barrier-cream')));
+  }
+});
+
+test('excluding selection also excludes selection-only case, issue and reviewed answer evidence', () => {
+  const w = createWorkspace();
+  const approved = draftAnswer(w.questions[3], w.products);
+  approved.status = 'approved';
+  assert.deepEqual(validateDraft(approved, w), []);
+  w.drafts.push(approved);
+  const selections = [
+    { id: 'case', kind: 'evidence' as const, entityId: 'case-quiet-audience-findings', x: 0, y: 0 },
+    { id: 'issue', kind: 'issue' as const, entityId: 'issue-barrier-cream', x: 0, y: 0 },
+    { id: 'draft', kind: 'draft' as const, entityId: approved.id, x: 0, y: 0 },
+  ];
+  const base = buildAiRequest('chat', 'What does the catalogue record for Daily Gel?', w);
+  for (const selected of selections) {
+    const request = buildAiRequest('chat', base.question, w, [], selected);
+    assert.deepEqual(request, base);
+  }
+  const requestedCase = buildAiRequest('chat', 'Use the selected evidence to explain the audience findings.', w, [], selections[0]);
+  assert.equal(JSON.parse(requestedCase.selectedContext).kind, 'evidence');
+  assert.ok(requestedCase.evidence.some(item => item.id === 'case:case-quiet-audience-findings'));
+  assert.ok(requestedCase.evidence.some(item => item.id.startsWith('issue:issue-buyers')));
+});
+
+test('pronoun follow-ups and explicit selected-product questions retain their context', () => {
+  const w = createWorkspace();
+  const history: ChatMessage[] = [{ id: 'prior', role: 'user', text: 'My budget is £20. Is Cloud Cream worth it?', createdAt: '' }];
+  const followup = buildAiRequest('chat', 'Is it worth it?', w, history);
+  assert.equal(followup.history.length, 1);
+  assert.ok(followup.checks.some(check => check.includes('£20')));
+  const selected = { id: 'product', kind: 'product' as const, entityId: 'daily-gel', x: 0, y: 0 };
+  const selectedRequest = buildAiRequest('chat', 'What does this product cost?', w, [], selected);
+  assert.equal(JSON.parse(selectedRequest.selectedContext).productId, 'daily-gel');
+  const result = validateAiChat(response({ title: 'Daily Gel facts', text: 'Daily Gel costs £24.', productIds: ['daily-gel'], sourceIds: ['product:daily-gel'] }), selectedRequest, w);
+  assert.equal(result.kind, 'answer');
+});
+
+test('scoped factual chat still rejects an answer mentioning an unlinked product', () => {
+  const w = createWorkspace();
+  const request = buildAiRequest('chat', 'What does the catalogue record for Daily Gel?', w);
+  const result = validateAiChat(response({ title: 'Daily Gel facts', text: 'Daily Gel costs £24. Cloud Cream is rich.', productIds: ['daily-gel'], sourceIds: ['product:daily-gel'] }), request, w);
+  assert.equal(result.kind, 'clarification');
+  assert.match(result.text, /Cloud Cream without linked product evidence/);
+});
+
+test('a standalone Daily Gel catalogue lookup can explicitly exclude comparisons and safety claims', () => {
+  const w = createWorkspace();
+  const selectedDraft = draftAnswer(w.questions[4], w.products);
+  w.drafts.push(selectedDraft);
+  const selected = { id: 'unrelated-draft', kind: 'draft' as const, entityId: selectedDraft.id, x: 0, y: 0 };
+  const history: ChatMessage[] = [{ id: 'previous', role: 'user', text: 'My budget is £20. Is Cloud Cream worth it?', createdAt: '' }];
+  const request = buildAiRequest('chat', 'For Daily Gel only, what price, skin-type label and finish does the supplied catalogue record? Quote Maya’s recorded note. Do not compare other products or make a safety claim.', w, history, selected);
+  assert.deepEqual(request.history, []);
+  assert.deepEqual(JSON.parse(request.selectedContext), {});
+  assert.ok(!request.checks.some(check => check.startsWith('Existing approval hold:')));
+  const answer = response({
+    title: 'Daily Gel: recorded catalogue facts',
+    text: 'Daily Gel costs £24. Catalogue skin-type label: Oily / Combo. Finish: Light. Maya’s recorded note: “Easy. No drama.”',
+    productIds: ['daily-gel'], sourceIds: ['product:daily-gel'],
+    decision: { verdict: 'Consider', suits: 'Reading the supplied catalogue record.', skipIf: 'You need an individual recommendation.', unknowns: 'Individual suitability is not established by the catalogue.' },
+  });
+  const result = validateAiChat(answer, request, w);
+  assert.equal(result.kind, 'answer');
+  assert.match(result.text, /Daily Gel costs £24/);
+  assert.match(result.text, /Easy\. No drama\./);
 });
 
 test('selected case explanations include the supplied caveat and cannot establish product safety', () => {

@@ -3,6 +3,7 @@ import { createCaseIssues, mayaNotes } from './seed';
 import { MAYA_PERSONA } from './persona';
 import { buildDecisionProfile } from './decisionProfile';
 import { isDecisionProfile } from './decisionTypes';
+import { hasPositiveComparisonIntent, purchaseTotals, resolvePurchaseContext, type PurchaseContext } from './purchaseContext';
 
 const unique = <T>(items: T[]) => [...new Set(items)];
 const tidy = (s: string) => s.toLowerCase().replace(/[’']/g, '');
@@ -48,6 +49,15 @@ function relatedProducts(question: Question, products: Product[]): Product[] {
   return products.filter(p=>ids.includes(p.id));
 }
 
+function spendingHolds(context: PurchaseContext, products: Product[], budget: number | undefined): string[] {
+  if (context.clarification) return [context.clarification];
+  const totals=purchaseTotals(context,products);
+  if (budget===undefined || !totals.length || totals.some(total=>total<=budget)) return [];
+  return [context.mode==='alternatives'
+    ? `The individual purchase options cost ${totals.map(money).join(' or ')}, each above the ${money(budget)} budget. Ask whether to keep an existing product or consider another option.`
+    : `The proposed new purchases total ${money(totals[0])}, above the ${money(budget)} budget. Ask which concern to prioritise; do not silently drop it.`];
+}
+
 function questionHolds(question: Question, products: Product[]): string[] {
   const t=tidy(question.text), holds:string[]=[], selected=relatedProducts(question,products);
   for (const name of ['Barrier Oil','Barrier Cream']) {
@@ -77,10 +87,10 @@ function questionHolds(question: Question, products: Product[]): string[] {
   const budget=budgetFor(t);
   const normalisedMoney=tidy(numericPounds(t));
   if (/\bpounds?\b|\bgbp\b|£\s*[a-z]/.test(normalisedMoney) || (budget===undefined && /\bbudget\b|\bspend\b|\bafford\b/.test(t))) holds.push('The spending limit is not clear in a supported numeric format. Confirm the amount in pounds using digits before recommending a purchase.');
-  if (budget!==undefined && selected.reduce((sum,p)=>sum+p.price,0)>budget) holds.push(`The linked products total ${money(selected.reduce((sum,p)=>sum+p.price,0))}, above the ${money(budget)} budget. Ask which concern to prioritise; do not silently drop it.`);
+  holds.push(...spendingHolds(resolvePurchaseContext(question.text,selected),selected,budget));
   if (selected.length===0 && !/i trust you|trust you more|thank you/.test(t)) holds.push('The question needs more context: identify the product or goal, current routine, skin preference and budget.');
   if (/\broutine\b/.test(t) && !/\b(dry|oily)\b/.test(t)) holds.push('A routine needs the follower’s skin preference, existing products and budget. “Two products” alone does not establish a suitable routine.');
-  if (/compare|versus|\bvs\b|better than|cheaper than/.test(t) && selected.length<2) holds.push('Both products and the comparison criteria need supporting records.');
+  if (hasPositiveComparisonIntent(t) && selected.length<2) holds.push('Both products and the comparison criteria need supporting records.');
   return unique(holds);
 }
 
@@ -91,6 +101,7 @@ const escapeRegex = (text:string) => text.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 
 export function draftAnswer(question: Question, products: Product[]): Draft {
   const selected=relatedProducts(question,products), holds=questionHolds(question,products), at=new Date().toISOString();
+  const purchaseContext=resolvePurchaseContext(question.text,selected);
   let title='A little more context first', text='';
   const cloud=selected.find(p=>p.id==='cloud-cream'), glass=selected.find(p=>p.id==='glass-drop');
   if (holds.length) {
@@ -105,9 +116,18 @@ export function draftAnswer(question: Question, products: Product[]): Draft {
     else if (first.includes('skin type')) clarification='What are you using on your skin now?';
     else if (first.includes('for the date')) clarification='What would you like help with for the date?';
     else if (first.includes('combination is needed')) clarification='What would you like to change about your current routine?';
+    else if (first.includes('which products are already owned')) clarification='Which products do you own, and are you choosing one new product or buying several together?';
+    else if (first.includes('number of units')) clarification='How many units of each product would you buy?';
     else if (first.includes('above the')) clarification=`Which concern would you prioritise within your ${money(budgetFor(question.text)!)} budget?`;
     else if (first.includes('comparison criteria')) clarification='Which two products are you choosing between?';
     text=`${clarification}\n\nI need that before making a useful recommendation. It is a starting point; these checks still need evidence:\n\n${holds.map(h=>`• ${h}`).join('\n')}\n\nNo product choice has been approved yet.`;
+  } else if (purchaseContext.mode==='owned' && selected.length) {
+    title='Start with what you already own';
+    text=`You already own ${selected.map(p=>p.name).join(' and ')}. Keeping an existing product adds £0 to your spending. If it already does the job, there is no need to buy it again.\n\nCheck what you want to change before adding another product; the catalogue alone does not establish individual suitability.`;
+  } else if (purchaseContext.mode==='alternatives') {
+    title='Compare one purchase at a time';
+    const options=purchaseContext.purchaseOptions.map(ids=>ids.length?ids.map(id=>selected.find(p=>p.id===id)!.name).join(' + '):'Keep what you already own');
+    text=`Purchase options: ${options.join(' / ')}.\n\n${selected.map(p=>`${p.name} costs ${money(p.price)}; the catalogue lists a ${p.finish.toLowerCase()} finish.`).join('\n')}\n\nCompare each option with your budget separately. Check your preferred finish and what you already use before choosing.`;
   } else if (cloud && selected.length===1) {
     title='Cloud Cream: when it earns its place';
     text=`Cloud Cream is ${money(cloud.price)}. The catalogue lists it as a ${cloud.finish.toLowerCase()} moisturiser for ${cloud.skin.toLowerCase()} skin. My recorded note: “${cloud.note}”\n\nWorth considering if that fills a gap in your routine. If your current moisturiser does the job, keep it. There is no prize for owning two.`;
@@ -155,15 +175,32 @@ export function validateDraft(draft: Draft, workspace: Workspace): string[] {
   if (/\b(?:eczema|rosacea|tretinoin|adapalene|isotretinoin|ceramides?|perfume|irritat\w*)\b|\bcontains?\b|\b(?:no|without|free of)\s+(?:added\s+)?fragrance\b/i.test(body)) errors.push('This wording involves ingredients, irritation or clinical suitability that the supplied evidence cannot verify. Keep the answer within the recorded facts or request more evidence.');
   const linkedProducts=draft.productIds.map(id=>workspace.products.find(p=>p.id===id)).filter((p):p is Product=>!!p);
   const knownBudget=question?budgetFor(question.text):undefined;
-  const total=linkedProducts.reduce((sum,p)=>sum+p.price,0);
+  const purchaseContext=resolvePurchaseContext(question?.text??'',question?relatedProducts(question,workspace.products):linkedProducts);
+  const totals=purchaseTotals(purchaseContext,workspace.products);
+  const answerPurchases=resolvePurchaseContext(body,linkedProducts,true);
+  const answerTotals=answerPurchases.hasExplicitPurchase?purchaseTotals(answerPurchases,linkedProducts):[];
+  if(answerPurchases.hasExplicitPurchase) errors.push(...spendingHolds(answerPurchases,linkedProducts,knownBudget));
+  // A stated choice replaces the question's alternatives for spending and change.
+  const spendingTotals=answerPurchases.hasExplicitPurchase?answerTotals:totals;
+  const remainingAmounts=knownBudget===undefined?[]:spendingTotals.map(total=>Math.max(0,knownBudget-total));
   const sourceAmounts=linkedProducts.flatMap(p=>[...numericPounds(p.note).matchAll(/£\s*(\d+(?:\.\d{1,2})?)/g)].map(m=>Number(m[1])));
-  const supportedAmounts=[0,total,...linkedProducts.map(p=>p.price),...sourceAmounts,...(knownBudget!==undefined?[knownBudget,Math.max(0,knownBudget-total)]:[])];
+  const supportedAmounts=[0,...spendingTotals,...linkedProducts.map(p=>p.price),...sourceAmounts,...(knownBudget!==undefined?[knownBudget,...remainingAmounts]:[])];
   for (const match of numericPounds(body).matchAll(/£\s*(\d+(?:\.\d{1,2})?)/g)) {
     const amount=Number(match[1]);
     if (!supportedAmounts.some(n=>Math.abs(n-amount)<0.001)) errors.push(`${money(amount)} is not supported by the linked prices, recorded notes or this follower’s budget. Check the amount before approval.`);
   }
   // A valid budget amount must not masquerade as a product price. Quoted source notes retain historical amounts.
   const outsideQuotes=numericPounds(body.replace(/“[^”]*”|"[^"\n]*"/g,''));
+  // Targeted spending/remainder claims cannot borrow another product's price or the budget amount.
+  for (const match of outsideQuotes.matchAll(/£\s*(\d+(?:\.\d{1,2})?)/g)) {
+    const before=outsideQuotes.slice(0,match.index).split(/[.!?;\n]/).at(-1) ?? '';
+    const after=outsideQuotes.slice(match.index!+match[0].length);
+    const amount=Number(match[1]);
+    const remainder=/^\s*(?:left|remaining|unspent|to spare)\b/i.test(after) || /\b(?:leave|leaves|leaving|remaining(?: budget)?|remainder|left with)\s+(?:(?:you|is|of|would|be|will|have)\s+)*$/i.test(before);
+    const spending=/\b(?:spend|spending|(?:new purchase|purchase|basket) total|total(?: spend| spending)?)\s+(?:(?:is|of|would|be|will|you)\s+)*$/i.test(before);
+    if (remainder && !remainingAmounts.some(value=>Math.abs(value-amount)<0.001)) errors.push(`${money(amount)} does not match the money left after the stated purchase. Check the choice and budget before approval.`);
+    if (spending && !spendingTotals.some(value=>Math.abs(value-amount)<0.001)) errors.push(`${money(amount)} does not match the stated purchase total. Check which products would be bought before approval.`);
+  }
   for (const p of linkedProducts) {
     const re=new RegExp(`\\b${escapeRegex(p.name)}\\b([^.!?£\\n]{0,70})£\\s*(\\d+(?:\\.\\d{1,2})?)`,'gi');
     for (const match of outsideQuotes.matchAll(re)) {
@@ -177,8 +214,6 @@ export function validateDraft(draft: Draft, workspace: Workspace): string[] {
   if (question) {
     const allowed=relatedProducts(question,workspace.products).map(p=>p.id);
     for (const id of draft.productIds) if (!allowed.includes(id)) errors.push(`The question does not establish a reason to recommend ${workspace.products.find(p=>p.id===id)?.name ?? id}. Clarify the question before adding products.`);
-    const budget=budgetFor(question.text), sum=draft.productIds.reduce((v,id)=>v+(workspace.products.find(p=>p.id===id)?.price??0),0);
-    if (budget!==undefined && sum>budget) errors.push(`This draft’s linked products exceed the ${money(budget)} budget.`);
   }
   return unique(errors);
 }

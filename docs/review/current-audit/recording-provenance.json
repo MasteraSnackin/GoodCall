@@ -1,0 +1,81 @@
+{
+  "created_utc": "2026-09-20T12:42:13.662138+00:00",
+  "source": "Existing live browser Page.screencastFrame recordings supplied by the parent audit task.",
+  "raw_archive_relative_to_app": "../output/goodcall-audit-recordings/2026-09-20-current-audit",
+  "encoding": {
+    "ffmpeg_version": "9.0.1",
+    "encoder": "libx264",
+    "crf": 18,
+    "preset": "medium",
+    "b_frames": 0,
+    "timing": "Variable frame rate at a 1/1000000 second time base. Every recorded frame is preserved in timestamp order.",
+    "scaling": "2560x1440 to 1280x720 with Lanczos; full-range JPEG converted to limited-range yuv420p.",
+    "start": "Time zero is the first available frame. The small gap between recording start and the first frame is omitted because no image was captured then.",
+    "end": "Last captured frame is held until the recorded end time. An identical terminal frame makes this hold explicit and adds one microsecond to the file duration.",
+    "overlays": "None. No cursor, click marks, captions, reconstructed screens, cuts, speed changes or audio were added."
+  },
+  "verification": {
+    "all_source_files_present": true,
+    "all_source_timestamps_strictly_increasing": true,
+    "source_recording_errors": null,
+    "full_decode": "Passed without decoder errors, preserving the source time base.",
+    "representative_frames": "Decoded first and last frames of both recordings and three intermediate before frames were visually inspected. Form labels and entered audit text remain readable at 1280 pixels."
+  },
+  "recordings": [
+    {
+      "name": "dialog-before",
+      "file": "dialog-before.mp4",
+      "sha256": "ea6faf260a49d020be19eb0411cfb59e4a064580a3ab81d18ba20f2d2101786d",
+      "bytes": 206144,
+      "duration_seconds": 5.784443,
+      "width": 1280,
+      "height": 720,
+      "codec": "H.264",
+      "pixel_format": "yuv420p",
+      "audio_streams": 0,
+      "original_frames": 360,
+      "encoded_frames": 361,
+      "capture_started_unix_milliseconds": 1789907830117,
+      "capture_ended_unix_milliseconds": 1789907835922,
+      "first_frame_unix_seconds": 1789907830.137558,
+      "initial_gap_omitted_seconds": 0.020557880401611328,
+      "maximum_presentation_timestamp_error_seconds": 1.3542175292258207e-07,
+      "source_metadata": "dialog-before.json",
+      "source_metadata_sha256": "13ead0f4ec7093de122b65b6e3d6c19deeaddd1b6d5806d820da15fe4aa3c588",
+      "archived_frames_directory": "dialog-before-frames",
+      "checksum_manifest": "dialog-before-frame-checksums.json",
+      "decoded_representative_frames": [
+        "encoding/dialog-before-start.png",
+        "encoding/dialog-before-end.png"
+      ]
+    },
+    {
+      "name": "dialog-after",
+      "file": "dialog-after.mp4",
+      "sha256": "0628e5b85b6d5a32fd7c6d0454ab1ea36e4399ddd4898d288abe67bd7537690a",
+      "bytes": 89283,
+      "duration_seconds": 5.586894,
+      "width": 1280,
+      "height": 720,
+      "codec": "H.264",
+      "pixel_format": "yuv420p",
+      "audio_streams": 0,
+      "original_frames": 258,
+      "encoded_frames": 259,
+      "capture_started_unix_milliseconds": 1789907918754,
+      "capture_ended_unix_milliseconds": 1789907924358,
+      "first_frame_unix_seconds": 1789907918.771107,
+      "initial_gap_omitted_seconds": 0.017107009887695312,
+      "maximum_presentation_timestamp_error_seconds": 1.5979003897825805e-07,
+      "source_metadata": "dialog-after.json",
+      "source_metadata_sha256": "2f52b0079b7fd1416ffeec42fec6d982e1badc03ec2416792e8a42b84f4eb5da",
+      "archived_frames_directory": "dialog-after-frames",
+      "checksum_manifest": "dialog-after-frame-checksums.json",
+      "decoded_representative_frames": [
+        "encoding/dialog-after-start.png",
+        "encoding/dialog-after-end.png"
+      ]
+    }
+  ],
+  "superseded_capture": "The earlier ten-frame partial capture and scale-affected screenshot are archived outside the app, labelled superseded. Their duplicates were removed from the final audit folder after preservation checks."
+}

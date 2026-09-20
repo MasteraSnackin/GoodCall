@@ -1,0 +1,195 @@
+{
+  "timestamp": "2026-09-20T12:29:42.950Z",
+  "node": "v26.8.1",
+  "platform": "darwin/arm64",
+  "cpu": "Apple M4 Max",
+  "warmupCalls": 10,
+  "samples": 11,
+  "note": "Isolated Node logic timings; no DOM, React rendering, localStorage device IO or network. Fixtures are under the existing 5 MB limit.",
+  "results": [
+    {
+      "label": "unaltered seed",
+      "questions": 12,
+      "drafts": 0,
+      "bytes": 14248,
+      "groupAllQuestions": {
+        "medianMs": 0.0043,
+        "p90Ms": 0.0046,
+        "iterationsPerSample": 500
+      },
+      "draftOneAnswer": {
+        "medianMs": 0.0074,
+        "p90Ms": 0.0079,
+        "iterationsPerSample": 500
+      },
+      "validateOneAnswer": {
+        "medianMs": 0.0296,
+        "p90Ms": 0.0318,
+        "iterationsPerSample": 197
+      },
+      "retrieveReusableAnswers": {
+        "medianMs": 0.0077,
+        "p90Ms": 0.0081,
+        "iterationsPerSample": 500
+      },
+      "validateWholeWorkspace": {
+        "medianMs": 0.0095,
+        "p90Ms": 0.012,
+        "iterationsPerSample": 500
+      },
+      "serialiseWholeWorkspace": {
+        "medianMs": 0.0349,
+        "p90Ms": 0.0357,
+        "iterationsPerSample": 237
+      },
+      "parseAndValidateBackup": {
+        "medianMs": 0.0563,
+        "p90Ms": 0.0582,
+        "iterationsPerSample": 147
+      },
+      "pendingQuestionLookup": {
+        "medianMs": 0.0003,
+        "p90Ms": 0.0004,
+        "iterationsPerSample": 500
+      }
+    },
+    {
+      "label": "120 synthetic questions, all matching topics",
+      "questions": 132,
+      "drafts": 119,
+      "bytes": 249529,
+      "groupAllQuestions": {
+        "medianMs": 0.0281,
+        "p90Ms": 0.0296,
+        "iterationsPerSample": 328
+      },
+      "draftOneAnswer": {
+        "medianMs": 0.006,
+        "p90Ms": 0.0064,
+        "iterationsPerSample": 500
+      },
+      "validateOneAnswer": {
+        "medianMs": 0.0273,
+        "p90Ms": 0.0293,
+        "iterationsPerSample": 307
+      },
+      "retrieveReusableAnswers": {
+        "medianMs": 3.363,
+        "p90Ms": 3.4023,
+        "iterationsPerSample": 3
+      },
+      "validateWholeWorkspace": {
+        "medianMs": 0.1142,
+        "p90Ms": 0.129,
+        "iterationsPerSample": 76
+      },
+      "serialiseWholeWorkspace": {
+        "medianMs": 0.2601,
+        "p90Ms": 0.2645,
+        "iterationsPerSample": 36
+      },
+      "parseAndValidateBackup": {
+        "medianMs": 0.7464,
+        "p90Ms": 0.7817,
+        "iterationsPerSample": 14
+      },
+      "pendingQuestionLookup": {
+        "medianMs": 0.0087,
+        "p90Ms": 0.0088,
+        "iterationsPerSample": 161
+      }
+    },
+    {
+      "label": "1200 synthetic questions, all matching topics",
+      "questions": 1212,
+      "drafts": 1199,
+      "bytes": 2386368,
+      "groupAllQuestions": {
+        "medianMs": 0.2327,
+        "p90Ms": 0.2388,
+        "iterationsPerSample": 43
+      },
+      "draftOneAnswer": {
+        "medianMs": 0.0065,
+        "p90Ms": 0.0074,
+        "iterationsPerSample": 500
+      },
+      "validateOneAnswer": {
+        "medianMs": 0.0274,
+        "p90Ms": 0.0276,
+        "iterationsPerSample": 365
+      },
+      "retrieveReusableAnswers": {
+        "medianMs": 39.9194,
+        "p90Ms": 40.5216,
+        "iterationsPerSample": 1
+      },
+      "validateWholeWorkspace": {
+        "medianMs": 1.1197,
+        "p90Ms": 1.1396,
+        "iterationsPerSample": 9
+      },
+      "serialiseWholeWorkspace": {
+        "medianMs": 2.4601,
+        "p90Ms": 2.5477,
+        "iterationsPerSample": 4
+      },
+      "parseAndValidateBackup": {
+        "medianMs": 7.081,
+        "p90Ms": 7.4099,
+        "iterationsPerSample": 2
+      },
+      "pendingQuestionLookup": {
+        "medianMs": 5.2183,
+        "p90Ms": 5.2842,
+        "iterationsPerSample": 2
+      }
+    },
+    {
+      "label": "2400 synthetic questions, all matching topics",
+      "questions": 2412,
+      "drafts": 2399,
+      "bytes": 4763568,
+      "groupAllQuestions": {
+        "medianMs": 0.4575,
+        "p90Ms": 0.4986,
+        "iterationsPerSample": 21
+      },
+      "draftOneAnswer": {
+        "medianMs": 0.0057,
+        "p90Ms": 0.006,
+        "iterationsPerSample": 500
+      },
+      "validateOneAnswer": {
+        "medianMs": 0.027,
+        "p90Ms": 0.0274,
+        "iterationsPerSample": 325
+      },
+      "retrieveReusableAnswers": {
+        "medianMs": 72.8861,
+        "p90Ms": 73.1683,
+        "iterationsPerSample": 1
+      },
+      "validateWholeWorkspace": {
+        "medianMs": 2.229,
+        "p90Ms": 2.2909,
+        "iterationsPerSample": 5
+      },
+      "serialiseWholeWorkspace": {
+        "medianMs": 12.2494,
+        "p90Ms": 12.5153,
+        "iterationsPerSample": 1
+      },
+      "parseAndValidateBackup": {
+        "medianMs": 13.7842,
+        "p90Ms": 14.2056,
+        "iterationsPerSample": 1
+      },
+      "pendingQuestionLookup": {
+        "medianMs": 4.3914,
+        "p90Ms": 4.4273,
+        "iterationsPerSample": 3
+      }
+    }
+  ]
+}

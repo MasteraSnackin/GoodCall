@@ -1,87 +1,69 @@
 # GoodCall visual and functional audit
 
-Reviewed 20 September 2026. Scope: the local React/Vite prototype at `http://127.0.0.1:4341/`, with the integrated case-evidence, design and optional AI changes. The original task templates and synced sources were left untouched.
+Current nine-file review, 20 September 2026. Scope: the existing React/Vite local prototype, its current Claude/OpenAI integration and the seven browser steps below. Original attachments and synced sources were not modified. The [initial audit](AUDIT-INITIAL.md) preserves the earlier mobile, contrast, storage and publication repair evidence; its screenshots and counts are historical.
 
 ## Result and scorecard
 
-**Verified & Polished for the tested local prototype scope.** No unresolved critical defect was found in the inspected flows after repair. These are reviewer judgements against the criteria below, not measured usability scores, WCAG certification or production approval.
+The current inspection found and repaired an accidental dialog dismissal and stale persona/provider copy. Independent logic review also reproduced budget-role and arithmetic defects; their regression coverage and final combined result are in [TEST-REPORT.md](../../TEST-REPORT.md). A separate live Claude check produced a sourced draft, and the final factual chat retest succeeded with a citation. The requested quotation was omitted; that content-quality limit remains explicit in the test report.
 
-| Category | Before repair | After repair | Evidence and remaining limitation |
-| --- | --- | --- | --- |
-| Visual | 7/10 | 9/10 | Phone layout, canvas viewport and three low-contrast labels corrected; readable desktop/phone inspectors. The full-board overview still requires zoom or an inspector for detailed reading. |
-| Functional | 7/10 | 9/10 | Publication, chat preservation, reuse matching and dialog focus regressions repaired; 288 tests and production build pass. Physical dragging, clipboard, downloads and audio need device acceptance. |
-| Trust | 7/10 | 9/10 | Publication waits for successful persistence; damaged chat is preserved; sources, missing evidence and local/AI modes remain explicit. A real provider 429 was handled without overwriting an answer; successful generation and real audience comprehension remain unverified. |
-
-## Captured audit steps
-
-1. **Open the desktop canvas at 1440 × 1000.** The app renders; navigation, source types, review actions and local/AI state are visible. Clicked Fit and inspected the board overview. The overview deliberately compresses long card text; the inspector is the reading surface.
-
-   ![Desktop canvas overview](screenshots/02-desktop-canvas.jpg)
-
-2. **Open Review answer.** The focused answer and inspector show the editable judgement, supporting sources and review state. Existing wording remains present. The final capture also shows the optional AI connection action.
-
-   ![Focused answer and inspector](screenshots/03-answer-inspector.jpg)
-
-3. **Inspect the answer at 390 × 844.** The inspector fits the viewport with readable fields and a close control. Document width and scroll width both measured 390 px: no page-level horizontal overflow in this state.
-
-   ![Phone-width answer inspector](screenshots/04-mobile-inspector.jpg)
-
-4. **Close the inspector and inspect the phone canvas.** The first capture exposed a 345 px introductory block caused by a desktop flex basis becoming height. After correction it measures 86 px. The board container grows from approximately 136.6 to 395.6 px; the graph viewport is approximately 293.6 px high and ends at the board boundary. The first graph-height-only correction collapsed the graph; the corrected position and height rules were then inspected successfully.
-
-   | Before | After |
-   | --- | --- |
-   | ![Oversized introduction before repair](screenshots/05-mobile-canvas.jpg) | ![Recovered canvas space after repair](screenshots/06-mobile-canvas-after.jpg) |
-
-5. **Open Case evidence on the phone layout.** The library displays 18 records, category controls, source references and caveats.
-
-   ![Case evidence library](screenshots/07-mobile-case-evidence.jpg)
-
-6. **Search for absent evidence and recover.** Entered “no matching audit evidence”; the library shows 0 of 18 with a clear recovery action. Show all evidence restores 18 of 18. Escape closes the dialog.
-
-   ![Recoverable empty search result](screenshots/08-evidence-empty-state.jpg)
-
-7. **Check keyboard dialog exit.** Opened Case evidence with Enter and closed it with Escape. Before repair, focus ended on `BODY`; afterwards it returned to the `BUTTON` labelled “Case evidence”, with no open dialog. A DOM regression also covers the shared modal opener restoration.
-
-These are saved, inspected screenshots and actual UI interactions. No interaction video was recorded. Screenshots do not prove speech, touch or provider behaviour.
-
-## Visual wins
-
-- Cream paper, charcoal and muted rust provide a coherent case-file identity; distinct source colours aid scanning without replacing labels.
-- Question, evidence, answer and review state stay close together; the inspector provides a readable alternative to the overview.
-- The sidebar groups creator work, evidence and follower outputs clearly. The evidence library has useful search, categories, counts and a recoverable empty state.
-- The phone repair restores working space without changing existing card positions or the chosen visual direction.
-
-## Critical findings and completed repairs
-
-| Finding | Repair | Proof |
+| Category | Reviewer judgement | Evidence and limit |
 | --- | --- | --- |
-| Phone introduction consumes most of the board space | Reset the review introduction's flex basis in the narrow column layout | Before/after captures and DOM dimensions above |
-| React Flow's inline root styles defeat the intended graph inset | Explicitly pin the root below controls and let the inset determine height | Graph ends at board boundary after repair |
-| Issue, placeholder and result-count colours are too faint at normal text sizes | Darker colours within the existing palette | Source colour calculation and rendered inspection; see DESIGN-LEAD |
-| Closing a modal loses its keyboard origin | Capture the mounted dialog/opener; close and restore connected opener on cleanup | Actual Enter/Escape check plus DOM regression |
-| Approved advice can be marked published before an oversized link or failed save is detected | Preflight the exact snapshot and save before returning published state | Four publication rule tests and three interface regressions |
-| Invalid chat can be overwritten by automatic saving | Preserve and verify exact original storage text before replacing it | 21 chat-storage tests |
-| Delimiter-based product-set keys collide | Encode canonical product arrays with JSON; index question lookup locally | Seven new reuse regressions and paired benchmark |
+| Visual | 9/10 for the inspected states | Consistent Warm studio palette, readable answer inspector, labelled evidence, clear empty-state recovery and a phone-width library with no page overflow. The full board requires zoom/inspection to read long cards. |
+| Functional | 9/10 for the inspected local flows | The padding defect is fixed in real interaction; outside clicks and focus return still work. Budget/context corrections have regression coverage. The final live factual chat retest succeeded, but omitted a requested quotation; human wording review remains necessary. |
+| Trust | 9/10 for the inspected states | Evidence, unknowns, local saving and review remain explicit. Provider copy now matches the implementation. Missing evidence continues to block approval; there is no automatic publication. |
 
-Root causes and test details: [DEBUG.md](DEBUG.md). Preservation and recovery contract: [ERROR-HANDLING.md](ERROR-HANDLING.md).
+These scores are reviewer judgements, not measured usability, a WCAG certification or production approval. They do not establish the template's three-second comprehension target, which needs participant observation.
 
-## Interaction and trust states
+## Fresh captured journey
 
-| State or criterion | Finding |
+1. **Start an unsaved question and click inside its padding — defect reproduced.** At 1280 × 720, entered fictional test text and clicked at x=399, y=357 inside a dialog bounded by x=390–890. The dialog closed; reopening showed an empty form. No question was submitted or saved. Health: failed before repair.
+
+   ![Unsaved form before the padding click](current-audit/01-dialog-before.jpg)
+
+   [Actual before recording, 5.78 seconds](current-audit/dialog-before.mp4). This is a live browser capture, not a screenshot montage.
+
+2. **Repeat after the bounds repair — passed.** Entered the same test wording and clicked the same interior coordinate. The dialog stayed open and the text remained. Clicking x=365, y=357 outside the dialog then closed it and returned focus to Add question; zero dialogs remained open. Health: repaired and checked.
+
+   ![Text preserved after an interior-padding click](current-audit/04-dialog-preserved-after.jpg)
+
+   [Actual after recording, 5.59 seconds](current-audit/dialog-after.mp4). Both clips are silent and contain no added cursor or reconstructed screen; [recording provenance](current-audit/RECORDINGS.md) describes the original capture timing and checks.
+
+3. **Open an existing answer for review — passed.** Review answer opens the readable inspector and preserves the existing published wording. Sources, review state, version history and an explicit AI connection action remain available. No answer was edited, approved or published during this inspection. Health: working.
+
+   ![Current answer review beside the canvas](current-audit/05-answer-review.jpg)
+
+4. **Browse case evidence — passed.** Opened the library and inspected 18 source cards, categories, page references and limitation labels. One instrumented click reached the second animation frame with the dialog open in **87.2 ms** on this machine. This is a single local sample and an animation-frame proxy, not a universal latency or physical presentation guarantee. The one-shot listener removed itself; [raw result](current-audit/feedback-timing.json). Health: working.
+
+   ![Current case-evidence library](current-audit/06-case-evidence.jpg)
+
+5. **Search for absent evidence and recover — passed.** “no matching audit evidence” produced 0 of 18, a plain explanation and Show all evidence. That action restored all 18 records. Health: working empty and recovery states.
+
+   ![Evidence search with a clear recovery action](current-audit/07-empty-evidence.jpg)
+
+6. **Check the phone breakpoint and keyboard exit — passed for this state.** At 390 × 844, document width and scroll width were both 390 px; the evidence dialog was 352 px wide. Category controls wrapped and source cards remained readable. Escape closed the dialog and returned focus to Case evidence. The temporary viewport override was reset. Health: working in responsive simulation; physical touch remains untested.
+
+   <img src="current-audit/08-mobile-evidence.jpg" alt="Evidence library at 390 by 844" width="390">
+
+7. **Read the persona/provider explanation — passed.** The persona now distinguishes local voice commands, optional Claude/OpenAI chat and drafting, and synthetic browser speech. The previous unconditional claim that live AI was unavailable was removed. Health: corrected and checked.
+
+   ![Persona explanation with accurate AI and voice boundaries](current-audit/09-persona-provider-note.jpg)
+
+The temporary audit tab was closed. The inspection left no new question, publication, credential, provider request or permanent viewport override. Existing case-file records were the only saved content shown in these captures.
+
+## Findings, repairs and remaining checks
+
+| Finding | Repair and evidence |
 | --- | --- |
-| Loading | Local operations are synchronous; AI operations expose pending, cancel and retry states. These paths have simulated HTTP/UI tests. A skeleton is not useful for every local action. |
-| Empty | Evidence-search empty state and recovery were exercised in the real browser. |
-| Error | Publication size/storage errors retain review state; chat failures retain the original; AI failures retain existing wording and require explicit retry. Fault injection was automated, not performed against the user's real storage. |
-| Success | Publication success follows successful saving. Local action feedback exists; no universal sub-100 ms latency claim was measured. |
-| Optimistic updates | Ordinary local editing updates immediately. Publishing deliberately waits for persistence because reporting success early caused a trust defect. |
-| Dialog intent | Publication preview, restore and AI setup benefit from explicit dialogs; evidence browsing also uses a focused library dialog. Focus return now works in the tested shared dialog. |
-| Source integrity | Case-file statements retain page references and caveats. Linking a source or resolving a report does not automatically validate an answer. |
-| AI boundary | An optional local OpenAI proxy is implemented. A user-authorised live OpenAI request was rejected with HTTP 429 after connection. The UI displayed a rate-limit/quota error without saving or overwriting an answer. Successful generation, Tano and social-account connections remain unverified. |
+| Shared dialogs treated interior padding as a backdrop | Check pointer coordinates against the dialog rectangle before closing. Two DOM regressions cover preservation and genuine backdrop dismissal; the before/after clips verify the real interaction. |
+| Persona claimed no live conversational AI existed | Explain local commands and optional provider use separately; preserve the synthetic-voice distinction. Fresh rendered capture above. |
+| Every evidence-linked product was counted as new spending | Derive explicit owned, purchase and alternative roles; preserve all evidence links and ask when roles or quantities are unclear. See the budget regression cases in [DEBUG.md](DEBUG.md). |
+| Explicit option selection could inherit another alternative's remainder | Validate selected spending/remainders against the selected purchase while allowing other linked prices as factual evidence. Independent review and regression details are recorded in the debug/test reports. |
+| Live chat exposed stale context and a negated comparison false hold | Positive/negated comparison intent and standalone conversation context were corrected. The live factual retest passed its price/label/finish/citation checks; consult the test report for the omitted-quote limitation. Evidence gates are not disabled to make a reply pass. |
 
-## Scope adaptations and follow-up
+Loading, cancellation, error and success states are covered in the provider/storage workflow tests. This audit exercised local success, empty/recovery and accidental-dismissal states directly. Fault-injection tests use isolated fixtures; the user's storage was not corrupted to provoke failures. Publication success remains dependent on successful persistence.
 
-The templates name Next.js 16, Antigravity, Tailwind, Framer Motion, Modal, glassmorphism and kinetic typography. GoodCall uses React/Vite, Codex, CSS and a local Node proxy. The review applied their underlying documentation, design, debugging and reliability tasks to this implementation. No framework migration, decorative animation or cloud deployment was introduced solely to match an example. The supplied visual trends are preferences, not external standards.
+## Template adaptations and boundaries
 
-Remaining acceptance: physical microphone and speaker operation, real touch-device use, a complete keyboard/screen-reader audit, pointer dragging, clipboard/download behaviour, representative audience sessions and successful live AI generation once the account limit is resolved. The non-blocking bundle advisory remains: final JavaScript is 655.93 kB minified / 206.41 kB gzip. See [PERFORMANCE.md](PERFORMANCE.md) for a measured optimisation and bounded next steps.
+The briefs name Next.js, Tailwind, Framer Motion, Modal and decorative styles. The review applied their documentation, design, debugging and reliability requirements to GoodCall's existing React/Vite/CSS app and local Node endpoints. An optional clarification was offered; no instruction to migrate the stack or change the established visual style was received. No new cloud infrastructure was deployed.
 
-Applicable accessibility guidance consulted: [WCAG contrast minimum](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html), [target size minimum](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html) and [reflow](https://www.w3.org/WAI/WCAG22/Understanding/reflow.html). This scoped review does not establish conformance to all criteria.
+A three-second information-hierarchy claim needs representative participants. Sub-100 ms feedback was sampled for one action only. Physical microphone/speaker operation, touch/dragging, full keyboard/screen-reader coverage, clipboard/download acceptance and audience usability remain separate checks. Tano/social integration is absent. The bundle-size advisory remains; [PERFORMANCE.md](PERFORMANCE.md) distinguishes measured retrieval improvements from future profiling work.

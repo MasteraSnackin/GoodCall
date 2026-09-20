@@ -4,7 +4,7 @@
 
 GoodCall is a single-page React application for the fictional Operation Shade / Tano Creator Heist exercise. It puts follower questions, product records, source notes, drafts and evidence findings on a movable canvas so a creator can inspect and review advice before sharing it. The application demonstrates Maya’s documented judgement and communication style through local evidence templates and bounded conversational rules.
 
-The implemented runtime is a browser client with local persistence and an optional AI proxy mounted in the local Vite development/preview server. Without a configured key, drafting and chat use local rules. Configured AI requests use OpenAI through the Node process; there is no shared workspace database, authentication service, Tano integration or social-account connection. Browser speech and externally hosted fonts are additional network-dependent surfaces.
+The implemented runtime is a browser client with local persistence and an optional AI proxy mounted in the local Vite development/preview server. Without a configured key, drafting and chat use local rules. Configured AI requests use Claude or OpenAI through the Node process; there is no shared workspace database, authentication service, Tano integration or social-account connection. Browser speech and externally hosted fonts are additional network-dependent surfaces.
 
 ## Key Requirements
 
@@ -40,12 +40,13 @@ flowchart TB
   App --> Speech[Browser speech APIs]
   Speech -. optional online processing .-> Vendor[Browser vendor service]
   App -. optional AI request .-> Proxy[Local Node AI proxy]
+  Proxy --> Claude[Anthropic Messages API]
   Proxy --> OpenAI[OpenAI Responses API]
   App --> Fonts[Google Fonts]
   Catalogue --> PDF[Included source PDF]
 ```
 
-The diagram separates local workspace storage from optional OpenAI and browser-managed services. The proxy passes selected request context to OpenAI without becoming a workspace database. Public advice remains a copied payload rather than a remotely stored publication; neither a share link nor local approval proves creator identity.
+The diagram separates local workspace storage from optional AI providers and browser-managed services. The proxy passes selected request context to the chosen provider without becoming a workspace database. Public advice remains a copied payload rather than a remotely stored publication; neither a share link nor local approval proves creator identity.
 
 ## Component Details
 
@@ -71,12 +72,14 @@ The case file is fictional source content. Its written instructions and reported
 
 ### Drafting, decisions and evidence checks
 
-**Files:** `src/lib/engine.ts`, `decisionProfile.ts`, `decisionReuse.ts`, `decisionTypes.ts`, `draftHistory.ts`; decision/history/reuse components.
+**Files:** `src/lib/engine.ts`, `purchaseContext.ts`, `decisionProfile.ts`, `decisionReuse.ts`, `decisionTypes.ts`, `draftHistory.ts`; decision/history/reuse components.
 
 - **Responsibilities:** classify questions by local keywords, detect catalogue products, create evidence-template drafts, validate bounded claims and context, rerun case-file checks, export reports and construct public advice.
 - **Technology:** deterministic TypeScript functions using current workspace records and static source notes.
 - **Owned data:** draft wording, decision fields, source references, captured product revisions, status timestamps, reuse provenance and earlier wording versions.
 - **Communication:** `App.tsx` invokes the functions for explicit actions. Validation runs before approval and publication. Reuse matches product sets and topic, creates an unapproved draft and reruns the new follower’s checks.
+
+Purchase context is derived from bounded explicit wording, without changing the saved question schema. Product IDs remain evidence links; only intended new purchases count as spending. Owned items contribute no new spending, alternatives are evaluated separately, and uncertain roles or quantities require clarification. Generation and validation share the resolver; approval still checks current product records and sources. This is not general language understanding.
 
 History retains up to 20 earlier versions, grouping nearby edits. Restoration carries forward current evidence and clears approval/publication. Resolving an issue changes report state; it does not remove an independent answer hold. These are bounded dataset rules, not medical assessment or comprehensive natural-language verification.
 
@@ -91,14 +94,14 @@ History retains up to 20 earlier versions, grouping nearby edits. Restoration ca
 
 The source contains a written transcript and QR placeholder rather than an available voice recording. Synthetic speech does not reproduce an authenticated Maya voice. Browser support, permission, network processing and audible output require device verification. Optional AI changes the draft/chat response path; the voice command parser and approval boundaries remain local.
 
-Chat storage validates retained messages and preserves the exact original bytes before replacing unreadable, partly invalid or oversized data. If preservation fails, it leaves the primary unchanged. Retry/clear operations use the same protection, and clear does not delete recovery copies. Storage notices distinguish a preserved original from successful reconstruction of every message; see [docs/review/ERROR-HANDLING.md](docs/review/ERROR-HANDLING.md).
+Chat storage validates retained messages and preserves the exact original localStorage string before replacing unreadable, partly invalid or oversized data. If preservation fails, it leaves the primary unchanged. Retry/clear operations use the same protection, and clear does not delete recovery copies. Storage notices distinguish a preserved original from successful reconstruction of every message; see [docs/review/ERROR-HANDLING.md](docs/review/ERROR-HANDLING.md).
 
 ### Optional AI proxy and request context
 
 **Files:** `server/aiServer.ts`, `vite.config.ts`, `src/lib/aiTypes.ts`, `aiClient.ts`, `aiContext.ts`; `AiSettings.tsx`, `AiDraftPreview.tsx`.
 
-- **Responsibilities:** configure a provider connection, construct bounded request context, validate structured requests/results, call OpenAI and return a suggestion for human review.
-- **Technology:** Node HTTP middleware in Vite development and preview, native `fetch`, OpenAI Responses API with strict JSON-schema output and `store: false` in the request. No provider SDK, model tools, web search or social-account actions are used.
+- **Responsibilities:** configure a provider connection, construct bounded request context, validate structured requests/results, call the selected provider and return a suggestion for human review.
+- **Technology:** Node HTTP middleware in Vite development and preview, native `fetch`, Anthropic Messages API with `output_config.format` JSON-schema output, or OpenAI Responses API with strict JSON-schema output and `store: false` in its request. No provider SDK, model tools, web search or social-account actions are used.
 - **Owned data:** a server-process credential and model setting, in-flight request controllers and generation state. Drafts record provider/model/time and unresolved evidence metadata; chat messages identify their local or AI origin. The proxy does not persist workspace state or credentials to a database.
 - **Communication:** same-origin `/api/ai/*` requests from the client. The proxy validates request and response shapes and allowed references. The client also rejects stale question/evidence/answer contexts, applies the local evidence gates and keeps suggestions unapproved. AI regeneration opens a comparison before replacing wording.
 
@@ -106,6 +109,7 @@ Chat storage validates retained messages and preserves the exact original bytes 
 | --- | --- |
 | `GET /api/ai/status` | Returns configured state, provider, model and credential source, excluding the credential |
 | `POST /api/ai/connect` | Accepts a key/model, checks model access and retains the credential in server-session memory |
+| `POST /api/ai/model` | Checks access with the existing credential and changes the model atomically; preserves the previous model on failure |
 | `POST /api/ai/disconnect` | Clears the active credential and cancels pending operations |
 | `POST /api/ai/answer` | Accepts validated draft/chat context and returns structured answer metadata or a bounded error |
 
@@ -113,7 +117,11 @@ The proxy restricts Host/Origin to the local app and requires JSON plus `X-GoodC
 
 Context contains the current question, selected-card context, catalogue/note evidence, relevant issue and case references, review checks and up to six recent chat messages. It does not serialise the entire workspace. Common handle patterns are stripped, but this is not comprehensive personal-data redaction. The request can still contain personal text deliberately entered into a question or chat. A failed request is shown as an error; it does not silently fall back to a local response.
 
-`OPENAI_API_KEY` and `OPENAI_MODEL` can configure the server through its environment or `.env.local`. A key entered in the password form is sent to the local process and OpenAI, then retained only for the process session. Disconnect clears the active credential; an environment key can return on restart. The source default model is `gpt-5.4-mini`, subject to account access and user selection. A user-authorised live request on 20 September 2026 was rejected with HTTP 429 after the session connected. The app surfaced the rate-limit/quota error and preserved existing answers; no second request was made. Successful generation and answer quality remain unverified. `store: false` is an API request setting, not a claim about all provider retention rules.
+`AI_PROVIDER=anthropic` with `ANTHROPIC_API_KEY`/`ANTHROPIC_MODEL`, or `AI_PROVIDER=openai` with `OPENAI_API_KEY`/`OPENAI_MODEL`, configures the server through its environment or `.env.local`. Provider selection never substitutes the other provider’s credential. A key entered in the password form is sent to the local process and the selected provider, then retained only for the process session. Disconnect clears the active credential; an environment key can return on restart. A fresh connection defaults to Claude Haiku 4.5 (`claude-haiku-4-5-20251001`); OpenAI defaults to `gpt-4.1-mini`, subject to account access and user selection. Connected sessions can change models without re-entering their key; the setting lasts for the server session. Safe, fixed error messages distinguish recognised provider rate-limit, credit, quota, spend-limit and usage-limit codes without exposing the upstream body. Earlier user-authorised OpenAI live generation attempts on 20 September 2026 were rejected with HTTP 429 after the session connected. The app surfaced the rate-limit/quota error and preserved existing answers. A later live Claude request produced a sourced, unapproved clarification draft. Two live chat checks revealed context/wording holds; their correction and acceptance are tracked in [TEST-REPORT.md](TEST-REPORT.md). Successful generation does not establish general answer quality. `store: false` is an API request setting, not a claim about all provider retention rules.
+
+Claude requests use the fixed Anthropic host, `x-api-key` and `anthropic-version: 2023-06-01`. The provider schema removes unsupported string/array length keywords while local validation still enforces all limits and source checks. Refusal, truncation and tool-use responses are rejected. Provider changes require a matching key, keep the active connection on failure, and never automatically fall back. Stored AI metadata accepts both known providers without changing approval requirements or historical OpenAI drafts.
+
+API contracts checked against [Anthropic structured outputs](https://platform.claude.com/docs/en/build-with-claude/structured-outputs) and [model access](https://platform.claude.com/docs/en/api/http/models/retrieve). Scoped live Claude drafting and factual chat have since succeeded. Response completeness and broader answer quality still need review; see [TEST-REPORT.md](TEST-REPORT.md).
 
 ### Workspace persistence and recovery
 
@@ -178,7 +186,7 @@ Follower feedback is stored separately from the workspace. The creator explicitl
 
 ### Optional AI generation
 
-When AI is configured and enabled, a draft/chat action builds a bounded context and calls the local proxy. The proxy checks the local request, calls OpenAI and verifies the structured answer against the supplied IDs. The client checks that the question and evidence have not changed, then runs its evidence gates. A new draft enters the unapproved workflow; an existing answer opens a replacement comparison. Chat shows labelled suggestions or clarification with cancellation and retry controls. Approval and publication are never model actions.
+When AI is configured and enabled, a draft/chat action builds a bounded context and calls the local proxy. The proxy checks the local request, calls the selected provider and verifies the structured answer against the supplied IDs. The client checks that the question and evidence have not changed, then runs its evidence gates. A new draft enters the unapproved workflow; an existing answer opens a replacement comparison. Chat shows labelled suggestions or clarification with cancellation and retry controls. Approval and publication are never model actions.
 
 ## Data Model (high-level)
 
@@ -253,9 +261,9 @@ These choices support an exercise prototype. They should be reassessed against a
 Possible architecture work, not implemented commitments:
 
 - Split the large workspace coordinator into explicit domain actions and clearer view boundaries.
-- Represent owned products, alternatives and intended purchases separately to improve spend reasoning.
+- Add editable, persisted product-role fields to extend the implemented derived ownership/alternative/purchase resolver.
 - Measure canvas and persistence costs; consider incremental storage, IndexedDB and bundle splitting where justified.
 - Add authenticated publication records with revocation/versioning and cross-device feedback if remote use is required.
-- Complete live AI acceptance with an authorised account and assess provider limits; obtain scoped access and reviewed contracts before connecting Tano or social services.
+- Extend the scoped live AI checks to response completeness and a broader representative question set; obtain access and reviewed contracts before connecting Tano or social services.
 - Extend real-browser acceptance and physical microphone/speaker checks. Desktop and phone-width inspection is now available; consult the current review report for the interactions actually verified.
 - Add production monitoring and documented data lifecycle controls only alongside an actual deployment.

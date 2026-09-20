@@ -59,6 +59,27 @@ function readContext(request: AiRequest): Record<string, unknown> {
   try { const value = JSON.parse(request.selectedContext); return value && typeof value === 'object' ? value : {}; } catch { return {}; }
 }
 
+function localConversation(history: AiRequest['history'], workspace: Workspace): ChatMessage[] {
+  const messages: ChatMessage[] = [];
+  // Reconstruct context only from bounded user turns, never from model claims.
+  history.filter(message => message.role === 'user').forEach((message, index) => {
+    const local = respondToChat(message.text, workspace, messages);
+    messages.push({ ...message, id: `ai-context-user-${index}`, createdAt: '' }, { ...local, role: 'assistant', id: `ai-context-answer-${index}`, createdAt: '' });
+  });
+  return messages;
+}
+
+function excludesSelection(question: string): boolean {
+  return /\b(?:unrelated to|independent of|ignore|disregard|without using|do not use|don't use)\s+(?:(?:the|a|currently)\s+)*(?:selected|this|that)\b/i.test(question);
+}
+
+function referencesSelection(question: string, workspace: Workspace): boolean {
+  // Mentioning an explicitly excluded card does not make it relevant context.
+  if (excludesSelection(question)) return false;
+  if (/\b(?:selected|this|that)\s+(?:canvas\s+)?(?:card|question|product|draft|answer|reply|issue|note|evidence|report)\b|\b(?:explain|review|summarise|summarize|use)\s+(?:the\s+)?selection\b/i.test(question)) return true;
+  return detectQuestionProducts(question, workspace.products).length === 0 && /\b(this|that|it|its)\b/i.test(question);
+}
+
 function contextualQuestion(request: AiRequest, workspace: Workspace): string {
   const context = readContext(request);
   const hasProduct = detectQuestionProducts(request.question, workspace.products).length > 0;
@@ -66,29 +87,31 @@ function contextualQuestion(request: AiRequest, workspace: Workspace): string {
   if (pointsToSelection && !hasProduct && typeof context.questionText === 'string') return `${context.questionText}\nFollow-up: ${request.question}`;
   if (pointsToSelection && !hasProduct && context.kind === 'product' && typeof context.title === 'string') return `${request.question}\nSelected product: ${context.title}`;
   // Reuse the existing bounded follow-up handling so a changed product does not silently lose a budget.
-  const history: ChatMessage[] = [];
-  // Metadata is intentionally absent from the network request. Reconstruct only the
-  // local validator's context from the bounded user turns, never from model claims.
-  request.history.filter(message => message.role === 'user').forEach((message, index) => {
-    const local = respondToChat(message.text, workspace, history);
-    history.push({ ...message, id: `ai-context-user-${index}`, createdAt: '' }, { ...local, role: 'assistant', id: `ai-context-answer-${index}`, createdAt: '' });
-  });
-  const local = respondToChat(request.question, workspace, history);
+  const local = respondToChat(request.question, workspace, localConversation(request.history, workspace));
   return local.questionText ?? request.question;
 }
 
 /** Prepare the smallest relevant conversation context; never serialise workspace state. */
 export function buildAiRequest(task: 'draft' | 'chat', question: string, workspace: Workspace, history: ChatMessage[] = [], selected?: CanvasCard): AiRequest {
   if (!question.trim() || question.length > 2000) throw new Error('Keep the current question between 1 and 2,000 characters.');
+  const currentQuestionText = withoutHandles(question.trim());
+  const boundedHistory = task === 'chat' ? history.filter(message => message.role === 'user' || message.role === 'assistant').slice(-6).map(message => ({ role: message.role, text: withoutHandles(message.text).slice(0, 2000) })) : [];
+  const localQuestion = task === 'chat' ? respondToChat(currentQuestionText, workspace, localConversation(boundedHistory, workspace)).questionText : undefined;
+  const namesProduct = detectQuestionProducts(currentQuestionText, workspace.products).length > 0;
+  const startsFresh = /^(?:(?:this is\s+)?a\s+)?(?:separate|new|unrelated)\s+(?:question|topic)\b/i.test(currentQuestionText) || (namesProduct && (!localQuestion || localQuestion === currentQuestionText));
+  // A standalone question starts fresh for the provider as well as the validator.
+  // Genuine follow-ups retain the bounded turns used to resolve explicit constraints.
+  const scopedHistory = startsFresh ? [] : boundedHistory;
+  const scopedSelection = task === 'draft' || (!namesProduct && !excludesSelection(currentQuestionText)) || referencesSelection(currentQuestionText, workspace) ? selected : undefined;
   const request: AiRequest = {
-    task, question: withoutHandles(question.trim()),
-    history: task === 'chat' ? history.filter(message => message.role === 'user' || message.role === 'assistant').slice(-6).map(message => ({ role: message.role, text: withoutHandles(message.text).slice(0, 2000) })) : [],
+    task, question: currentQuestionText,
+    history: scopedHistory,
     evidence: workspace.products.map(product => evidence(`product:${product.id}`, 'product', product.source, productText(product))),
-    productIds: workspace.products.map(product => product.id), checks: [], selectedContext: JSON.stringify(selectedContext(workspace, selected)),
+    productIds: workspace.products.map(product => product.id), checks: [], selectedContext: JSON.stringify(selectedContext(workspace, scopedSelection)),
   };
   request.evidence.push(...mayaNotes.map(note => evidence(`note:${note.id}`, 'note', note.source)));
   const creator = CASE_EVIDENCE.find(item => item.id === 'case-creator-constraints')!;
-  const selectedCase = selected?.kind === 'evidence' ? findCaseEvidence(selected.entityId) : undefined;
+  const selectedCase = scopedSelection?.kind === 'evidence' ? findCaseEvidence(scopedSelection.entityId) : undefined;
   for (const item of [creator, ...(selectedCase && selectedCase.id !== creator.id ? [selectedCase] : [])]) {
     item.sourceRefs.filter(publicSource).forEach((source, index) => request.evidence.push(evidence(`case:${item.id}${index ? `:source:${index}` : ''}`, 'case-evidence', source)));
     if (item.caveat) request.checks.push(`Evidence limit for ${item.title}: ${item.caveat}`);
@@ -101,15 +124,15 @@ export function buildAiRequest(task: 'draft' | 'chat', question: string, workspa
   const mandatoryHolds = validateDraft(localDraft, temporaryWorkspace);
   const linkedIds = new Set(localDraft.productIds);
   const relatedIssues = runEvidenceChecks(workspace).filter(issue =>
-    (selected?.kind === 'issue' && selected.entityId === issue.id) || selectedCase?.relatedIssueIds?.includes(issue.id) ||
+    (scopedSelection?.kind === 'issue' && scopedSelection.entityId === issue.id) || selectedCase?.relatedIssueIds?.includes(issue.id) ||
     issue.questionIds.includes(currentQuestion.id) || issue.productIds.some(id => linkedIds.has(id)) ||
     (issue.id === 'issue-barrier-oil' && /barrier oil/i.test(relevantText)) || (issue.id === 'issue-barrier-cream' && /barrier cream/i.test(relevantText)));
   for (const issue of relatedIssues) {
     issue.sourceRefs.filter(publicSource).forEach((source, index) => request.evidence.push(evidence(`issue:${issue.id}${index ? `:source:${index}` : ''}`, 'issue', source)));
     request.checks.push(`${issue.title}: ${issue.description} Next step: ${issue.nextAction} Report status: ${issue.status}; this status does not approve a recommendation.`);
   }
-  if (selected?.kind === 'draft') {
-    const draft = workspace.drafts.find(item => item.id === selected.entityId);
+  if (scopedSelection?.kind === 'draft') {
+    const draft = workspace.drafts.find(item => item.id === scopedSelection.entityId);
     if (draft && draft.status !== 'draft' && validateDraft(draft, workspace).length === 0) {
       const source = draft.sourceRefs.find(publicSource);
       if (source) request.evidence.push(evidence(`reviewed:${draft.id}`, 'reviewed-answer', source, `${draft.title}\n${draft.text}\n${JSON.stringify(draft.decision ?? {})}\nReviewed wording for its original context, not blanket approval for another follower.`));
@@ -139,7 +162,7 @@ function validateResponse(response: AiResponse, request: AiRequest): void {
   if (answer.productIds.some(id => !request.productIds.includes(id))) throw new Error('The AI response references an unknown product.');
   if (answer.productIds.some(id => !answer.sourceIds.includes(`product:${id}`))) throw new Error('Every referenced product needs its supplied catalogue source.');
   if (!answer.sourceIds.length && answer.kind === 'answer') throw new Error('The AI answer has no supporting evidence.');
-  if (response.provider !== 'openai' || !response.model || !Number.isFinite(Date.parse(response.generatedAt))) throw new Error('The AI response is missing its generation details.');
+  if (!['openai', 'anthropic'].includes(response.provider) || !response.model || !Number.isFinite(Date.parse(response.generatedAt))) throw new Error('The AI response is missing its generation details.');
 }
 
 export function aiSourceRefs(response: AiResponse, request: AiRequest): SourceRef[] {
