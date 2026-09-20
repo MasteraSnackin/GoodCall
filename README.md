@@ -1,53 +1,53 @@
 # GoodCall
 
-Turn a creator’s judgement into reviewed, reusable advice.
+Help creators turn their judgement into advice they can review and reuse.
 
 [![Watch the 60-second narrated GoodCall screenshot walkthrough](docs/demo/demo-poster.png)](docs/demo/GoodCall-60-Second-Demo.mp4)
 
-**[Watch the narrated demo — 60 seconds](docs/demo/GoodCall-60-Second-Demo.mp4)** · [Download the interactive walkthrough](https://github.com/MasteraSnackin/GoodCall/raw/refs/heads/main/docs/demo/GoodCall-interactive-walkthrough.zip)
+[Watch the 60-second narrated demo](docs/demo/GoodCall-60-Second-Demo.mp4) · [Download the interactive walkthrough](https://github.com/MasteraSnackin/GoodCall/raw/refs/heads/main/docs/demo/GoodCall-interactive-walkthrough.zip)
 
-*Explore Maya’s workflow through saved app screens, guided highlights and British English narration.*
+The walkthrough uses saved app screens, guided highlights and British English narration to explain Maya's workflow.
 
 ## Description
 
-GoodCall is a working local prototype for the fictional Operation Shade / Tano Creator Heist exercise. It helps Maya organise follower questions, connect supporting evidence, draft answers in her style and check missing or conflicting information before sharing an advice card. A movable canvas keeps the question, sources, decision and review state together.
+GoodCall is a working local prototype for the fictional Operation Shade / Tano Creator Heist exercise. Maya can organise follower questions on a movable canvas, link them to evidence and draft answers in her own style. The question, sources, decision and review status stay together, so she can check for missing or conflicting information before sharing an advice card.
 
-The app works with browser storage and bounded local rules without credentials. Optional Claude or OpenAI assistance routes drafts and chat through a local Node proxy when configured and enabled; every answer still needs review. Tano and social inboxes are not connected. Browser speech is optional and may use the browser vendor’s online services.
+The app uses browser storage and local rules that cover the exercise data. You can use it without credentials. If you configure and enable Claude or OpenAI, drafts and chat go through a local Node proxy. Every answer still needs review. Tano and social inboxes are not connected. Optional browser speech may use the browser vendor's online services.
 
-## Table of Contents
+## Table of contents
 
 - [Description](#description)
 - [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Architecture Overview](#architecture-overview)
+- [Tech stack](#tech-stack)
+- [Architecture overview](#architecture-overview)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Configuration](#configuration)
-- [Screenshots / Demo](#screenshots--demo)
-- [API / CLI Reference](#api--cli-reference)
+- [Screenshots / demo](#screenshots--demo)
+- [API / CLI reference](#api--cli-reference)
 - [Tests](#tests)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [License](#license)
-- [Contact / Support](#contact--support)
+- [Contact / support](#contact--support)
 
 ## Features
 
-- **Evidence canvas:** movable question, product, note, answer, issue and case-evidence cards; saved positions and connections; card search, focused connections, zoom, minimap and expanded view.
-- **Case-file library:** searchable source cards for creator context, audience profiles, content, behaviour, missing materials and the exercise brief. Page references, tables and caveats distinguish reported figures from verified findings. Adding context cards preserves existing work; linking one does not validate an answer.
-- **Question management:** the 12 supplied questions, 10 products and four note/transcript summaries, plus reviewed typed or dictated questions. Keyword grouping preserves each original question; clarification retains its original source.
-- **Reviewed drafting:** editable evidence-template answers in Maya’s documented style. Bounded checks flag missing records, stale product revisions, budget/context conflicts, unsupported claims and altered known prices or quotations. Explicit owned products, alternative choices and new purchases are treated separately; unclear roles or quantities need clarification. Approval and publication are separate actions.
-- **Reusable decisions:** record Maya’s call, who an answer suits, when to skip and what remains unknown. Search reviewed advice and reuse a matching product/topic answer as a new, unapproved draft. See [DECISIONS.md](DECISIONS.md).
-- **History and recovery:** compare refreshed wording, keep edits, and restore up to 20 earlier draft versions while retaining current evidence and requiring fresh approval. Export, validate, preview and restore private workspace backups; preserve recovery copies.
-- **Evidence reports:** ten focused case-file checks with source excerpts, affected records, next actions and resolution references. Export a Markdown report. Resolving a report does not bypass answer validation.
-- **Follower cards:** preview the exact public content before publishing, then save or share an encoded snapshot. Generated payloads exclude raw question records and private workspace provenance. Feedback can become a follow-up question after explicit review; it stays on the same browser and origin.
-- **Chat and voice:** typed conversation, reviewed dictation, bounded navigation/drafting commands and synthetic read-aloud. Commands cannot approve or publish. Chat can explicitly add a question; it does not silently change the workspace.
-- **Optional AI assistance:** choose Claude or OpenAI for source-referenced draft suggestions and chat. Existing answers remain unchanged until a suggestion is explicitly applied. Local evidence checks, stale-response checks and human approval remain in the path.
-- **Maya persona and appearance:** source-backed traits and examples for drafts and voice replies; Warm studio, Beauty editorial and Case-file desk themes. See [PERSONA.md](PERSONA.md).
+- Move question, product, note, answer, issue and case-evidence cards around the canvas. Positions and connections are saved. Search for cards, focus their connections, zoom, use the minimap or expand the view.
+- Search the case-file library for creator context, audience profiles, content, behaviour, missing materials and the exercise brief. Page references, tables and caveats separate reported figures from verified findings. Adding context cards preserves existing work, but linking a card does not validate an answer.
+- Work with the 12 supplied questions, 10 products and four note/transcript summaries, or review and add typed or dictated questions. Keyword grouping keeps each original question intact. Clarifications retain their original source.
+- Edit answers built from evidence templates in Maya's documented style. Checks cover missing records, stale product revisions, budget or context conflicts, unsupported claims and changes to known prices or quotations. They distinguish explicitly owned products, alternative choices and new purchases. Unclear roles or quantities need clarification. Approval and publication are separate actions.
+- Record Maya's decision, who the answer suits, when to skip and what remains unknown. Search reviewed advice and reuse an answer that matches the product or topic as a new, unapproved draft. See [DECISIONS.md](DECISIONS.md).
+- Compare refreshed wording, keep edits or restore up to 20 earlier draft versions. Restored drafts retain current evidence and need fresh approval. You can export, validate, preview and restore private workspace backups, with recovery copies preserved.
+- Review ten case-file checks, each with source excerpts, affected records, next actions and resolution references. Export the findings as a Markdown report. Resolving a report does not bypass answer validation.
+- Preview exactly what followers will see before publishing, then save or share an encoded snapshot. The generated snapshot excludes raw question records and private workspace provenance. After explicit review, feedback can become a follow-up question. Feedback stays in the same browser and on the same origin.
+- Type in chat, review dictation, use supported navigation and drafting commands, or listen to synthetic read-aloud. Commands cannot approve or publish. You can explicitly add a question from chat; chat does not silently change the workspace.
+- Choose optional Claude or OpenAI assistance for draft suggestions and chat with source references. Suggestions leave existing answers unchanged until you apply them. Local evidence checks, stale-response checks and human approval still apply.
+- Use Maya's documented traits and examples for drafts and voice replies. Choose the Warm studio, Beauty editorial or Case-file desk theme. See [PERSONA.md](PERSONA.md).
 
-These checks are specific to the exercise dataset. They do not audit arbitrary uploaded documents, establish product safety or provide comprehensive semantic fact checking. The app is a single-user prototype without authentication, a shared database or an immutable audit log.
+The checks cover this exercise dataset. They cannot audit arbitrary uploaded documents, establish product safety or verify every claim for factual accuracy. This is a single-user prototype without authentication, a shared database or an immutable audit log.
 
-## Tech Stack
+## Tech stack
 
 | Area | Technology |
 | --- | --- |
@@ -60,7 +60,7 @@ These checks are specific to the exercise dataset. They do not audit arbitrary u
 | Voice | Browser speech recognition and speech synthesis, where supported |
 | Tests | Node test runner via `tsx`; Vitest, Testing Library and jsdom |
 
-## Architecture Overview
+## Architecture overview
 
 ```mermaid
 flowchart LR
@@ -78,11 +78,11 @@ flowchart LR
   Proxy --> OpenAI[OpenAI Responses API]
 ```
 
-The React app owns the workspace and invokes local rules for drafting, checks and review transitions. Browser storage holds private work and local follower data; share links contain validated public snapshots. An optional local Node proxy holds AI credentials and calls the selected provider, but does not provide accounts or a remote workspace database; see [ARCHITECTURE.md](ARCHITECTURE.md).
+The React app manages the workspace and runs local rules for drafting, evidence checks and changes in review status. Browser storage holds private work and local follower data. Share links contain validated public snapshots. The optional local Node proxy holds AI credentials and calls the selected provider; it has no accounts or remote workspace database. See [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Installation
 
-Use **Node.js 26**; the initial release was tested with Node 26.8.1 and npm 11.19.0. The repository includes an `.nvmrc` for `nvm` users.
+Use Node.js 26. The initial release was tested with Node 26.8.1 and npm 11.19.0, and the repository includes an `.nvmrc` for `nvm` users.
 
 1. Clone the repository and enter it:
 
@@ -105,7 +105,7 @@ Use **Node.js 26**; the initial release was tested with Node 26.8.1 and npm 11.1
    npm run dev
    ```
 
-Open **http://127.0.0.1:4341/**. Use the same address consistently: `localhost` and `127.0.0.1` have separate browser storage. No database, API key or external account is required.
+Open http://127.0.0.1:4341/. Use the same address each time: `localhost` and `127.0.0.1` have separate browser storage. You do not need a database, API key or external account.
 
 ## Usage
 
@@ -120,35 +120,41 @@ Open **http://127.0.0.1:4341/**. Use the same address consistently: `localhost` 
 
 ### Navigate and expand the evidence
 
-Use **Find a card** to search the board. **Focus connections** narrows the view around a selected card; **Show all cards** or **Fit** restores it without changing saved positions. The bottom controls provide zoom, **100%**, fit, selected-card focus and a pannable minimap. **Expand canvas** gives the board more space. Close details with **Escape** or the close button; **Show card details** reopens them.
+Use **Find a card** to search the board. **Focus connections** shows the cards connected to your selection. **Show all cards** or **Fit** restores the view without changing saved positions. The bottom controls let you zoom, return to **100%**, fit the board, focus a selected card and pan with the minimap. Choose **Expand canvas** for more space. Close details with **Escape** or the close button, and reopen them with **Show card details**.
 
-Choose **Case evidence** on the canvas to open the **Case-file evidence** library, search its sources and add individual cards or an overview. Source links open the included PDF at the relevant page. These cards describe the fictional file and retain its uncertainties; they are not live account analytics.
+Choose **Case evidence** on the canvas to open the **Case-file evidence** library. Search the sources, then add individual cards or an overview. Source links open the included PDF at the relevant page. The cards describe the fictional file, including its uncertainties. They do not show live account analytics.
 
 ### Chat, voice and persona
 
-Open **Chat with Maya** and try “Is Cloud Cream worth £38?”, followed by “My budget is £30”, or ask “What’s missing?”. Use **Enter** to send and **Shift + Enter** for a new line. Dictation stays editable until you explicitly send it. **Read aloud** speaks one reply; **Speak replies** applies to new replies. The latest 60 messages remain on this device until cleared. Damaged stored chat is copied before replacement; failed preservation blocks the write and exposes a retry action. Clearing active history leaves preserved recovery copies intact.
+Open **Chat with Maya** and try “Is Cloud Cream worth £38?”, followed by “My budget is £30”, or ask “What’s missing?”. Use **Enter** to send and **Shift + Enter** for a new line. You can edit dictation until you choose to send it. **Read aloud** speaks one reply; **Speak replies** applies to new replies.
 
-In **Voice**, review the transcript before choosing **Run command** or **Use as question**. Try “Show reports”, “Explain this card”, “What is your approach?” or “Draft an answer for Sarah”. Named drafting commands require an exact follower match. The selected browser voice is synthetic; the source PDF provides a transcript and QR placeholder, not a usable Maya recording. The app stores no audio.
+The latest 60 messages stay on this device until you clear them. If stored chat is damaged, the app copies it before replacing it. If the copy fails, the app stops the write and offers a retry. Clearing active history leaves recovery copies intact.
+
+In **Voice**, review the transcript before choosing **Run command** or **Use as question**. Try “Show reports”, “Explain this card”, “What is your approach?” or “Draft an answer for Sarah”. A drafting command that names a follower needs an exact match. The browser voice is synthetic. The source PDF contains a transcript and QR placeholder but no usable recording of Maya. The app stores no audio.
 
 ### Optional live AI
 
 Choose **Set up AI** in the header. Select **Claude (Anthropic)**, enter an Anthropic API key and choose **Connect and enable AI**. Claude Haiku 4.5 (`claude-haiku-4-5-20251001`) is the default for a fresh connection. OpenAI remains available as an alternative with its own API key. An OpenAI key cannot connect to Claude.
 
-Connecting checks access to the selected model; it does not prove that the account can generate an answer. A connected session can change its model without re-entering the key. Switching provider requires that provider's key and replaces the active connection only after the check succeeds. Failed checks preserve the existing connection. **Use live AI for new answers and chat** controls whether new requests use the provider or local templates.
+Connecting checks whether your account can access the selected model. It does not confirm that the account can generate an answer. Once connected, you can change models without re-entering the key. To switch providers, enter the new provider's key. The app replaces the active connection only after the check succeeds, so a failed check leaves the existing connection intact. **Use live AI for new answers and chat** controls whether new requests use the provider or local templates.
 
-Live requests send the current question, supporting catalogue/case-file records, selected context and a short chat history to the selected provider. Common follower-handle patterns are stripped, but personal-data redaction is incomplete. Review what you enter. Generation uses your API account. The earlier OpenAI live request on 20 September 2026 returned HTTP 429 without saving or overwriting an answer; a later live Claude check produced a sourced, unapproved clarification draft. Two chat checks exposed context/wording holds; see [TEST-REPORT.md](TEST-REPORT.md) for their repair and acceptance status. A successful draft is not a general answer-quality guarantee.
+Live requests send the current question, supporting catalogue and case-file records, selected context and a short chat history to the selected provider. The app removes common follower-handle patterns, but it does not remove all personal data. Review what you enter. Generation uses your API account.
 
-For an existing answer, **Suggest with AI** opens a comparison before replacement. Applying it returns the answer to draft. Errors or cancellation preserve current wording and do not silently switch providers or substitute a local answer. Provider errors are shown without forwarding private response details. Disconnecting clears the active server credential and cancels pending requests; environment configuration can return after a server restart.
+On 20 September 2026, a live OpenAI request returned HTTP 429 without saving or overwriting an answer. A later Claude check produced a sourced clarification draft that remained unapproved. Two chat checks were held because of context and wording checks; [TEST-REPORT.md](TEST-REPORT.md) records the fixes and acceptance status. One successful draft does not establish general answer quality.
 
-**Keys entered in the form last only for the current server session.** A server restart forgets them. To configure your own persistent local setup, use the server environment variables below; the app does not automatically save form keys to disk or browser storage.
+For an existing answer, **Suggest with AI** opens a comparison before you replace the wording. Applying a suggestion returns the answer to draft. If a request fails or you cancel it, the current wording stays in place. The app does not silently switch providers or substitute a local answer, and it shows provider errors without exposing private response details. Disconnecting clears the active server credential and cancels pending requests. Configuration from environment variables can return after a server restart.
+
+Keys entered in the form last only for the current server session. Restarting the server clears them. To keep your local configuration across restarts, use the server environment variables below. The app does not automatically save form keys to disk or browser storage.
 
 ### Protect work and review publication
 
-**Regenerate from evidence** compares existing wording with a fresh suggestion. Keep the wording while refreshing evidence, or accept the suggestion; both require review. **Saved draft versions** restores wording with current evidence, without restoring old approval.
+**Regenerate from evidence** compares the existing wording with a fresh suggestion. You can keep your wording and refresh the evidence, or accept the suggestion. Either choice needs review. **Saved draft versions** restores wording with current evidence; it does not restore an old approval.
 
-Use **Backup & restore** to download a private JSON backup or preview a replacement. Backups include workspace questions, evidence records, drafts, history, reports and layout. Chat, follower saves, feedback and appearance preferences are separate. A publication preview highlights some possible contact details, but a human must still check the complete public wording. Preview and publication use the same snapshot format/size checks, and publication becomes visible only after the proposed workspace is saved successfully.
+Use **Backup & restore** to download a private JSON backup or preview a replacement. Backups include workspace questions, evidence records, drafts, history, reports and layout. Chat, follower saves, feedback and appearance preferences are stored separately.
 
-Follower feedback offers **That helped**, **Too expensive**, **I already own something similar** and **Still unsure**. Review a clarification in **Follower feedback** before adding it as a question. The prototype does not send feedback between devices or message a follower.
+The publication preview highlights some possible contact details. You still need to check the full wording before making it public. Preview and publication use the same checks for snapshot format and size. A publication becomes visible only after the app successfully saves the proposed workspace.
+
+Followers can choose **That helped**, **Too expensive**, **I already own something similar** or **Still unsure**. Review a clarification in **Follower feedback** before adding it as a question. The prototype does not send feedback between devices or message a follower.
 
 ### Build and preview
 
@@ -157,15 +163,17 @@ npm run build
 npm run preview
 ```
 
-Stop the development server before previewing; both use port 4341 with strict port checking. `build` writes `dist/`. The included servers bind to the local machine and are not internet deployments. A shared snapshot only opens on a device that can access the app’s origin. Editing or withdrawing the original does not revoke an existing link.
+Stop the development server before previewing. Both use port 4341 with strict port checking. `build` writes `dist/`. The included servers bind to the local machine; they do not deploy the app to the internet. A shared snapshot only opens on a device that can access the app's origin. Editing or withdrawing the original does not revoke an existing link.
 
 ## Configuration
 
-No environment variables are required for local templates. The optional proxy accepts `AI_PROVIDER=anthropic` with `ANTHROPIC_API_KEY` and `ANTHROPIC_MODEL`, or `AI_PROVIDER=openai` with `OPENAI_API_KEY` and `OPENAI_MODEL`. The model defaults are `claude-haiku-4-5-20251001` and `gpt-4.1-mini` respectively. Account access and generation capability need verification.
+Local templates need no environment variables. The optional proxy accepts `AI_PROVIDER=anthropic` with `ANTHROPIC_API_KEY` and `ANTHROPIC_MODEL`, or `AI_PROVIDER=openai` with `OPENAI_API_KEY` and `OPENAI_MODEL`. The model defaults are `claude-haiku-4-5-20251001` and `gpt-4.1-mini` respectively. Check both model access and whether your account can generate a response.
 
-Use the server environment or a private `.env.local` file. The repository ignores populated environment files and includes a blank `.env.example`. Restrict any populated file to your user account; never prefix a key with `VITE_`, place it in client source or commit it. The selected provider only receives its matching credential. Without an explicit selection, an Anthropic environment key takes precedence, an existing OpenAI-only configuration remains supported, and an unconfigured app defaults to Claude.
+Use the server environment or a private `.env.local` file. The repository ignores populated environment files and includes a blank `.env.example`. Restrict access to any populated file to your user account. Never prefix a key with `VITE_`, place it in client source or commit it. Each provider receives only its own credential.
 
-Alternatively, enter a key through **AI connection** for the current session. It is held in the local server process, not browser storage or workspace backups. The proxy runs in both `npm run dev` and `npm run preview`; a static `dist/` deployment does not contain it.
+If you do not select a provider, an Anthropic environment key takes precedence. Existing OpenAI-only configurations still work. An unconfigured app defaults to Claude.
+
+You can also enter a key through **AI connection** for the current session. The local server process holds it; browser storage and workspace backups do not. The proxy runs in both `npm run dev` and `npm run preview`. A static `dist/` deployment does not contain it.
 
 | Setting | Location | Behaviour |
 | --- | --- | --- |
@@ -180,15 +188,15 @@ Alternatively, enter a key through **AI connection** for the current session. It
 | Other local stores | `maya-chat-v1`, `maya-saved-advice-v1`, `goodcall-follower-feedback-v1`, `maya-theme` | Separate chat, saved advice, feedback and appearance |
 | Workspace backup limit | `src/lib/workspaceValidation.ts` | 5,000,000 bytes; structure and record references are validated |
 
-The legacy `maya-*` storage names preserve existing data after the GoodCall rename. Clearing site data removes local records. The interface loads fonts from Google Fonts; optional browser speech can also depend on a network service.
+The app keeps its `maya-*` storage names so existing data survives the GoodCall rename. Clearing site data removes local records. The interface loads fonts from Google Fonts, and optional browser speech can also depend on a network service.
 
-## Screenshots / Demo
+## Screenshots / demo
 
-Run the local demo using the steps above. No public live deployment is supplied.
+Use the steps above to run the demo locally. There is no public live deployment.
 
 ### 60-second walkthrough
 
-Follow Maya from audience questions and connected evidence to answer review, reusable follower advice, chat and voice controls, and missing-material reports.
+The walkthrough follows Maya as she reviews audience questions and connected evidence, checks answers and prepares advice that followers can reuse. It also covers chat and voice controls and reports on missing materials.
 
 | Version | Open or download |
 | --- | --- |
@@ -197,7 +205,7 @@ Follow Maya from audience questions and connected evidence to answer review, reu
 | **Interactive walkthrough** | [Download ZIP](https://github.com/MasteraSnackin/GoodCall/raw/refs/heads/main/docs/demo/GoodCall-interactive-walkthrough.zip), extract it and open the HTML in a browser; six screens and 18 clickable hotspots work offline |
 | **Text and captions** | [Narration script](docs/demo/GoodCall-narration.txt) · [SRT captions](docs/demo/GoodCall-captions.srt) |
 
-These walkthroughs animate or explore saved screenshots. They do not operate the live app or demonstrate microphone, speaker or provider responses. The video’s voice-over is a separately generated narrator. See the [demo guide](docs/demo/README.md) for all formats and controls.
+These walkthroughs use saved screenshots, with animation or clickable areas to explore. They do not operate the live app or demonstrate microphone, speaker or provider responses. The video's narrator was generated separately. See the [demo guide](docs/demo/README.md) for all formats and controls.
 
 ### Screenshot gallery
 
@@ -255,9 +263,9 @@ Browse and search case-file evidence on a phone-width screen.
 
 <img src="docs/review/screenshots/07-mobile-case-evidence.jpg" alt="GoodCall case-file evidence search and source cards at phone width" width="390">
 
-These captures document the inspected local interface. They do not establish physical microphone/speaker operation or live provider access; consult the [final review report](docs/review/TASK-RESULTS.md) for interaction coverage.
+These screenshots show the local interface that was inspected. They do not verify microphone or speaker operation, or live provider access. The [final review report](docs/review/TASK-RESULTS.md) lists the interactions checked.
 
-The current audit also includes short recordings of a reproduced dialog defect and its repair. They show actual browser interactions with fictional, unsaved test text:
+The audit also includes short recordings of a dialog defect before and after its repair. These show actual browser interactions with fictional, unsaved test text:
 
 - [Before: clicking inside the dialog loses the form](docs/review/current-audit/dialog-before.mp4)
 - [After: the same click preserves the form](docs/review/current-audit/dialog-after.mp4)
@@ -268,11 +276,11 @@ The five-slide presentation includes a 60-second pitch with speaker notes:
 - [View the pitch as a PDF](docs/pitch/GoodCall-60-Second-Pitch.pdf)
 - [Download the editable PowerPoint](docs/pitch/GoodCall-60-Second-Pitch.pptx)
 
-The visual direction uses cream paper, charcoal and muted rust, with distinct question, product, note and issue cards. Physical browser, phone, pointer and audio acceptance remain separate from automated testing.
+The design uses cream paper, charcoal and muted rust, with distinct question, product, note and issue cards. Browser, phone, pointer and audio behaviour need hands-on checks as well as automated tests.
 
-## API / CLI Reference
+## API / CLI reference
 
-There is no public account/workspace API or custom CLI. The available npm commands are:
+There is no public API for accounts or workspaces, and no custom CLI. Use these npm commands:
 
 | Command | Purpose |
 | --- | --- |
@@ -281,9 +289,9 @@ There is no public account/workspace API or custom CLI. The available npm comman
 | `npm run preview` | Serve the production build locally |
 | `npm test` | Run Node logic tests, then simulated-interface tests |
 
-The browser route `#/advice/<snapshot>` opens a validated advice snapshot. It is a client-side route, not a server endpoint or signed publication record.
+The browser route `#/advice/<snapshot>` opens a validated advice snapshot in the client. It has no server endpoint and does not represent a signed publication record.
 
-The local Vite server also mounts these AI endpoints:
+The local Vite server provides these AI endpoints:
 
 | Method and route | Purpose |
 | --- | --- |
@@ -299,7 +307,7 @@ Read the local status without sending a model request:
 curl http://127.0.0.1:4341/api/ai/status
 ```
 
-POST requests require a matching local origin, JSON and `X-GoodCall-Client: canvas`; use the app controls. This is a local development/preview interface without user authentication, not a public service contract.
+Use the app controls for POST requests. They require a matching local origin, JSON and `X-GoodCall-Client: canvas`. This interface is for local development and preview, has no user authentication and is not a public service contract.
 
 ## Tests
 
@@ -308,13 +316,15 @@ npm test
 npm run build
 ```
 
-Logic tests use Node’s test runner through `tsx`; UI tests use Vitest, Testing Library and jsdom. Coverage includes evidence and budget gates, source changes, review transitions, private-source exclusion, snapshot validation, local feedback, chat and mocked speech lifecycles, draft history, recovery, canvas navigation and creator/follower workflows.
+Logic tests use Node's test runner through `tsx`. UI tests use Vitest, Testing Library and jsdom. They cover evidence and budget gates, source changes, review transitions, exclusion of private sources, snapshot validation, local feedback, chat and mocked speech lifecycles, draft history, recovery, canvas navigation and creator/follower workflows.
 
-See [TEST-REPORT.md](TEST-REPORT.md) for dated results and [USABILITY-CHECKS.md](USABILITY-CHECKS.md) for the six audience scenarios and device checks. Graph integration tests use a callback adapter in place of the real renderer. Simulated tests alone do not establish layout, real dragging, browser permissions, microphone capture, audible playback, clipboard or downloads. The initial browser-policy block was historical; desktop and phone-width browser inspection is now available, with its actual coverage recorded separately. Physical voice and live provider verification remain unproven by screenshots or mocked tests.
+See [TEST-REPORT.md](TEST-REPORT.md) for dated results and [USABILITY-CHECKS.md](USABILITY-CHECKS.md) for the six audience scenarios and device checks. Graph integration tests use a callback adapter instead of the real renderer. Simulated tests alone cannot verify layout, real dragging, browser permissions, microphone capture, audible playback, clipboard or downloads.
+
+Browser policy blocked the initial inspection. Desktop and phone-width browser inspection is now available, and its coverage is recorded separately. Screenshots and mocked tests do not prove that physical voice or live providers work.
 
 ## Roadmap
 
-Possible next steps, not current capabilities:
+These are possible next steps. They are not current capabilities:
 
 - Add editable, persisted product roles beyond the current derived ownership, comparison and purchase checks.
 - Extend browser and phone acceptance evidence, including physical speech and storage-denial paths.
@@ -324,14 +334,14 @@ Possible next steps, not current capabilities:
 
 ## Contributing
 
-Open an [issue](https://github.com/MasteraSnackin/GoodCall/issues) for a reproducible defect or a scoped proposal, then submit a [pull request](https://github.com/MasteraSnackin/GoodCall/pulls) with the change and relevant validation. Run `npm test` and `npm run build` before proposing code changes.
+Open an [issue](https://github.com/MasteraSnackin/GoodCall/issues) with steps to reproduce a defect or a specific proposal. Then submit a [pull request](https://github.com/MasteraSnackin/GoodCall/pulls) describing the change and how you checked it. Run `npm test` and `npm run build` before proposing code changes.
 
-Preserve original follower context, source references and explicit review steps. Keep fictional case-file material separate from verified external facts. Include meaningful regression tests for changed logic, and state which browser/device checks were actually performed. Do not commit credentials, private workspace backups, dependencies or build output.
+Keep the original follower context, source references and explicit review steps. Separate fictional case-file material from verified external facts. Add meaningful regression tests when you change logic, and state which browser and device checks you performed. Do not commit credentials, private workspace backups, dependencies or build output.
 
 ## License
 
-No project licence has been selected and no `LICENSE` file is included. This repository does not grant a general licence to use, modify or redistribute the project or the supplied exercise materials. Contact the maintainer about permission; dependencies retain their respective licences.
+No project licence has been selected, and the repository includes no `LICENSE` file. It does not grant a general licence to use, modify or redistribute the project or the supplied exercise materials. Contact the maintainer for permission. Dependencies keep their own licences.
 
-## Contact / Support
+## Contact / support
 
 Maintainer: [MasteraSnackin](https://github.com/MasteraSnackin). Use [GitHub issues](https://github.com/MasteraSnackin/GoodCall/issues) for support and bug reports. No separate support email or website is published here.
