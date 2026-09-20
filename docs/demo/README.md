@@ -2,9 +2,13 @@
 
 The demo follows Maya’s workflow through audience questions, the connected canvas, answer review, follower advice, chat and voice controls, and evidence reports.
 
+Play the narrated walkthrough below. Use the player’s sound control to hear the narration.
+
+https://github.com/user-attachments/assets/afcde62e-0aca-45eb-bc52-dd00cbdfee06
+
 | File | What it includes |
 | --- | --- |
-| [60-second narrated video](GoodCall-60-Second-Demo.mp4) | Saved app screens with guided highlights and a synthetic British English female voiceover. |
+| [Watch the 60-second narrated video](https://github.com/user-attachments/assets/afcde62e-0aca-45eb-bc52-dd00cbdfee06) · [Download MP4](https://github.com/MasteraSnackin/GoodCall/raw/refs/heads/main/docs/demo/GoodCall-60-Second-Demo.mp4) | Saved app screens with guided highlights and a synthetic British English female voiceover. |
 | [60-second silent GIF](GoodCall-60-Second-Demo.gif) | An animated, silent version for a quick preview. |
 | [Interactive walkthrough — HTML](GoodCall-interactive-walkthrough.html) | Six guided screens and 18 hotspots, with explanations, zoom, reset and keyboard navigation. |
 | [Interactive walkthrough — ZIP](GoodCall-interactive-walkthrough.zip) | The same standalone HTML packaged for download. |

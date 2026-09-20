@@ -2,9 +2,11 @@
 
 Help creators turn their judgement into advice they can review and reuse.
 
-[![Watch the 60-second narrated GoodCall screenshot walkthrough](docs/demo/demo-poster.png)](docs/demo/GoodCall-60-Second-Demo.mp4)
+Play the 60-second narrated walkthrough below. Use the player’s sound control to hear the narration.
 
-[Watch the 60-second narrated demo](docs/demo/GoodCall-60-Second-Demo.mp4) · [Download the interactive walkthrough](https://github.com/MasteraSnackin/GoodCall/raw/refs/heads/main/docs/demo/GoodCall-interactive-walkthrough.zip)
+https://github.com/user-attachments/assets/afcde62e-0aca-45eb-bc52-dd00cbdfee06
+
+[Open the video](https://github.com/user-attachments/assets/afcde62e-0aca-45eb-bc52-dd00cbdfee06) · [Download MP4](https://github.com/MasteraSnackin/GoodCall/raw/refs/heads/main/docs/demo/GoodCall-60-Second-Demo.mp4) · [Download the interactive walkthrough](https://github.com/MasteraSnackin/GoodCall/raw/refs/heads/main/docs/demo/GoodCall-interactive-walkthrough.zip)
 
 The walkthrough uses saved app screens, guided highlights and British English narration to explain Maya's workflow.
 
@@ -192,7 +194,7 @@ The walkthrough follows Maya as she reviews audience questions and connected evi
 
 | Version | Open or download |
 | --- | --- |
-| **Narrated video** | [60-second MP4](docs/demo/GoodCall-60-Second-Demo.mp4), with a synthetic British English female voice-over and optional English captions |
+| **Narrated video** | [Watch the 60-second video](https://github.com/user-attachments/assets/afcde62e-0aca-45eb-bc52-dd00cbdfee06), with a synthetic British English female voice-over and optional English captions; [download MP4](https://github.com/MasteraSnackin/GoodCall/raw/refs/heads/main/docs/demo/GoodCall-60-Second-Demo.mp4) |
 | **Silent animation** | [60-second GIF](docs/demo/GoodCall-60-Second-Demo.gif), with zooms and highlights |
 | **Interactive walkthrough** | [Download ZIP](https://github.com/MasteraSnackin/GoodCall/raw/refs/heads/main/docs/demo/GoodCall-interactive-walkthrough.zip), extract it and open the HTML in a browser; six screens and 18 clickable hotspots work offline |
 | **Text and captions** | [Narration script](docs/demo/GoodCall-narration.txt) · [SRT captions](docs/demo/GoodCall-captions.srt) |
