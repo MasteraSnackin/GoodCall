@@ -57,14 +57,14 @@ export default function WorkspaceRecovery({ workspace, onRestore }: { workspace:
 
   return <section className="workspace-recovery" aria-labelledby="workspace-recovery-title">
     <h3 id="workspace-recovery-title">Workspace backup & recovery</h3>
-    <p>Back up questions, product evidence, answers and their history, reports, and the canvas. Chat conversations, follower saves, feedback and visual preferences are separate and are not included.</p>
+    <p>A backup includes questions, product evidence, answers and their history, reports, and the canvas. Chat conversations, follower saves, feedback and visual preferences are stored separately and are not included.</p>
     <p className={`workspace-save-status ${storage.ok ? 'saved' : 'unsaved'}`} role="status">{storage.message}</p>
     <button type="button" className="secondary" onClick={backup}>Download private workspace backup</button>
     <label className="workspace-import">Choose a backup to restore
       <input ref={input} type="file" accept=".json,application/json" onChange={event => { void inspectFile(event.target.files?.[0]); }} />
     </label>
     {reading && <p role="status">Checking the workspace backup…</p>}
-    {!!snapshots.length && <div className="workspace-recovery-copies"><h4>Recovery copies in this browser</h4><p>Previous saved versions stay on this device. A downloaded backup also protects against browser data being cleared.</p>{snapshots.map(snapshot => <button type="button" key={snapshot.key} className="secondary small" onClick={() => { ++sequence.current; setReading(false); setError(false); setMessage(''); setPreview({ label: snapshot.label, workspace: snapshot.workspace }); }}>Preview {snapshot.label.toLowerCase()}</button>)}</div>}
+    {!!snapshots.length && <div className="workspace-recovery-copies"><h4>Recovery copies in this browser</h4><p>Previous saved versions stay on this device. Download a backup to keep a copy if you clear your browser data.</p>{snapshots.map(snapshot => <button type="button" key={snapshot.key} className="secondary small" onClick={() => { ++sequence.current; setReading(false); setError(false); setMessage(''); setPreview({ label: snapshot.label, workspace: snapshot.workspace }); }}>Preview {snapshot.label.toLowerCase()}</button>)}</div>}
     {preview && <div className="workspace-restore-preview" role="region" aria-label="Restore preview"><h4>Review before replacing</h4><p><strong>{preview.label}</strong></p><p>Backup: {counts(preview.workspace)}.</p><p>Current: {counts(workspace)}.</p><p>This replaces your current workspace. A copy of the workspace you have open will be saved first; if that fails, the restore is cancelled.</p><div className="workspace-restore-actions"><button type="button" className="primary" onClick={confirmRestore}>Replace workspace</button><button type="button" className="secondary" onClick={() => { setPreview(null); if (input.current) input.current.value = ''; }}>Cancel restore</button></div></div>}
     {message && <p role={error ? 'alert' : 'status'} className={error ? 'workspace-recovery-error' : 'workspace-recovery-message'}>{message}</p>}
   </section>;

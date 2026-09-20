@@ -1,10 +1,12 @@
 import type { CanvasCard, CardKind, Workspace } from './types';
 import { mayaNotes } from './seed';
-export const canvasCardKindLabel = (kind: CardKind): string => ({question:'Question',product:'Product',note:'Maya’s note',draft:'Answer',issue:'Evidence issue'})[kind];
+import { findCaseEvidence, caseEvidenceText } from './caseEvidence';
+export const canvasCardKindLabel = (kind: CardKind): string => ({question:'Question',product:'Product',note:'Maya’s note',draft:'Answer',issue:'Evidence issue',evidence:'Case evidence'})[kind];
 export function canvasCardLabel(card: CanvasCard, workspace: Workspace): string {
  switch(card.kind){
   case 'question':return workspace.questions.find(q=>q.id===card.entityId)?.handle||'Audience question';
   case 'product':return workspace.products.find(p=>p.id===card.entityId)?.name||'Product evidence';
+  case 'evidence':return findCaseEvidence(card.entityId)?.title||'Case-file evidence';
   case 'note':return mayaNotes.find(n=>n.id===card.entityId)?.title||'Maya’s note';
   case 'draft':return workspace.drafts.find(d=>d.id===card.entityId)?.title||'Answer draft';
   case 'issue':return workspace.issues.find(i=>i.id===card.entityId)?.title||'Evidence issue';
@@ -16,6 +18,7 @@ export function searchCanvasCards(workspace: Workspace, query: string): CanvasCa
  return workspace.cards.filter(card=>{
   const detail=card.kind==='question'?workspace.questions.find(q=>q.id===card.entityId)?.text
    :card.kind==='product'?workspace.products.find(p=>p.id===card.entityId)?.note
+   :card.kind==='evidence'?(()=>{const evidence=findCaseEvidence(card.entityId);return evidence?caseEvidenceText(evidence):'';})()
    :card.kind==='note'?mayaNotes.find(n=>n.id===card.entityId)?.text
    :card.kind==='issue'?workspace.issues.find(i=>i.id===card.entityId)?.description
    :(()=>{const d=workspace.drafts.find(d=>d.id===card.entityId);return [d?.text,d?.decision?.verdict,d?.decision?.suits,d?.decision?.skipIf,d?.decision?.unknowns].filter(Boolean).join(' ');})();

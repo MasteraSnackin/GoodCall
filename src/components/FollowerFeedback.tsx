@@ -23,7 +23,7 @@ export default function FollowerFeedback({advice}:{advice:PublishedAdvice}){
  }
  return <section className="follower-feedback" aria-labelledby="feedback-heading">
   <div className="feedback-heading"><MessageSquare size={18}/><h2 id="feedback-heading">Did this help you decide?</h2></div>
-  <p className="feedback-local-note">Feedback stays in this browser. The creator feedback view on this device can read it; it is not sent to Maya on another device.</p>
+  <p className="feedback-local-note">You can read this feedback in the creator view on this device. It stays in this browser and is not sent to Maya on another device.</p>
   {saved?<div className="feedback-saved" role="status"><Check size={18}/><div><strong>Feedback saved on this device</strong><p>{FEEDBACK_REASONS.find(r=>r.id===saved.reason)?.label}</p>{saved.clarification&&<p>{saved.clarification}</p>}</div></div>:<>
    <div className="feedback-options">{FEEDBACK_REASONS.map(option=><button key={option.id} type="button" className="secondary" aria-pressed={reason===option.id} onClick={()=>{setReason(option.id);setClarification('');setError('');if(option.id==='helped')save(option.id);}}>{option.label}</button>)}</div>
    {reason&&reason!=='helped'&&<form onSubmit={event=>{event.preventDefault();save(reason);}}><label className="field">{prompts[reason].label}<textarea value={clarification} onChange={event=>setClarification(event.target.value)} maxLength={1000} minLength={2} required rows={3} placeholder={prompts[reason].placeholder}/></label><button className="primary" type="submit" disabled={clarification.trim().length<2}>Save feedback</button></form>}
@@ -39,9 +39,9 @@ export function FollowerFeedbackInbox({onAddQuestion}:{onAddQuestion:AddQuestion
  useEffect(()=>{window.addEventListener(FEEDBACK_CHANGED_EVENT,refresh);window.addEventListener('storage',refresh);return()=>{window.removeEventListener(FEEDBACK_CHANGED_EVENT,refresh);window.removeEventListener('storage',refresh);};},[]);
  return <section className="feedback-inbox" aria-labelledby="feedback-inbox-heading">
   <header><div><span className="eyebrow">AFTER THE ANSWER</span><h2 id="feedback-inbox-heading">Follower feedback</h2></div><button className="secondary" onClick={refresh}><RefreshCw size={15}/>Refresh feedback</button></header>
-  <p className="feedback-local-note">Only feedback saved in this browser appears here. Nothing is collected from other devices. Adding a follow-up starts a new audience question for review; it does not change the published answer.</p>
+  <p className="feedback-local-note">This view shows feedback saved in this browser; it does not collect feedback from other devices. Adding a follow-up creates an audience question for review and leaves the published answer unchanged.</p>
   {store.error&&<p className="feedback-error" role="alert">{store.error}</p>}
-  {!store.error&&store.items.length===0&&<p className="feedback-empty">No local feedback yet. A follower can leave feedback on a shared answer opened on this device.</p>}
+  {!store.error&&store.items.length===0&&<p className="feedback-empty">No feedback saved in this browser yet. Followers can leave feedback when they open a shared answer on this device.</p>}
   {store.items.map(item=><FeedbackInboxItem key={item.id} item={item} onAddQuestion={onAddQuestion}/>)}
  </section>;
 }

@@ -1,9 +1,12 @@
 import type { CanvasCard, Question, SourceRef, Workspace } from './types';
 import { detectQuestionProducts, draftAnswer, groupQuestion, runEvidenceChecks, validateDraft } from './engine';
 import { mayaNotes } from './seed';
+import { findCaseEvidence, caseEvidenceText } from './caseEvidence';
 import { MAYA_PERSONA } from './persona';
 
 export interface ChatMessage {
+  origin?: 'local' | 'ai';
+  aiModel?: string;
   id: string;
   role: 'user' | 'assistant';
   text: string;
@@ -98,6 +101,10 @@ function explainCard(workspace:Workspace,selected?:CanvasCard):Reply {
   if (selected.kind==='issue') {
     const issue=workspace.issues.find(i=>i.id===selected.entityId);
     if (issue) return {kind:'answer',text:issue.status==='Resolved'?`${issue.title}\n\nHistorical finding: ${issue.description}\n\nStatus: Resolved.\nResolution recorded: ${issue.resolution||'No resolution detail was recorded.'}\n\nA recorded resolution does not independently approve an audience answer.`:`${issue.title}\n\n${issue.description}\n\nStatus: ${issue.status}.\nNext step: ${issue.nextAction}`,sourceRefs:refs(issue.sourceRefs)};
+  }
+  if (selected.kind==='evidence') {
+    const evidence=findCaseEvidence(selected.entityId);
+    if (evidence) return {kind:'answer',text:`${evidence.title}\n\n${caseEvidenceText(evidence)}`,sourceRefs:refs(evidence.sourceRefs)};
   }
   if (selected.kind==='note') {
     const note=mayaNotes.find(n=>n.id===selected.entityId);

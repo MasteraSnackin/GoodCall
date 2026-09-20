@@ -20,7 +20,7 @@ function recoverableContent(draft: Draft) {
     questionId: draft.questionId, title: draft.title, text: draft.text,
     decision: draft.decision, mode: draft.mode, productIds: draft.productIds,
     sourceRefs: draft.sourceRefs, productRevisions: draft.productRevisions,
-    persona: draft.persona, reusedFrom: draft.reusedFrom,
+    persona: draft.persona, reusedFrom: draft.reusedFrom, ai: draft.ai,
   });
 }
 
@@ -58,8 +58,9 @@ export function restoreDraftRevision(current: Draft, revisionId: string, now = n
   if (!revision) throw new Error('This saved draft is no longer available.');
   const recorded = checkpointDraft(current, 'Before restoring an earlier draft', { now });
   const { title, text, decision, mode } = revision.snapshot;
+  const ai = revision.snapshot.ai ? { ...revision.snapshot.ai, missingEvidence: [...new Set([...revision.snapshot.ai.missingEvidence, ...(current.ai?.missingEvidence || [])])] } : current.ai;
   return {
-    ...recorded, title, text, decision: decision ? { ...decision } : undefined, mode,
+    ...recorded, title, text, decision: decision ? { ...decision } : undefined, mode, ai,
     status: 'draft', approvedAt: undefined, publishedAt: undefined, cardId: undefined,
     updatedAt: now,
   };
@@ -70,7 +71,7 @@ export function refreshDraftWithHistory(current: Draft, suggested: Draft, keepWo
   const recorded = checkpointDraft(current, 'Before refreshing from evidence', { now });
   return {
     ...suggested,
-    ...(keepWording ? { title: current.title, text: current.text, decision: current.decision ? { ...current.decision } : undefined, mode: current.mode } : {}),
+    ...(keepWording ? { title: current.title, text: current.text, decision: current.decision ? { ...current.decision } : undefined, mode: current.mode, ai: current.ai } : {}),
     id: current.id, questionId: current.questionId, createdAt: current.createdAt,
     history: recorded.history, updatedAt: now,
     status: 'draft', approvedAt: undefined, publishedAt: undefined, cardId: undefined,

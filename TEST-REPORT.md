@@ -2,9 +2,25 @@
 
 Reviewed 20 September 2026. Local app: http://127.0.0.1:4341/
 
-## Initial GitHub release verification — 20 September 2026
+## Current integrated review — 20 September 2026
 
-The final integrated release passed **212 automated tests**: 106 Node rule/storage tests and 106 simulated-interface tests across 14 Vitest files. The production build passed with Node.js 26.8.1 and npm 11.19.0. The local app returned HTTP 200.
+The final combined run after the dialog-focus repair passed **288 automated tests**: **167 Node tests and 121 DOM tests across 17 Vitest files**. `npm run build` passed with Node.js 26.8.1 and npm 11.19.0. JavaScript is 655.93 kB minified / 206.41 kB gzip; CSS is 111.92 kB / 22.62 kB gzip. The JavaScript bundle advisory is non-blocking.
+
+This review adds publication preflight and persistence guarantees, exact damaged-chat preservation, collision-safe reviewed-answer reuse, a measured retrieval index, mobile layout/contrast corrections and modal focus restoration. The final combined snapshot includes the concurrent 18-record case-evidence library, design copy and optional OpenAI proxy/draft/chat workflow.
+
+Real integrated-browser inspection was completed at **1440 × 1000** and **390 × 844**. It exercised Fit, answer review, evidence search/reset, an empty result and Enter/Escape dialog exit. Phone introduction height fell from 345 px to 86 px; the graph viewport now fits below its controls. Focus returns to Case evidence after closing its dialog. Saved captures and the numbered journey are in [AUDIT.md](docs/review/AUDIT.md). The earlier browser-policy block below is historical and does not describe this session.
+
+A separate read-only code review found no actionable issue in the scoped publication, recovery, reuse, CSS and modal cleanup changes. Automated failure tests use isolated fixtures; they did not deliberately corrupt the user's browser data.
+
+A user-connected OpenAI session then attempted **one authorised live answer request** using `gpt-5.4-mini`. OpenAI rejected it with HTTP 429. The UI displayed a rate-limit/quota message, inserted no draft and overwrote no current answer. Testing stopped without retry or a second request. The app response does not distinguish rate limiting from unavailable quota. Successful live generation and answer quality remain unverified.
+
+Physical microphone/speaker operation, real touch/dragging, a complete screen-reader audit, clipboard/download acceptance and participant usability remain separate checks. Tano and social accounts are not connected. The paired large-fixture reuse benchmark showed an 8.8% median reduction in one Node run; it does not establish end-user latency. See [PERFORMANCE.md](docs/review/PERFORMANCE.md).
+
+[All nine task results](docs/review/TASK-RESULTS.md) · [Architecture](ARCHITECTURE.md) · [Usability checks](USABILITY-CHECKS.md)
+
+## Historical initial GitHub release verification — 20 September 2026
+
+The initial integrated release passed **212 automated tests**: 106 Node rule/storage tests and 106 simulated-interface tests across 14 Vitest files. The production build passed with Node.js 26.8.1 and npm 11.19.0. The local app returned HTTP 200.
 
 This release includes the canvas navigation and keyboard fixes, reusable decisions, chat and voice controls, draft comparison/history/restoration, workspace backup/recovery, publication preview, local follower feedback and the six audience acceptance scenarios. The repository also includes the GoodCall pitch as PDF and editable PowerPoint.
 
@@ -20,7 +36,7 @@ The subsequent chat feature adds typed conversations, editable dictation, per-re
 
 Concurrent reusable-decision work was being prepared in another task. Its pending tests were excluded from this chat release check; that task owns the final combined verification after its integration. The earlier review results below describe the pre-chat version.
 
-Microphone capture, audible playback and visual browser acceptance remain unverified because of the existing browser policy block. The chat is a local case-file assistant, with no live language model connected.
+At that historical checkpoint, microphone capture, audible playback and visual browser acceptance were unverified because of the browser policy block. Chat then used a local case-file assistant without a connected language model. The current review above supersedes the browser and integration status.
 
 ## Historical pre-chat verification
 

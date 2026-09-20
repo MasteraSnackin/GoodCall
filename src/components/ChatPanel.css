@@ -92,3 +92,8 @@
 .chat-message-actions button { min-height: 30px; }
 .chat-icon-button { width: 34px; height: 34px; }
 @media (max-height: 500px) { .chat-panel { overflow-y: auto; }.chat-history { min-height: 90px; }.chat-privacy { font-size: 10px; } }
+.chat-ai-status { display: flex; align-items: center; gap: 12px; padding: 10px 12px; margin: 8px 0; background: var(--paper); border: 1px solid var(--line); border-radius: 7px; font-size: 12px; }
+.chat-ai-status button,.chat-notice button,.chat-ai-settings { border: 0; background: transparent; color: var(--accent); text-decoration: underline; cursor: pointer; font: inherit; font-size: 12px; padding: 4px; }
+.chat-ai-status button { margin-left: auto; white-space: nowrap; }
+.chat-notice button { display: block; margin-top: 5px; }
+.chat-ai-settings { margin-top: 5px; }

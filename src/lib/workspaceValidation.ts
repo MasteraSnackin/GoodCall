@@ -1,6 +1,7 @@
 import { INTENTS } from './types';
 import type { Workspace } from './types';
 import { mayaNotes } from './seed';
+import { CASE_EVIDENCE } from './caseEvidence';
 
 export const MAX_BACKUP_BYTES = 5_000_000;
 type RecordValue = Record<string, unknown>;
@@ -20,13 +21,14 @@ const sources = (value: unknown) => list(value, source, 200);
 const decision = (value: unknown) => object(value) && oneOf(value.verdict, ['Consider', 'Skip for now', 'Need more context']) && ['suits', 'skipIf', 'unknowns'].every(key => string(value[key], 800));
 const reuse = (value: unknown) => object(value) && id(value.draftId) && string(value.title) && optional(value.approvedAt, date);
 const revisions = (value: unknown) => object(value) && Object.entries(value).length <= 1_000 && Object.entries(value).every(([key, revision]) => id(key) && integer(revision));
+const aiMetadata = (value: unknown) => object(value) && value.provider === 'openai' && string(value.model, 120) && value.model.length > 0 && date(value.generatedAt) && list(value.missingEvidence, item => string(item, 1000), 20);
 const persona = (value: unknown) => object(value) && id(value.id) && integer(value.version);
 
 function draft(value: unknown, historyAllowed = true): boolean {
   if (!object(value)) return false;
   const valid = id(value.id) && id(value.questionId) && string(value.title) && string(value.text, 100_000) && ids(value.productIds) && sources(value.sourceRefs) && revisions(value.productRevisions)
-    && oneOf(value.status, ['draft', 'approved', 'published']) && oneOf(value.mode, ['Evidence template', 'Written by Maya']) && date(value.createdAt) && date(value.updatedAt)
-    && optional(value.approvedAt, date) && optional(value.publishedAt, date) && optional(value.cardId, id) && optional(value.decision, decision) && optional(value.reusedFrom, reuse) && optional(value.persona, persona);
+    && oneOf(value.status, ['draft', 'approved', 'published']) && oneOf(value.mode, ['Evidence template', 'Written by Maya', 'AI suggestion']) && date(value.createdAt) && date(value.updatedAt)
+    && optional(value.approvedAt, date) && optional(value.publishedAt, date) && optional(value.cardId, id) && optional(value.decision, decision) && optional(value.reusedFrom, reuse) && optional(value.persona, persona) && optional(value.ai, aiMetadata);
   if (!valid) return false;
   if (!historyAllowed) return value.history === undefined;
   return optional(value.history, history => list(history, entry => object(entry) && id(entry.id) && date(entry.savedAt) && string(entry.reason, 2_000) && draft(entry.snapshot, false) && object(entry.snapshot) && entry.snapshot.id === value.id && entry.snapshot.questionId === value.questionId, 50)
@@ -42,7 +44,7 @@ export function validateWorkspace(value: unknown): WorkspaceValidation {
     products: item => object(item) && id(item.id) && ['name', 'type', 'skin', 'finish', 'note'].every(key => string(item[key])) && number(item.price) && number(item.score, 10) && source(item.source) && integer(item.revision),
     issues: item => object(item) && id(item.id) && ['title', 'description', 'nextAction'].every(key => string(item[key])) && oneOf(item.kind, ['Missing material', 'Conflicting information', 'Needs clarification']) && oneOf(item.area, ['Audience advice', 'Case-file report']) && oneOf(item.severity, ['Blocks affected answer', 'Needs review', 'Admin only']) && sources(item.sourceRefs) && ids(item.questionIds) && ids(item.productIds) && oneOf(item.status, ['Open', 'Checking', 'Resolved']) && optional(item.resolution, string) && optional(item.resolutionSource, string) && optional(item.resolvedAt, date),
     drafts: item => draft(item),
-    cards: item => object(item) && id(item.id) && id(item.entityId) && oneOf(item.kind, ['question', 'product', 'note', 'draft', 'issue']) && typeof item.x === 'number' && Number.isFinite(item.x) && Math.abs(item.x) <= 10_000_000 && typeof item.y === 'number' && Number.isFinite(item.y) && Math.abs(item.y) <= 10_000_000,
+    cards: item => object(item) && id(item.id) && id(item.entityId) && oneOf(item.kind, ['question', 'product', 'note', 'draft', 'issue', 'evidence']) && typeof item.x === 'number' && Number.isFinite(item.x) && Math.abs(item.x) <= 10_000_000 && typeof item.y === 'number' && Number.isFinite(item.y) && Math.abs(item.y) <= 10_000_000,
     links: item => object(item) && id(item.id) && id(item.source) && id(item.target) && optional(item.evidenceOrigin, origin => oneOf(origin, ['generated', 'manual'])),
     activity: item => object(item) && id(item.id) && string(item.text) && date(item.at),
   };
@@ -54,7 +56,7 @@ export function validateWorkspace(value: unknown): WorkspaceValidation {
   const workspace = value as unknown as Workspace;
   const productIds = new Set(workspace.products.map(item => item.id));
   const questionIds = new Set(workspace.questions.map(item => item.id));
-  const sets = { question: questionIds, product: productIds, draft: new Set(workspace.drafts.map(item => item.id)), issue: new Set(workspace.issues.map(item => item.id)), note: new Set(mayaNotes.map(item => item.id)) };
+  const sets = { question: questionIds, product: productIds, draft: new Set(workspace.drafts.map(item => item.id)), issue: new Set(workspace.issues.map(item => item.id)), note: new Set(mayaNotes.map(item => item.id)), evidence: new Set(CASE_EVIDENCE.map(item => item.id)) };
   if (workspace.questions.some(item => item.productIds.some(key => !productIds.has(key))) || workspace.issues.some(item => item.productIds.some(key => !productIds.has(key)) || item.questionIds.some(key => !questionIds.has(key)))) return fail('A question or issue refers to a missing product or question.');
   const relatedDraft = (item: Workspace['drafts'][number]) => questionIds.has(item.questionId) && item.productIds.every(key => productIds.has(key)) && Object.keys(item.productRevisions).every(key => productIds.has(key));
   if (workspace.drafts.some(item => !relatedDraft(item) || item.history?.some(entry => !relatedDraft(entry.snapshot)))) return fail('An answer or earlier draft refers to a missing question or product.');

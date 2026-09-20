@@ -1,6 +1,7 @@
 import type { CanvasCard, Workspace } from './types';
 import { validateDraft } from './engine';
 import { mayaNotes } from './seed';
+import { findCaseEvidence, caseEvidenceText } from './caseEvidence';
 import { MAYA_PERSONA } from './persona';
 
 export type PersonaTopic = 'persona' | 'issues' | 'selected';
@@ -45,6 +46,10 @@ export function personaReply(topic: PersonaTopic, workspace: Workspace, selected
   if (selected.kind === 'issue') {
     const issue = workspace.issues.find(item => item.id === selected.entityId);
     if (issue) return { ok: true, message: `${issue.title}. Status: ${issue.status}. ${issue.status === 'Resolved' ? 'The original finding was: ' : ''}${issue.description} ${issue.status === 'Resolved' ? `The recorded resolution is: ${issue.resolution || 'No resolution detail supplied.'} Answer evidence is checked separately.` : `Next step: ${issue.nextAction}`}` };
+  }
+  if (selected.kind === 'evidence') {
+    const evidence = findCaseEvidence(selected.entityId);
+    if (evidence) return { ok: true, message: `${evidence.title}. Case-file evidence. ${caseEvidenceText(evidence)}` };
   }
   if (selected.kind === 'note') {
     const note = mayaNotes.find(item => item.id === selected.entityId);

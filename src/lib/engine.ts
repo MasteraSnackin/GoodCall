@@ -130,6 +130,7 @@ export function draftAnswer(question: Question, products: Product[]): Draft {
 /** This deliberately bounded validator supports the demo dataset; it is not general clinical or document verification. */
 export function validateDraft(draft: Draft, workspace: Workspace): string[] {
   const errors:string[]=[], question=workspace.questions.find(q=>q.id===draft.questionId);
+  if (draft.ai?.missingEvidence.length) errors.push(...draft.ai.missingEvidence.map(item=>`AI flagged missing evidence: ${item}`));
   if (!draft.title.trim()) errors.push('Add a title before approval.');
   if (!draft.text.trim()) errors.push('Add an answer before approval.');
   if (!question) errors.push('The original question is missing.');

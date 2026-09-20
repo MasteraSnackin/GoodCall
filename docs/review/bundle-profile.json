@@ -1,0 +1,92 @@
+{
+  "timestamp": "2026-09-20T11:43:00.177Z",
+  "note": "Production bundle generated in memory. Module renderedLength attribution is before final chunk minification; do not equate it to a package share of final gzip bytes. No transfer, parse, hydration or device timing measured.",
+  "chunks": [
+    {
+      "file": "assets/index-CDHiqI9i.js",
+      "isEntry": true,
+      "imports": [],
+      "dynamicImports": [],
+      "bytes": 629077,
+      "gzipBytes": 198099,
+      "renderedModuleBytes": [
+        {
+          "group": "react-dom",
+          "bytes": 653787
+        },
+        {
+          "group": "application",
+          "bytes": 346767
+        },
+        {
+          "group": "@xyflow/react",
+          "bytes": 150977
+        },
+        {
+          "group": "@xyflow/system",
+          "bytes": 104869
+        },
+        {
+          "group": "d3-selection",
+          "bytes": 25752
+        },
+        {
+          "group": "d3-transition",
+          "bytes": 24393
+        },
+        {
+          "group": "lucide-react",
+          "bytes": 22207
+        },
+        {
+          "group": "react",
+          "bytes": 21175
+        },
+        {
+          "group": "d3-zoom",
+          "bytes": 17228
+        },
+        {
+          "group": "scheduler",
+          "bytes": 11420
+        },
+        {
+          "group": "d3-color",
+          "bytes": 11293
+        },
+        {
+          "group": "d3-interpolate",
+          "bytes": 9536
+        },
+        {
+          "group": "d3-drag",
+          "bytes": 7484
+        },
+        {
+          "group": "use-sync-external-store",
+          "bytes": 6054
+        },
+        {
+          "group": "zustand",
+          "bytes": 3266
+        },
+        {
+          "group": "d3-timer",
+          "bytes": 3092
+        },
+        {
+          "group": "d3-dispatch",
+          "bytes": 2730
+        },
+        {
+          "group": "classcat",
+          "bytes": 397
+        },
+        {
+          "group": "d3-ease",
+          "bytes": 91
+        }
+      ]
+    }
+  ]
+}

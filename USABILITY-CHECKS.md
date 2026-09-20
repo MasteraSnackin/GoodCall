@@ -25,10 +25,14 @@ Record task completion, assistance needed, errors, elapsed time and the particip
 - Review a follower’s “Too expensive” clarification and explicitly add it as a question. Confirm that the published answer has not changed.
 - Approve an answer, inspect the exact follower preview, return to editing, then preview and publish deliberately.
 
-## Device checks still required
+## Browser checks completed — 20 September 2026
 
-Browser inspection is unavailable under the administrator-enforced browser policy encountered in this session. Do not bypass it with another automation surface.
+The integrated browser was available for the current review. Desktop 1440 × 1000 and phone-width 390 × 844 inspections covered the canvas overview/Fit, answer inspector, case-evidence library, empty search and reset, and keyboard Enter/Escape dialog exit. The inspected phone canvas and inspector had no page-level horizontal overflow. A mobile flex-height/graph-viewport defect and lost modal focus were reproduced, repaired and checked again.
 
-Pending manual checks: phone-width layout and scrolling, keyboard-only navigation and focus return, real canvas dragging, file download/selection, clipboard behaviour, microphone permission and capture, audible speech and stop controls. Test speech with text still available when permission is refused. Use the app on the same local origin for existing saved data.
+[The visual audit](docs/review/AUDIT.md) records the numbered actions and saved before/after captures. These are agent-operated browser checks, not participant research or a physical-phone test. They do not establish full keyboard or screen-reader accessibility.
 
-No human session, physical microphone test, speaker test or visual browser sign-off has been recorded here.
+## Device and participant checks still required
+
+Pending manual checks: physical phone touch and scrolling, complete keyboard/screen-reader navigation, real canvas dragging, file download/selection, clipboard behaviour, microphone permission/capture, audible speech and stop controls. Test speech with text still available when permission is refused. Use the app on the same local origin for existing saved data.
+
+One user-authorised live OpenAI request was rejected with HTTP 429 and the error was shown without an answer mutation. Successful generation and answer quality need a later acceptance run after the account limit is resolved. No Tano/social integration or human usability session has been verified.

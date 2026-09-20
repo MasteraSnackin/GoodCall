@@ -21,7 +21,7 @@ export function DraftHistory({ draft, onRestore }: { draft: Draft; onRestore: (r
   const revisions = [...(draft.history ?? [])].reverse();
   return <section className="draft-history" aria-labelledby={`${id}-heading`}>
     <h3 id={`${id}-heading`}>Saved draft versions</h3>
-    <p className="draft-history-intro">Up to 20 earlier versions are kept on this device. Restoring brings back the wording and decision details with the current evidence, and returns the answer to review.</p>
+    <p className="draft-history-intro">This device keeps up to 20 earlier versions. Restoring brings back the wording and decision details with the current evidence. The answer will need review again.</p>
     {revisions.length === 0 ? <p className="draft-history-empty">No earlier versions yet. Editing or refreshing this answer will save a version here.</p> : <ol className="draft-history-list">
       {revisions.map((revision, index) => <li key={revision.id}>
         <details>
@@ -44,7 +44,7 @@ export function DraftComparison({ current, suggested, onUseSuggested, onKeepWord
   const id = useId();
   return <section className="draft-comparison" aria-labelledby={`${id}-heading`}>
     <h3 id={`${id}-heading`}>Choose the wording to keep</h3>
-    <p className="draft-history-intro">Both refresh choices use the latest evidence and return the answer to review. Your current version will be saved in draft history.</p>
+    <p className="draft-history-intro">Whether you keep your wording or use the suggestion, the answer will use the latest evidence and need review again. Your current version will stay in draft history.</p>
     <div className="draft-comparison-columns">
       <section aria-labelledby={`${id}-current`}><h3 id={`${id}-current`}>Your wording</h3><DraftWording draft={current}/></section>
       <section aria-labelledby={`${id}-suggested`}><h3 id={`${id}-suggested`}>Updated suggestion</h3><DraftWording draft={suggested}/></section>

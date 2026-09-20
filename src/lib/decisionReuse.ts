@@ -2,7 +2,8 @@ import { draftAnswer, groupQuestion, validateDraft } from './engine';
 import { isDecisionProfile } from './decisionTypes';
 import type { Draft, Question, Workspace } from './types';
 
-const productKey = (ids: string[]) => [...new Set(ids)].sort().join('|');
+// JSON retains ID boundaries even when an imported ID contains a delimiter.
+const productKey = (ids: string[]) => JSON.stringify([...new Set(ids)].sort());
 
 /** Matching topic and products suggest a starting point; they do not establish personal fit. */
 export function findReusableAnswers(question: Question, workspace: Workspace): Draft[] {
@@ -10,10 +11,19 @@ export function findReusableAnswers(question: Question, workspace: Workspace): D
   if (!resolved.length) return [];
   const key = productKey(resolved);
   const intent = groupQuestion(question.text);
+  let questionsById: Map<string, Question> | undefined;
   return workspace.drafts.filter(draft => {
     if (draft.questionId === question.id || !['approved', 'published'].includes(draft.status)) return false;
     if (!isDecisionProfile(draft.decision) || productKey(draft.productIds) !== key) return false;
-    const original = workspace.questions.find(item => item.id === draft.questionId);
+    // Build once, only if a draft reaches this stage. Keep Array.find's first-match
+    // behaviour and never retain validation results across workspace changes.
+    if (!questionsById) {
+      questionsById = new Map();
+      for (const original of workspace.questions) {
+        if (!questionsById.has(original.id)) questionsById.set(original.id, original);
+      }
+    }
+    const original = questionsById.get(draft.questionId);
     if (!original || groupQuestion(original.text) !== intent) return false;
     return validateDraft(draft, workspace).length === 0;
   });
@@ -31,6 +41,8 @@ export function reuseAnswer(question: Question, source: Draft, workspace: Worksp
     ...fresh,
     title: candidate.title,
     text: candidate.text,
+    mode: candidate.mode,
+    ...(candidate.ai ? { ai: { ...candidate.ai, missingEvidence: [...candidate.ai.missingEvidence] } } : {}),
     decision: { ...candidate.decision },
     reusedFrom: { draftId: candidate.id, title: candidate.title, ...(candidate.approvedAt ? { approvedAt: candidate.approvedAt } : {}) },
     // fresh carries this question’s evidence and current product revisions. Review state,

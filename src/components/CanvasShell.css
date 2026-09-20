@@ -82,7 +82,7 @@
 }
 
 .canvas-workspace .workspace-summary .summary-tail {
-  color: #7c806f;
+  color: #656b5b;
   font-size: 9px;
 }
 
@@ -114,7 +114,7 @@
 .canvas-workspace .canvas-review-start p {
   font-size: 11px;
   line-height: 1.55;
-  color: #737966;
+  color: #626957;
   margin-top: 3px;
 }
 
@@ -415,6 +415,12 @@
 
   .canvas-workspace .canvas-review-start {
     padding: 10px 12px;
+  }
+
+  /* The copy's desktop flex basis must not become a 280px height in a column. */
+  .canvas-workspace .canvas-review-start > div {
+    flex: 0 1 auto;
+    min-width: 0;
   }
 
   .canvas-workspace .canvas-review-start strong {

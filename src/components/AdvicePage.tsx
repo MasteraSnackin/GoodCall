@@ -10,7 +10,7 @@ const SAVED='maya-saved-advice-v1';
 function getSaved():PublishedAdvice[]{try{const x=JSON.parse(localStorage.getItem(SAVED)||'[]');return Array.isArray(x)?x.filter(isAdvice):[];}catch{return[];}}
 function AdviceContent({advice}:{advice:PublishedAdvice}){
  return <div data-testid="public-advice-content">
-  <h1>{advice.title}</h1><p className="advice-deck">Good advice should still be here when you’re ready.</p>
+  <h1>{advice.title}</h1><p className="advice-deck">Return to this answer when you're ready to decide.</p>
   <article className="advice-body"><div className="advice-avatar">m.</div><div><span className="eyebrow">YOUR ANSWER</span><div className="advice-copy">{advice.text}</div></div></article>
   {advice.decision&&<DecisionSummary value={advice.decision}/>}
   {advice.products.length>0&&<div className="advice-products">{advice.products.map(p=><article key={p.name}><div className="product-symbol"><Heart size={22} strokeWidth={1.3}/></div><div><span className="eyebrow">FROM THE CASE-FILE SHELF</span><h3>{p.name}</h3><p>“{p.note}”</p></div><strong>£{p.price.toFixed(p.price%1?2:0)}</strong></article>)}</div>}
@@ -27,12 +27,12 @@ export default function AdvicePage({advice,onBack,preview=false}:{advice:Publish
  function toggleSave(){if(preview||!current)return;const next=isSaved?saved.filter(x=>x.id!==current.id):[current,...saved.filter(x=>x.id!==current.id)];try{localStorage.setItem(SAVED,JSON.stringify(next));setSaved(next);setError('');}catch{setError('Your browser could not save this card. Copy its link instead.');}}
  async function copy(){if(preview||!current)return;let url:string;try{url=shareUrl(current);}catch{setError('This answer could not be turned into a share link.');return;}try{await navigator.clipboard.writeText(url);setCopied(true);setTimeout(()=>setCopied(false),2500);}catch{setFallback(url);}}
  return <div className={`advice-page${preview?' advice-preview':''}`}>
-  <nav>{!preview&&<button onClick={onBack}><ArrowLeft size={17}/>Workspace</button>}<span>GoodCall</span><small>{preview?'FOLLOWER PREVIEW':'THE ANSWER EDIT'}</small></nav>
-  <main><div className="advice-kicker"><span className="eyebrow">A LITTLE CLARITY, FROM MAYA’S NOTES</span><span className="approved-tag">{preview?'Preview · not published':<><ShieldCheck size={14}/>Reviewed in this demo</>}</span></div>
+  <nav>{!preview&&<button onClick={onBack}><ArrowLeft size={17}/>Workspace</button>}<span>GoodCall</span><small>{preview?'FOLLOWER PREVIEW':'YOUR ANSWER'}</small></nav>
+  <main><div className="advice-kicker"><span className="eyebrow">FROM MAYA'S NOTES</span><span className="approved-tag">{preview?'Preview · not published':<><ShieldCheck size={14}/>Reviewed in this demo</>}</span></div>
    <AdviceContent advice={current}/>
    {!preview&&<><div className="advice-actions"><button className="primary" onClick={toggleSave}>{isSaved?<Check size={17}/>:<Bookmark size={17}/>} {isSaved?'Saved for later':'Save for later'}</button><button className="secondary" onClick={copy}>{copied?<Check size={17}/>:<Copy size={17}/>} {copied?'Link copied':'Share this answer'}</button></div>{error&&<p role="alert">{error}</p>}{fallback&&<label className="field">Copy this link<input readOnly value={fallback} onFocus={e=>e.target.select()}/></label>}<FollowerFeedback key={`${current.id}:${feedbackAdviceVersion(current)}`} advice={current}/></>}
-   <div className="advice-footnote"><span>{preview?'Check the answer before publishing.':'Saved for the right moment.'}</span><p>{preview?'This is a read-only preview of the public answer. Opening it does not publish, save or share the answer.':'Exercise prototype using fictional case-file data. This is a copy of advice approved locally on '+new Date(current.publishedAt).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})+'; it does not update when the original changes. Saves stay in this browser. Links work while this app is available at the same address.'}</p></div>
+   <div className="advice-footnote"><span>{preview?'Check the answer before publishing.':'About this answer'}</span><p>{preview?'This is a read-only preview of the public answer. Opening it does not publish, save or share the answer.':'Exercise prototype using fictional case-file data. This is a copy of advice approved locally on '+new Date(current.publishedAt).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})+'; it does not update when the original changes. Saves stay in this browser. Links work while this app is available at the same address.'}</p></div>
    {!preview&&saved.length>0&&<section className="saved-advice"><span className="eyebrow">YOUR SAVED ANSWERS · {saved.length}</span>{saved.map(s=><button key={s.id} onClick={()=>{location.hash=shareUrl(s).split('#')[1];setSelection({base:advice!,advice:s});setFallback('');setCopied(false);setError('');window.scrollTo(0,0);}}><Bookmark size={15}/><span>{s.title}</span><ArrowUpRight size={16}/></button>)}</section>}
-  </main><footer>GoodCall <span>Less second-guessing. More getting on with your day.</span></footer>
+  </main><footer>GoodCall <span>Advice to help you decide.</span></footer>
  </div>;
 }

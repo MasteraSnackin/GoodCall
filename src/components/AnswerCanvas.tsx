@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import type { CanvasCard, CardKind, Workspace } from '../lib/types';
 import { mayaNotes } from '../lib/seed';
+import { findCaseEvidence } from '../lib/caseEvidence';
 import { canvasCardLabel, canvasCardKindLabel, searchCanvasCards, relatedCanvasCardIds } from '../lib/canvasNavigation';
 import type {DecisionProfile} from '../lib/decisionTypes';
 import {DecisionSummary} from './DecisionProfile';
@@ -52,6 +53,7 @@ const kindIcons = {
   question: MessageCircle,
   product: ShoppingBag,
   note: FileText,
+  evidence: FileText,
   draft: Sparkles,
   issue: TriangleAlert,
 };
@@ -117,6 +119,10 @@ function presentCard(card: CanvasCard, workspace: Workspace, onDraft: AnswerCanv
       page: product ? pageLabel(product.source.page) : '', price: product?.price,
       badge: product ? `${product.score}/10` : undefined,
     };
+  }
+  if (card.kind === 'evidence') {
+    const evidence = findCaseEvidence(card.entityId);
+    return { kind: card.kind, entityId: card.entityId, eyebrow: 'Case-file evidence', title: evidence?.title || 'Case-file evidence', text: evidence?.summary || 'Source details unavailable.', footer: evidence?.category || 'Source record', badge: evidence?.table ? `${evidence.table.rows.length} records` : undefined, page: evidence ? [...new Set(evidence.sourceRefs.map(ref => ref.page))].map(pageLabel).join(', ') : '' };
   }
   if (card.kind === 'note') {
     const note = mayaNotes.find(item => item.id === card.entityId);

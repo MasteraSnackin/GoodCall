@@ -21,6 +21,14 @@ interface ChatPanelProps {
   onClear: () => void;
   selectedLabel?: string;
   storageError?: string;
+  storageNotice?: string;
+  onRetryStorage?: () => void;
+  aiLabel?: string;
+  pending?: boolean;
+  error?: string;
+  onCancel?: () => void;
+  onRetry?: () => void;
+  onOpenAi?: () => void;
 }
 
 const LIMIT = 2000;
@@ -39,7 +47,7 @@ function inputConstructor() {
   return browser.SpeechRecognition || browser.webkitSpeechRecognition;
 }
 
-export default function ChatPanel({ open, onClose, messages, onSend, onAddQuestion, onClear, selectedLabel, storageError }: ChatPanelProps) {
+export default function ChatPanel({ open, onClose, messages, onSend, onAddQuestion, onClear, selectedLabel, storageError, storageNotice, onRetryStorage, aiLabel = 'Local case-file assistant · no live AI', pending = false, error, onCancel, onRetry, onOpenAi }: ChatPanelProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const composerRef = useRef<HTMLTextAreaElement>(null);
   const historyRef = useRef<HTMLDivElement>(null);
@@ -204,7 +212,7 @@ export default function ChatPanel({ open, onClose, messages, onSend, onAddQuesti
 
   function send() {
     const text = composer.trim();
-    if (!text || active) return;
+    if (!text || active || pending) return;
     stopReading(); setNotice(''); onSend(text); setComposer(''); composerRef.current?.focus();
   }
 
@@ -217,7 +225,7 @@ export default function ChatPanel({ open, onClose, messages, onSend, onAddQuesti
     }}>
     <header className="chat-panel-header">
       <div className="chat-mark" aria-hidden="true">m.</div>
-      <div><h2 id="chat-panel-title">Chat with Maya</h2><p id="chat-panel-description">Local case-file assistant · no live AI</p></div>
+      <div><h2 id="chat-panel-title">Chat with Maya</h2><p id="chat-panel-description">{aiLabel}</p></div>
       <button className="chat-clear" type="button" aria-label="Clear chat" disabled={!messages.length} onClick={() => { abortListening(); stopReading(); onClear(); setAddedIds(new Set()); }}>Clear history</button>
       <button type="button" className="chat-icon-button" onClick={close} aria-label="Close chat"><X size={19}/></button>
     </header>
@@ -225,7 +233,7 @@ export default function ChatPanel({ open, onClose, messages, onSend, onAddQuesti
     <div className="chat-history" ref={historyRef} role="log" aria-label="Conversation with Maya" aria-live="polite" aria-relevant="additions text">
       {messages.length === 0 && <div className="chat-welcome"><span className="chat-welcome-icon"><MessageCircle size={24} strokeWidth={1.4}/></span><h3>A little clarity, before the next answer.</h3><p>Ask about a product, the evidence that is missing, or the card you are working on. We’ll start with what the case file actually tells us.</p><small>Suggestions stay in this chat. You decide what becomes an audience question.</small></div>}
       {messages.map((message, index) => <article className={`chat-message chat-message--${message.role}`} key={message.id} aria-label={`${message.role === 'assistant' ? 'Maya’s reply' : 'Your message'} ${index + 1}`}>
-        <span className="chat-message-author">{message.role === 'assistant' ? 'Maya · case-file persona' : 'You'}</span>
+        <span className="chat-message-author">{message.role === 'assistant' ? message.origin === 'ai' ? `AI suggestion · ${message.aiModel || 'OpenAI'}` : 'Maya · local evidence helper' : 'You'}</span>
         <div className="chat-message-text">{message.text}</div>
         {message.role === 'assistant' && <>
           {!!message.sourceRefs?.length && <details className="chat-message-sources"><summary><BookOpen size={12}/>Supporting evidence <span>{message.sourceRefs.length}</span><ChevronDown size={12}/></summary><div>{message.sourceRefs.map((source, sourceIndex) => <div className="chat-source" key={`${source.label}-${sourceIndex}`}>{source.page > 0 ? <a href={`/operation-shade-case-file.pdf#page=${source.page}`} target="_blank" rel="noreferrer">{source.label} · p. {source.page}<ArrowUpRight size={11}/></a> : <span>{source.label} · workspace note</span>}<p>{source.excerpt}</p></div>)}</div></details>}
@@ -236,7 +244,10 @@ export default function ChatPanel({ open, onClose, messages, onSend, onAddQuesti
     <div className="chat-prompt-chips" aria-label="Suggested messages">{SUGGESTIONS.map(prompt => <button type="button" key={prompt} onClick={() => { edit(prompt); composerRef.current?.focus(); }}>{prompt}</button>)}</div>
     <section className="chat-compose-area" aria-label="Write or dictate a message">
       <div className="chat-voice-settings"><label><input type="checkbox" aria-label="Speak replies" checked={speakReplies} disabled={!supportsOutput} onChange={event => { setSpeakReplies(event.target.checked); if (!event.target.checked && readingAutoRef.current) stopReading(); }}/><span>Speak replies</span><small>{speakReplies ? 'New replies only' : 'Off'}</small></label>{supportsOutput && voices.length > 0 && <label className="chat-voice-picker"><span className="chat-sr-only">Reading voice</span><select aria-label="Reading voice" value={voiceURI} onChange={event => { stopReading(); setVoiceURI(event.target.value); }}><option value="">Automatic voice</option>{voices.map((voice, index) => <option key={`${voice.voiceURI}-${index}`} value={voice.voiceURI}>{voice.name} ({voice.lang})</option>)}</select></label>}</div>
-      {storageError && <p className="chat-notice chat-notice--error" role="alert">{storageError}</p>}
+      {storageNotice && <p className="chat-notice" role="status">{storageNotice}</p>}
+      {storageError && <div className="chat-notice chat-notice--error" role="alert">{storageError}{onRetryStorage&&<button type="button" onClick={onRetryStorage}>Retry saving chat</button>}</div>}
+      {pending && <div className="chat-ai-status" role="status"><span>AI is checking the evidence and drafting a reply…</span>{onCancel&&<button type="button" onClick={onCancel}>Cancel AI request</button>}</div>}
+      {error && <div className="chat-notice chat-notice--error" role="alert"><span>{error}</span>{onRetry&&!pending&&<button type="button" onClick={onRetry}>Retry AI answer</button>}</div>}
       {notice && <p className="chat-notice" role="status">{notice}</p>}
       {interim && <p className="chat-interim" aria-live="polite">Hearing: {interim}</p>}
       <form className={`chat-composer ${active ? 'is-listening' : ''}`} onSubmit={event => { event.preventDefault(); send(); }}>
@@ -245,11 +256,12 @@ export default function ChatPanel({ open, onClose, messages, onSend, onAddQuesti
           onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); send(); } }}/>
         <div className="chat-composer-tools"><span className="chat-input-status" role="status">{phase === 'starting' ? 'Starting microphone…' : phase === 'listening' ? 'Listening · review before sending' : phase === 'stopping' ? 'Finishing transcript…' : composer.length > 1700 ? `${composer.length.toLocaleString()} / 2,000` : 'Enter to send · Shift + Enter for a new line'}</span><div>
           <button type="button" className={`chat-mic ${active ? 'active' : ''}`} disabled={!supportsInput || phase === 'stopping'} aria-label={phase === 'starting' ? 'Cancel dictation' : phase === 'listening' ? 'Stop dictation' : phase === 'stopping' ? 'Finishing dictation' : 'Start dictation'} title={supportsInput ? 'Dictate your message' : 'Speech recognition is unavailable'} onClick={phase === 'starting' ? abortListening : active ? finishListening : startListening}>{active ? <MicOff size={17}/> : <Mic size={17}/>}</button>
-          <button type="submit" className="chat-send" disabled={!composer.trim() || active} aria-label="Send message"><ArrowUp size={18}/></button>
+          <button type="submit" className="chat-send" disabled={!composer.trim() || active || pending} aria-label="Send message"><ArrowUp size={18}/></button>
         </div></div>
       </form>
       {(!supportsInput || !supportsOutput) && <p className="chat-support-note">{!supportsInput ? 'Dictation is unavailable in this browser. You can type your message. ' : ''}{!supportsOutput ? 'Read aloud is unavailable here; replies remain on screen.' : ''}</p>}
       <p className="chat-privacy">Synthetic browser voice, not a clone of Maya. Browser speech may use an online service. This app does not store audio.</p>
+      {onOpenAi&&<button className="chat-ai-settings" type="button" onClick={onOpenAi}>AI connection settings</button>}
     </section>
   </dialog>;
 }
