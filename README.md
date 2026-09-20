@@ -177,11 +177,51 @@ Run the local demo using the steps above. No public live deployment is supplied.
 
 **Desktop canvas**
 
+Connect questions, product facts, notes and answers on a movable board.
+
 ![GoodCall desktop canvas](docs/review/screenshots/02-desktop-canvas.jpg)
+
+**Audience questions**
+
+Browse the original follower questions by topic, with source links and actions for drafting or review.
+
+![Audience question inbox with topic filters and original follower messages](docs/review/screenshots/09-audience-questions.jpg)
+
+**Products and Maya’s notes**
+
+Compare the case-file products, prices, ratings and Maya’s quoted judgement.
+
+![Product knowledge shelf showing Cloud Cream, Daily Gel and Red Reset](docs/review/screenshots/10-product-knowledge.jpg)
+
+**Missing materials and inconsistencies**
+
+See open findings, missing materials and the questions that need more evidence.
+
+![Evidence report with open findings, missing materials and review filters](docs/review/screenshots/11-evidence-report.jpg)
+
+**Case-file evidence library**
+
+Search 18 source cards covering Maya, her audience, content, behaviour and unresolved case details.
+
+![Searchable case-file evidence library with categories and source page references](docs/review/screenshots/12-case-evidence-library.jpg)
+
+**Follower-facing advice**
+
+A locally reviewed answer in the follower reading view, labelled as part of the exercise demo.
+
+![Follower advice page showing the reviewed Cloud Cream answer](docs/review/screenshots/13-follower-advice.jpg)
 
 **Phone-width answer review**
 
+Read and review the answer in the compact inspector.
+
 <img src="docs/review/screenshots/04-mobile-inspector.jpg" alt="GoodCall answer review panel at phone width" width="390">
+
+**Phone-width evidence library**
+
+Browse and search case-file evidence on a phone-width screen.
+
+<img src="docs/review/screenshots/07-mobile-case-evidence.jpg" alt="GoodCall case-file evidence search and source cards at phone width" width="390">
 
 These captures document the inspected local interface. They do not establish physical microphone/speaker operation or live provider access; consult the [final review report](docs/review/TASK-RESULTS.md) for interaction coverage.
 
