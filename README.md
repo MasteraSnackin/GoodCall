@@ -2,9 +2,11 @@
 
 Turn a creator’s judgement into reviewed, reusable advice.
 
-![GoodCall answer canvas with a selected answer and review panel](docs/review/screenshots/03-answer-inspector.jpg)
+[![Watch the 60-second narrated GoodCall screenshot walkthrough](docs/demo/demo-poster.png)](docs/demo/GoodCall-60-Second-Demo.mp4)
 
-*Review an answer alongside its supporting evidence.*
+**[Watch the narrated demo — 60 seconds](docs/demo/GoodCall-60-Second-Demo.mp4)** · [Download the interactive walkthrough](https://github.com/MasteraSnackin/GoodCall/raw/refs/heads/main/docs/demo/GoodCall-interactive-walkthrough.zip)
+
+*Explore Maya’s workflow through saved app screens, guided highlights and British English narration.*
 
 ## Description
 
@@ -183,6 +185,27 @@ The legacy `maya-*` storage names preserve existing data after the GoodCall rena
 ## Screenshots / Demo
 
 Run the local demo using the steps above. No public live deployment is supplied.
+
+### 60-second walkthrough
+
+Follow Maya from audience questions and connected evidence to answer review, reusable follower advice, chat and voice controls, and missing-material reports.
+
+| Version | Open or download |
+| --- | --- |
+| **Narrated video** | [60-second MP4](docs/demo/GoodCall-60-Second-Demo.mp4), with a synthetic British English female voice-over and optional English captions |
+| **Silent animation** | [60-second GIF](docs/demo/GoodCall-60-Second-Demo.gif), with zooms and highlights |
+| **Interactive walkthrough** | [Download ZIP](https://github.com/MasteraSnackin/GoodCall/raw/refs/heads/main/docs/demo/GoodCall-interactive-walkthrough.zip), extract it and open the HTML in a browser; six screens and 18 clickable hotspots work offline |
+| **Text and captions** | [Narration script](docs/demo/GoodCall-narration.txt) · [SRT captions](docs/demo/GoodCall-captions.srt) |
+
+These walkthroughs animate or explore saved screenshots. They do not operate the live app or demonstrate microphone, speaker or provider responses. The video’s voice-over is a separately generated narrator. See the [demo guide](docs/demo/README.md) for all formats and controls.
+
+### Screenshot gallery
+
+**Answer review**
+
+Review an answer alongside its supporting evidence.
+
+![GoodCall answer canvas with a selected answer and review panel](docs/review/screenshots/03-answer-inspector.jpg)
 
 **Desktop canvas**
 
