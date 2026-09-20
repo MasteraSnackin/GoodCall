@@ -2,6 +2,10 @@
 
 A canvas where creators can draft, review and reuse advice based on their own judgement.
 
+[![Animated walkthrough of GoodCall](docs/demo/GoodCall-60-Second-Demo.gif)](docs/demo/GoodCall-60-Second-Demo.gif)
+
+The preview loops automatically. [View the full-size animation](docs/demo/GoodCall-60-Second-Demo.gif) or [view a still image](docs/demo/demo-poster.png). The [demo guide](docs/demo/README.md) explains how it was made.
+
 Watch the 60-second walkthrough below, and use the player's sound control to hear the narration.
 
 https://github.com/user-attachments/assets/afcde62e-0aca-45eb-bc52-dd00cbdfee06
