@@ -1,0 +1,59 @@
+{
+  "verifiedAt": "2026-09-20T13:09:49.788020+00:00",
+  "feature": "Canvas editing tools and review notes",
+  "baseCommit": "34c5f15ba3838f608657ca647b65849b07d37957",
+  "automated": {
+    "nodeTests": 243,
+    "domTests": 153,
+    "total": 396,
+    "vitestFiles": 19,
+    "testCommand": "npm test",
+    "buildCommand": "npm run build",
+    "result": "passed"
+  },
+  "bundle": {
+    "javascriptKB": 682.62,
+    "javascriptGzipKB": 215.28,
+    "cssKB": 116.38,
+    "cssGzipKB": 23.34,
+    "advisory": "Existing JavaScript chunk exceeds 500 kB"
+  },
+  "browser": {
+    "testOrigin": "http://localhost:4341/",
+    "userOriginPreserved": "http://127.0.0.1:4341/",
+    "checks": [
+      "Drag-box selects two cards without opening inspector",
+      "Group drag saves both positions",
+      "One-step undo and redo restore the whole group",
+      "Locked group does not move on attempted drag",
+      "Measured spacing and undo preserve locked positions",
+      "Arrow-key movement enables history and undo/redo restores positions",
+      "New review note receives actual textarea focus after measurement",
+      "Review note text and locks survive reload",
+      "Review-note deletion works",
+      "390x844 layout has no horizontal page overflow; tools scroll horizontally"
+    ],
+    "limits": [
+      "Physical touch-device behaviour not tested",
+      "Comprehensive screen-reader coverage not claimed",
+      "No new provider generation requested"
+    ]
+  },
+  "review": "Two scoped independent review lanes completed; concrete placement and keyboard defects corrected and browser-verified",
+  "claudeSession": "remained configured; server not restarted",
+  "sourceSha256": {
+    "src/App.tsx": "ef2e052b7f280e8672aa1feb366336c914cd4239447b663c9c9ba8eb5457c724",
+    "src/components/AnswerCanvas.tsx": "bfb127e0cbfebf870dcd296f09c88d371632d8d3d27f22c1d5a9fba4e8eed68c",
+    "src/components/Canvas.css": "97aaa3fb0974f04269c8fb7d45dfd19abbc29d164a33375aa7bdd55fd0cf3021",
+    "src/lib/canvasLayout.ts": "80575a755919255ea680f221b54feefd8fedb2d36a66c85b64f10e57eb20e31a",
+    "src/lib/useCanvasEditing.ts": "e145854517892b0dbdbdd15bf25995979436be99ee8dff67fe9f5c43953918b8",
+    "src/lib/caseEvidenceCanvas.ts": "f9341254a46103268ddcc4de0149d0ebda5d0e47a85a9687d7cb6393bbb8aac3",
+    "src/lib/types.ts": "d1e2abac7a7e51c80de61acf690e9d1e6d8bc949a9dfcb3e87180ca21f926784",
+    "src/lib/workspaceValidation.ts": "e63db469bc22376795cf1181bd8482574897ddde1e6ac9ad0f3faf2e2f4be71d",
+    "tests/canvasControls.test.tsx": "922aba134e6739f9cbe84ba7156c5818c518c33c149f1fb2a7f2e892b8900f96",
+    "tests/canvasEditing.test.tsx": "d6dd13ba8f18f860fb4c07d15464d13fec1bdc5e56af42c1aa6c08606b56915a",
+    "tests/canvasLayout.test.ts": "5f7eacfd0180046ba065015abbec0f37da1fdc33127f070138def75285b03d69",
+    "tests/reviewNotes.test.ts": "2c844b191201ca94ef4d6c158b5e75a7c2140543d3fdeb308cdcbef490f7478b",
+    "tests/caseEvidence.test.ts": "68d9131a6512530b79ad55137f4d39ab6ffb7e2829d92a7c11c2970f862a12e2"
+  }
+}

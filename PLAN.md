@@ -1,6 +1,12 @@
 # GoodCall task plan
 
-## Current result
+## Canvas tools follow-up
+
+Completed 20 September 2026: multiple selection and movement, Select/Pan modes, alignment and spacing, saved position locks, layout-only Undo/Redo and editable review notes. Notes persist in the workspace and private backups while remaining outside AI requests and published advice. Automatic placement keeps new cards clear of existing notes.
+
+The final full suite passed **396 tests** (243 Node + 153 DOM), and the production build passed. Browser checks verified group dragging, spacing, locks, keyboard movement/history, note focus/editing/removal, reload persistence and the 390 × 844 layout. The live Claude session remained connected. Physical touch/audio, full assistive-technology acceptance and the existing bundle advisory remain separate boundaries. See [canvas usage](docs/CANVAS-TOOLS.md) and [current verification](TEST-REPORT.md).
+
+## Previous nine-file review result
 
 Status: **Verified & Polished — tested local prototype scope**, 20 September 2026. The repeated nine-file review is complete with the existing React/Vite/CSS implementation. The original attachments and synced sources remain unchanged. Example references to Next.js, Tailwind, Framer Motion and Modal were adapted to the established app; no stack migration or cloud deployment was added.
 

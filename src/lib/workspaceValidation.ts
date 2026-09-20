@@ -23,6 +23,8 @@ const reuse = (value: unknown) => object(value) && id(value.draftId) && string(v
 const revisions = (value: unknown) => object(value) && Object.entries(value).length <= 1_000 && Object.entries(value).every(([key, revision]) => id(key) && integer(revision));
 const aiMetadata = (value: unknown) => object(value) && oneOf(value.provider, ['openai', 'anthropic']) && string(value.model, 120) && value.model.length > 0 && date(value.generatedAt) && list(value.missingEvidence, item => string(item, 1000), 20);
 const persona = (value: unknown) => object(value) && id(value.id) && integer(value.version);
+const coordinate = (value: unknown) => typeof value === 'number' && Number.isFinite(value) && Math.abs(value) <= 10_000_000;
+const locked = (value: unknown) => optional(value, item => typeof item === 'boolean');
 
 function draft(value: unknown, historyAllowed = true): boolean {
   if (!object(value)) return false;
@@ -44,7 +46,7 @@ export function validateWorkspace(value: unknown): WorkspaceValidation {
     products: item => object(item) && id(item.id) && ['name', 'type', 'skin', 'finish', 'note'].every(key => string(item[key])) && number(item.price) && number(item.score, 10) && source(item.source) && integer(item.revision),
     issues: item => object(item) && id(item.id) && ['title', 'description', 'nextAction'].every(key => string(item[key])) && oneOf(item.kind, ['Missing material', 'Conflicting information', 'Needs clarification']) && oneOf(item.area, ['Audience advice', 'Case-file report']) && oneOf(item.severity, ['Blocks affected answer', 'Needs review', 'Admin only']) && sources(item.sourceRefs) && ids(item.questionIds) && ids(item.productIds) && oneOf(item.status, ['Open', 'Checking', 'Resolved']) && optional(item.resolution, string) && optional(item.resolutionSource, string) && optional(item.resolvedAt, date),
     drafts: item => draft(item),
-    cards: item => object(item) && id(item.id) && id(item.entityId) && oneOf(item.kind, ['question', 'product', 'note', 'draft', 'issue', 'evidence']) && typeof item.x === 'number' && Number.isFinite(item.x) && Math.abs(item.x) <= 10_000_000 && typeof item.y === 'number' && Number.isFinite(item.y) && Math.abs(item.y) <= 10_000_000,
+    cards: item => object(item) && id(item.id) && id(item.entityId) && oneOf(item.kind, ['question', 'product', 'note', 'draft', 'issue', 'evidence']) && coordinate(item.x) && coordinate(item.y) && locked(item.locked),
     links: item => object(item) && id(item.id) && id(item.source) && id(item.target) && optional(item.evidenceOrigin, origin => oneOf(origin, ['generated', 'manual'])),
     activity: item => object(item) && id(item.id) && string(item.text) && date(item.at),
   };
@@ -54,6 +56,9 @@ export function validateWorkspace(value: unknown): WorkspaceValidation {
     if (new Set(items.map(item => (item as RecordValue).id)).size !== items.length) return fail(`The ${key} data contains repeated identifiers.`);
   }
   const workspace = value as unknown as Workspace;
+  if (!optional(value.reviewNotes, notes => list(notes, item => object(item) && id(item.id) && string(item.text, 4000) && coordinate(item.x) && coordinate(item.y) && locked(item.locked) && date(item.createdAt) && date(item.updatedAt), 500))) return fail('The review notes are invalid or exceed the workspace limits.');
+  const noteIds = (workspace.reviewNotes || []).map(note => note.id);
+  if (new Set(noteIds).size !== noteIds.length || workspace.cards.some(card => noteIds.includes(card.id))) return fail('The review notes contain repeated canvas identifiers.');
   const productIds = new Set(workspace.products.map(item => item.id));
   const questionIds = new Set(workspace.questions.map(item => item.id));
   const sets = { question: questionIds, product: productIds, draft: new Set(workspace.drafts.map(item => item.id)), issue: new Set(workspace.issues.map(item => item.id)), note: new Set(mayaNotes.map(item => item.id)), evidence: new Set(CASE_EVIDENCE.map(item => item.id)) };

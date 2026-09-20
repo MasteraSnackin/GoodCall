@@ -67,6 +67,18 @@ test('placement avoids existing records even if a generated card ID is already i
   assert.equal(validateWorkspace(next).ok, true);
 });
 
+test('new evidence avoids review notes and cannot reuse a note identifier', () => {
+  const workspace = createWorkspace();
+  const baseX = Math.max(800, ...workspace.cards.map(card => card.x)) + 360;
+  workspace.reviewNotes = [{ id: 'card-case-content-log', text: 'Keep this visible', x: baseX, y: 35, createdAt: '2026-09-20T12:00:00Z', updatedAt: '2026-09-20T12:00:00Z' }];
+  const next = addCaseEvidenceCards(workspace, ['case-content-log']);
+  const added = next.cards.at(-1)!;
+  assert.notEqual(added.id, workspace.reviewNotes[0].id);
+  assert.ok(added.y >= 515);
+  assert.equal(validateWorkspace(next).ok, true);
+  assert.strictEqual(next.reviewNotes, workspace.reviewNotes);
+});
+
 test('search and spoken or chat explanations include the full selected evidence and limitations', () => {
   const workspace = addCaseEvidenceCards(createWorkspace(), ['case-hidden-audience-sample', 'case-quiet-audience-findings']);
   const before = JSON.stringify(workspace);

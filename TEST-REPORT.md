@@ -2,7 +2,21 @@
 
 Reviewed 20 September 2026. Local app: http://127.0.0.1:4341/
 
-## Current nine-file completion — 20 September 2026
+## Current canvas tools — 20 September 2026
+
+**396 automated tests passed: 243 Node tests and 153 DOM tests across 19 Vitest files.** The full `npm test` and `npm run build` runs passed after the final canvas correction. JavaScript is **682.62 kB / 215.28 kB gzip** and CSS is **116.38 kB / 23.34 kB gzip**. The existing large-chunk advisory remains.
+
+The canvas adds multiple selection, group movement, Select/Pan modes, measured alignment and spacing, position locks, 50-action session layout history and saved review notes. Tests cover legacy backups, malformed notes/locks, layout-only history, later answer/approval preservation, deletion, external moves, restore, deferred keyboard updates, measured note focus, locked items and placement around notes. Review notes are excluded from AI context, fingerprints, evidence gates and public payloads.
+
+Real browser checks on the separate `localhost:4341` origin covered drag-box selection, moving two cards together, one-step Undo/Redo, attempted movement of locked cards, spacing mixed groups without moving locked cards, arrow-key movement and its Undo/Redo, note editing, actual focus after note creation, note removal and saved notes/locks after reload. The 390 × 844 layout had no horizontal page overflow; its toolbar scrolls sideways and expanded view remains available. This is browser verification, not physical touch-device acceptance.
+
+Two independent review lanes found and helped correct note-placement collisions and unsaved keyboard movement. Browser verification additionally caught a deferred-event timing issue and focus attempted before React Flow measured the note. The final review found no further blocker in those changes. The existing Claude session remained configured throughout; no server restart, new provider generation, answer approval or advice publication was performed for this feature.
+
+[Canvas tools guide](docs/CANVAS-TOOLS.md) · [Verification record](docs/review/canvas-tools-verification-2026-09-20.json)
+
+The nine-file review below records the preceding release. Its provider findings remain relevant; its test totals and canvas drag limitations describe that earlier snapshot.
+
+## Previous nine-file completion — 20 September 2026
 
 **354 automated tests passed: 215 Node tests and 139 DOM tests across 18 Vitest files.** `npm test` and `npm run build` both passed after the last quantity/recommendation correction. Node 26.8.1 and npm 11.19.0 were used. Production JavaScript is **666.46 kB / 210.20 kB gzip**; CSS is **112.03 kB / 22.64 kB gzip**. The existing large-chunk advisory remains. [Machine-readable verification and source snapshot](docs/review/verification-2026-09-20.json).
 

@@ -122,6 +122,8 @@ Open http://127.0.0.1:4341/. Use the same address each time: `localhost` and `12
 
 Use **Find a card** to search the board. **Focus connections** shows the cards connected to your selection. **Show all cards** or **Fit** restores the view without changing saved positions. The bottom controls let you zoom, return to **100%**, fit the board, focus a selected card and pan with the minimap. Choose **Expand canvas** for more space. Close details with **Escape** or the close button, and reopen them with **Show card details**.
 
+Use the editing toolbar to select and move several cards, align or space them, lock positions, and add review notes. **Undo** and **Redo** apply to layout changes; answers and approvals stay intact. Notes save with the workspace but are excluded from AI requests and published advice. On phones, scroll the toolbar sideways to reach every tool. See the [canvas tools guide](docs/CANVAS-TOOLS.md) for shortcuts and history limits.
+
 Choose **Case evidence** on the canvas to open the **Case-file evidence** library. Search the sources, then add individual cards or an overview. Source links open the included PDF at the relevant page. The cards describe the fictional file, including its uncertainties. They do not show live account analytics.
 
 ### Chat, voice and persona
