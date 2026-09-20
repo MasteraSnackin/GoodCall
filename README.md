@@ -6,17 +6,17 @@ A canvas where creators can draft, review and reuse advice based on their own ju
 
 The hosted demo uses local evidence templates for answers and chat. Work is saved in each browser; Claude, OpenAI, Tano and social accounts are not connected on the public site.
 
-[![Animated walkthrough of GoodCall](docs/demo/GoodCall-60-Second-Demo.gif)](docs/demo/GoodCall-60-Second-Demo.gif)
+[![Animated walkthrough of GoodCall](docs/demo/GoodCall-70-Second-Demo.gif)](docs/demo/GoodCall-70-Second-Demo.gif)
 
-The preview loops automatically. [View the full-size animation](docs/demo/GoodCall-60-Second-Demo.gif) or [view a still image](docs/demo/demo-poster.png). The [demo guide](docs/demo/README.md) explains how it was made.
+The preview loops automatically. [View the full-size animation](docs/demo/GoodCall-70-Second-Demo.gif) or [view a still image](docs/demo/demo-poster.png). The [demo guide](docs/demo/README.md) explains how it was made.
 
-Watch the 60-second walkthrough below, and use the player's sound control to hear the narration.
+Watch the updated 70-second walkthrough below, and use the player's sound control to hear the narration.
 
-https://github.com/user-attachments/assets/afcde62e-0aca-45eb-bc52-dd00cbdfee06
+https://github.com/user-attachments/assets/0c5d9325-f816-4f53-b7f3-fcd25ebe62c8
 
-[Open the video](https://github.com/user-attachments/assets/afcde62e-0aca-45eb-bc52-dd00cbdfee06) · [Download MP4](https://github.com/MasteraSnackin/GoodCall/raw/refs/heads/main/docs/demo/GoodCall-60-Second-Demo.mp4) · [Download the interactive walkthrough](https://github.com/MasteraSnackin/GoodCall/raw/refs/heads/main/docs/demo/GoodCall-interactive-walkthrough.zip)
+[Open the video](https://github.com/user-attachments/assets/0c5d9325-f816-4f53-b7f3-fcd25ebe62c8) · [Download MP4](https://github.com/MasteraSnackin/GoodCall/raw/refs/heads/main/docs/demo/GoodCall-70-Second-Demo.mp4) · [Download the interactive walkthrough](https://github.com/MasteraSnackin/GoodCall/raw/refs/heads/main/docs/demo/GoodCall-interactive-walkthrough.zip)
 
-Saved app screens, guided highlights and British English narration explain how Maya uses the workspace.
+Saved app screens, guided highlights and British English narration explain how Maya uses the workspace. The original 60-second story now ends with a matching ten-second chapter on follower advice, private notes, local activity and evidence checks.
 
 ## Description
 
@@ -196,16 +196,16 @@ The app keeps its `maya-*` storage names so existing data survives the GoodCall 
 
 Open the [public demo](https://goodcall-sigma.vercel.app), or use the steps above to run it locally. The hosted version has no live AI backend; the [deployment guide](docs/DEPLOYMENT.md) describes its scope and verification.
 
-### 60-second walkthrough
+### Updated 70-second walkthrough
 
-The walkthrough shows Maya reviewing audience questions and connected evidence, checking answers and preparing advice that followers can reuse. It also shows the chat and voice controls and reports on missing materials.
+The walkthrough shows Maya reviewing audience questions and connected evidence, checking answers and preparing advice that followers can reuse. It also shows the chat and voice controls and reports on missing materials. The final ten seconds add follower advice, private notes, local activity and answers that need another evidence check, using the same visual style and narration voice.
 
 | Version | Open or download |
 | --- | --- |
-| **Narrated video** | [Watch the 60-second video](https://github.com/user-attachments/assets/afcde62e-0aca-45eb-bc52-dd00cbdfee06), with a synthetic British English female voice-over and optional English captions; [download MP4](https://github.com/MasteraSnackin/GoodCall/raw/refs/heads/main/docs/demo/GoodCall-60-Second-Demo.mp4) |
-| **Silent animation** | [60-second GIF](docs/demo/GoodCall-60-Second-Demo.gif), with zooms and highlights |
+| **Narrated video** | [Watch the 70-second video](https://github.com/user-attachments/assets/0c5d9325-f816-4f53-b7f3-fcd25ebe62c8), with a synthetic British English female voice-over and optional English captions; [download MP4](https://github.com/MasteraSnackin/GoodCall/raw/refs/heads/main/docs/demo/GoodCall-70-Second-Demo.mp4) |
+| **Silent animation** | [70-second GIF](docs/demo/GoodCall-70-Second-Demo.gif), with zooms and highlights |
 | **Interactive walkthrough** | [Download ZIP](https://github.com/MasteraSnackin/GoodCall/raw/refs/heads/main/docs/demo/GoodCall-interactive-walkthrough.zip), extract it and open the HTML in a browser; six screens and 18 clickable hotspots work offline |
-| **Text and captions** | [Narration script](docs/demo/GoodCall-narration.txt) · [SRT captions](docs/demo/GoodCall-captions.srt) |
+| **Text and captions** | [Narration script](docs/demo/GoodCall-70-Second-narration.txt) · [SRT captions](docs/demo/GoodCall-70-Second-captions.srt) |
 
 The walkthroughs combine saved screenshots with animation or clickable areas. They do not operate the live app or demonstrate microphone, speaker or provider responses. The video's narration was generated separately. See the [demo guide](docs/demo/README.md) for all formats and controls.
 

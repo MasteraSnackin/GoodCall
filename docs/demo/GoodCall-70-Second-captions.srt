@@ -1,0 +1,43 @@
+1
+00:00:00,500 --> 00:00:09,500
+Maya faces repeated questions, scattered product information and
+limited time. GoodCall groups similar questions, while keeping
+each follower’s needs visible.
+
+2
+00:00:10,500 --> 00:00:18,372
+Is Cloud Cream worth thirty-eight pounds? The canvas connects that
+question to product facts and Maya’s notes, making the evidence
+visible.
+
+3
+00:00:20,500 --> 00:00:27,775
+Here, a saved answer shows the wording Maya can review, including
+who a product suits, its price and the limits of the advice.
+
+4
+00:00:30,500 --> 00:00:38,031
+Followers can revisit a reviewed answer in one clear view, helping
+Maya share useful guidance without starting from scratch every
+time.
+
+5
+00:00:40,500 --> 00:00:49,183
+Chat and voice options offer another way into the workspace, with
+controls for asking questions, dictating input and hearing
+responses read aloud.
+
+6
+00:00:50,500 --> 00:00:59,012
+The evidence report flags missing materials and issues to check
+before advice is reused. Less searching, clearer answers, with
+Maya in control.
+
+7
+00:01:00,500 --> 00:01:04,200
+Now followers can find advice and save private notes,
+
+8
+00:01:04,200 --> 00:01:08,372
+while Maya sees local activity and which answers
+need another evidence check.
